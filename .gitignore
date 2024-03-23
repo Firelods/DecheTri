@@ -1,11 +1,16 @@
-# Exclude everything
-/.gitignore
-/.gradle
+*.iml
+.gradle
+/local.properties
 /.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
 /build.gradle.kts
 /gradle
 /gradle.properties
 /gradlew
 /gradlew.bat
-/local.properties
 /settings.gradle.kts
