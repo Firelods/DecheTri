@@ -19,7 +19,9 @@
     <string name="role_admin_title">Administrateur</string>
 
 
-<!--    SharedPreferences keys -->
+<!--    SharedPreferences -->
+    <string name="shared_preferences_file_key">shared_preferences</string>
+    <string name="default_role">user</string>
     <string name="shared_preferences_key_role">role</string>
 
 </resources>

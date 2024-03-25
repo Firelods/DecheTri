@@ -6,16 +6,6 @@
         android:title="@string/title_flux" />
 
     <item
-        android:id="@+id/navigation_taskList"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_tasklist" />
-
-    <item
-        android:id="@+id/navigation_statistics"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_stat" />
-
-    <item
         android:id="@+id/navigation_map"
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="@string/title_map" />
