@@ -5,29 +5,34 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import etu.seinksansdoozebank.dechetri.R;
+import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteReportBinding;
 
 public class WasteReportFragment extends Fragment {
+    private FragmentWasteReportBinding binding;
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        WasteReportViewModel wasteReportViewModel =
+                new ViewModelProvider(this).get(WasteReportViewModel.class);
 
-    private WasteReportViewModel mViewModel;
+        binding = FragmentWasteReportBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-    public static WasteReportFragment newInstance() {
-        return new WasteReportFragment();
+        final TextView textView = binding.textWasteReport;
+        wasteReportViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        return root;
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_waste_report, container, false);
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
-
-
-
 }

@@ -5,29 +5,34 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import etu.seinksansdoozebank.dechetri.R;
+import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
 
 public class WasteMapFragment extends Fragment {
+    private FragmentWasteMapBinding binding;
 
-    private WasteMapViewModel mViewModel;
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        WasteMapViewModel wasteMapViewModel =
+                new ViewModelProvider(this).get(WasteMapViewModel.class);
 
-    public static WasteMapFragment newInstance() {
-        return new WasteMapFragment();
+        binding = FragmentWasteMapBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        final TextView textView = binding.textWasteMap;
+        wasteMapViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        return root;
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_waste_map, container, false);
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
-
-
-
 }

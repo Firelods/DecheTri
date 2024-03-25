@@ -5,29 +5,35 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import etu.seinksansdoozebank.dechetri.R;
+import etu.seinksansdoozebank.dechetri.databinding.FragmentStatisticsBinding;
 
 public class StatisticsFragment extends Fragment {
 
-    private StatisticsViewModel mViewModel;
+    private FragmentStatisticsBinding binding;
 
-    public static StatisticsFragment newInstance() {
-        return new StatisticsFragment();
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        StatisticsViewModel statisticsViewModel =
+                new ViewModelProvider(this).get(StatisticsViewModel.class);
+
+        binding = FragmentStatisticsBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        final TextView textView = binding.textStat;
+        statisticsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        return root;
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_statistics, container, false);
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
-
-
-
 }
