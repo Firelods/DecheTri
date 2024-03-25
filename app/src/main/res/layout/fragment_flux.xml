@@ -4,12 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     tools:context=".ui.flux.FluxFragment">
 
     <ListView
         android:id="@+id/listView_flux"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:dividerHeight="20dp"
+        android:divider="@color/white"
         app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

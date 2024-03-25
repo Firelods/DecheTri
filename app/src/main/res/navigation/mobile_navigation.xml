@@ -3,23 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_flux">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="etu.seinksansdoozebank.dechetri.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigation_flux"
+        android:name="etu.seinksansdoozebank.dechetri.ui.flux.FluxFragment"
+        android:label="@string/title_flux"
+        tools:layout="@layout/fragment_flux" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="etu.seinksansdoozebank.dechetri.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_statistics"
+        android:name="etu.seinksansdoozebank.dechetri.ui.statistics.StatisticsFragment"
+        android:label="@string/title_stat"
+        tools:layout="@layout/fragment_statistics" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="etu.seinksansdoozebank.dechetri.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_taskList"
+        android:name="etu.seinksansdoozebank.dechetri.ui.taskslist.TasksListFragment"
+        android:label="@string/title_tasklist"
+        tools:layout="@layout/fragment_tasks_list" />
+
+    <fragment
+        android:id="@+id/navigation_map"
+        android:name="etu.seinksansdoozebank.dechetri.ui.wastemap.WasteMapFragment"
+        android:label="@string/title_map"
+        tools:layout="@layout/fragment_waste_map" />
+
+    <fragment
+        android:id="@+id/navigation_report"
+        android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.WasteReportFragment"
+        android:label="@string/title_report"
+        tools:layout="@layout/fragment_waste_report" />
+
 </navigation>
