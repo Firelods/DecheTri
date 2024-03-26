@@ -41,7 +41,7 @@ public class FluxFragment extends Fragment implements FLuxAdapterListener {
 
         // Create a list of flux
         fluxList = new ArrayList<>();
-        fluxList.add(new Flux("Collecte des déchets", "Le 12/12/2021", "La collecte des déchets aura lieu le 12/12/2021."));
+        fluxList.add(new Flux("Collecte des déchets", "Le 12/12/2021", "La collecte des déchets aura lieu le 12/12/2021.\nliorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec nisl ac nisi tincidunt tincidunt. Donec auctor, nunc nec ultricies ultricies, nunc nisl ultricies elit, nec ultricies elit nisl nec nisl. Nullam nec nisl ac nisi tincidunt tincidunt. Donec auctor, nunc nec ultricies ultricies, nunc nisl ultricies elit, nec ultricies elit nisl nec nisl. Nullam nec nisl ac nisi tincidunt tincidunt. Donec auctor, nunc nec ultricies ultricies, nunc nisl ultricies elit, nec ultricies elit nisl nec nisl."));
         fluxList.add(new Flux("Collecte des déchets", "Le 19/12/2021", "La collecte des déchets aura lieu le 19/12/2021."));
         fluxList.add(new Flux("Collecte des déchets", "Le 26/12/2021", "La collecte des déchets aura lieu le 26/12/2021."));
         fluxList.add(new Flux("Collecte des déchets", "Le 02/01/2022", "La collecte des déchets aura lieu le 02/01/2022."));
