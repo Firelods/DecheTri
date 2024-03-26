@@ -1,22 +1,22 @@
 package etu.seinksansdoozebank.dechetri.ui.wastemap;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.activity.result.ActivityResultLauncher;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +30,8 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
@@ -42,32 +43,63 @@ public class WasteMapFragment extends Fragment {
     private static final String TAG = "WasteMapFragment";
     private LocationManager locationManager;
     Drawable markerDrawable;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentWasteMapBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        markerDrawable= getResources().getDrawable(R.drawable.my_location);
 
         Context ctx = getContext();
         if (ctx != null) {
-            Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-
-
+            markerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.my_location);
+            Configuration.getInstance().load(ctx, ctx.getSharedPreferences("osmdroid", Context.MODE_PRIVATE));
             locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         }
         if (checkLocationPermission()) {
             Log.v(TAG, "Location permission granted");
             setupMapView();
             updateMapToCurrentLocation();
+            List<Waste> wastes = new ArrayList<>();
+
+            // Ajouter des éléments Waste à la liste
+            wastes.add(new Waste("Homme", 43.568649561971746, 7.118045347165924, "52, avenue Laure Tessier\n02448 Briand-sur-Renard"));
+            wastes.add(new Waste("Histoire", 43.5903290982534, 7.144700577473443, "634, chemin Thibault Lévy\n94291 Vallet-sur-Carpentier"));
+            wastes.add(new Waste("Village", 43.584942163317315, 7.129661435858396, "54, chemin Valentine Martineau\n48705 Bruneauboeuf"));
+            wastes.add(new Waste("Midi", 43.59516846342956, 7.123057751195417, "735, rue Inès Munoz\n94926 Lejeune-sur-Mer"));
+            wastes.add(new Waste("Rideau", 43.594965510989326, 7.124292537096873, "avenue de Moulin\n66315 Da Costa"));
+            addWastePointsOnMap(wastes);
         } else {
             Log.v(TAG, "Location permission not granted");
             requestLocationPermission();
         }
 
+
         return view;
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Pause map view to free resources
+        map.onPause(); // Ensure this method is called on the map
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        map.onResume(); // Ensure this method is called on the map
+        if (checkLocationPermission()) {
+            updateMapToCurrentLocation();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Here you can nullify or clear any resources related to the map if needed
+        map.onDetach();
+
+    }
     private boolean checkLocationPermission() {
         Context context = getContext();
         if (context == null) return false;
@@ -76,14 +108,24 @@ public class WasteMapFragment extends Fragment {
                 && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    setupMapView();
+                    updateMapToCurrentLocation();
+                } else {
+                    // Handle the case where permission is denied
+                    Log.v(TAG, "Location permission denied");
+                }
+            });
+
     private void requestLocationPermission() {
-        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
     private void setupMapView() {
         map = binding.mapView;
         map.setTileSource(TileSourceFactory.MAPNIK);
-        map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
         mapController = map.getController();
     }
@@ -106,35 +148,24 @@ public class WasteMapFragment extends Fragment {
             addMarker(startPoint);
             mapController.setZoom(15.0);
         } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
-                @Override
-                public void onLocationChanged(@NonNull Location location) {
-                    GeoPoint startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    mapController.setCenter(startPoint);
-                    mapController.setZoom(15.0);
-                    addMarker(startPoint);
-                }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, location -> {
+                GeoPoint startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                mapController.setCenter(startPoint);
+                mapController.setZoom(15.0);
+                addMarker(startPoint);
             });
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setupMapView();
-                updateMapToCurrentLocation();
-            } else {
-                // Handle the case where the user denies the permission.
-            }
-        }
-    }
     private void addMarker(GeoPoint startPoint) {
         OverlayItem locationMarker = new OverlayItem("Votre Position", "Vous êtes ici", startPoint);
         locationMarker.setMarker(markerDrawable);
 
-        ItemizedIconOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(Collections.singletonList(locationMarker),
+        ArrayList<OverlayItem> items = new ArrayList<>();
+        items.add(locationMarker);
+
+        ItemizedIconOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(
+                items,
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
                     public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
@@ -150,9 +181,46 @@ public class WasteMapFragment extends Fragment {
         map.getOverlays().add(locationOverlay);
         map.invalidate();
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+
+    public void addWastePointsOnMap(List<Waste> wastes) {
+        ArrayList<OverlayItem> items = new ArrayList<>();
+
+        for (Waste location : wastes) {
+            GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
+            OverlayItem overlayItem = new OverlayItem(location.getAddress(), "Déchet ici", point);
+            overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), R.drawable.waste));
+            items.add(overlayItem);
+        }
+
+        ItemizedIconOverlay<OverlayItem> wasteOverlay = new ItemizedIconOverlay<>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+            @Override
+            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                showWasteDetails(wastes.get(index));
+                return true;
+            }
+
+            @Override
+            public boolean onItemLongPress(final int index, final OverlayItem item) {
+                // Gestion du long press, si nécessaire
+                return true;
+            }
+        }, requireContext());
+
+        map.getOverlays().add(wasteOverlay);
+        map.invalidate(); // Rafraîchit la carte pour afficher les nouveaux éléments
+    }
+
+    public void showWasteDetails(Waste waste) {
+        WasteDialogFragment wasteDialogFragment = new WasteDialogFragment();
+
+        Bundle args = new Bundle();
+        args.putString("name", waste.getName());
+        args.putDouble("latitude", waste.getLatitude());
+        args.putDouble("longitude", waste.getLongitude());
+        args.putString("address", waste.getAddress());
+
+        wasteDialogFragment.setArguments(args);
+
+        wasteDialogFragment.show(getParentFragmentManager(), "wasteDetails");
     }
 }
