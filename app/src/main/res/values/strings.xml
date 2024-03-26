@@ -24,4 +24,7 @@
     <string name="default_role">user</string>
     <string name="shared_preferences_key_role">role</string>
 
+<!--    ActionBar   -->
+    <string name="action_bar_burger_menu_content_description">the burger menu icon</string>
+
 </resources>
