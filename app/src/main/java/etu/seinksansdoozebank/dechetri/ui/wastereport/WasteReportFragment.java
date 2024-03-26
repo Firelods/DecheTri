@@ -24,8 +24,8 @@ public class WasteReportFragment extends Fragment {
         binding = FragmentWasteReportBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textWasteReport;
-        wasteReportViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        //final TextView textView = binding.textWasteReport;
+        //wasteReportViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         return root;
     }
