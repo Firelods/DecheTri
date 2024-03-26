@@ -10,6 +10,7 @@
     <string name="title_report">Signalement</string>
     <string name="title_stat">Statistiques</string>
     <string name="title_tasklist">Liste de tâches</string>
+    <string name="title_disconnect">Se déconnecter</string>
 
 <!--    RoleChoice Activity-->
     <string name="role_choice_title">Choix du rôle d\'utilisation de l\'application</string>
@@ -23,8 +24,5 @@
     <string name="shared_preferences_file_key">shared_preferences</string>
     <string name="default_role">user</string>
     <string name="shared_preferences_key_role">role</string>
-
-<!--    ActionBar   -->
-    <string name="action_bar_burger_menu_content_description">the burger menu icon</string>
 
 </resources>

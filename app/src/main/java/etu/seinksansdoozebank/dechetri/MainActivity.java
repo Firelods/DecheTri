@@ -3,10 +3,12 @@ package etu.seinksansdoozebank.dechetri;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -19,8 +21,6 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navView;
 
-    private TextView actionBarTitle;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         navView = findViewById(R.id.nav_view);
-        actionBarTitle = findViewById(R.id.title);
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String defaultRole = getResources().getString(R.string.role_user_title); //user by default
@@ -59,9 +58,29 @@ public class MainActivity extends AppCompatActivity {
 
         navView.setOnItemSelectedListener(item -> {
             Log.d("MainActivity", "onNavigationItemSelected: " + item.getTitle());
-            actionBarTitle.setText(item.getTitle());
+            getSupportActionBar().setTitle(item.getTitle());
             return true;
         });
         navView.setSelectedItemId(navView.getMenu().getItem(0).getItemId());
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.navigation_disconnect) {
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(getString(R.string.shared_preferences_key_role));
+            editor.apply();
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
