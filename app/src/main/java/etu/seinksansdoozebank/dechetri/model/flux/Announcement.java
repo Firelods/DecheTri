@@ -1,12 +1,12 @@
 package etu.seinksansdoozebank.dechetri.model.flux;
 
-public class Flux {
+public class Announcement {
 
     private String title;
     private String date;
     private String description;
     private static final String APP_NAME = "DecheTri";
-    public Flux(String title, String date, String description) {
+    public Announcement(String title, String date, String description) {
         this.title = title;
         this.date = date;
         this.description = description;
