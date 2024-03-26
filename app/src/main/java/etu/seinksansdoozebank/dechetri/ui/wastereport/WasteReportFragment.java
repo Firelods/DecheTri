@@ -18,15 +18,9 @@ public class WasteReportFragment extends Fragment {
     private FragmentWasteReportBinding binding;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        WasteReportViewModel wasteReportViewModel =
-                new ViewModelProvider(this).get(WasteReportViewModel.class);
 
         binding = FragmentWasteReportBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        final TextView textView = binding.textWasteReport;
-        wasteReportViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
         return root;
     }
 

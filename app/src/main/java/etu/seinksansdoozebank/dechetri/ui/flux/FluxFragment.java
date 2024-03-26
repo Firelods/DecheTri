@@ -20,14 +20,9 @@ public class FluxFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        FluxViewModel fluxViewModel =
-                new ViewModelProvider(this).get(FluxViewModel.class);
 
         binding = FragmentFluxBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        final TextView textView = binding.textFlux;
-        fluxViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
