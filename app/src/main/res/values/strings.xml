@@ -19,6 +19,12 @@
     <string name="role_manager_title">Manager</string>
     <string name="role_admin_title">Administrateur</string>
 
+<!--    AlertDialog    -->
+    <string name="alert_disconnect_title">Déconnexion</string>
+    <string name="alert_disconnect_message">Voulez-vous vraiment vous déconnecter ?</string>
+    <string name="alert_disconnect_yes">Se déconnecter</string>
+    <string name="alert_disconnect_no">Rester connecté</string>
+
 
 <!--    SharedPreferences -->
     <string name="shared_preferences_file_key">shared_preferences</string>

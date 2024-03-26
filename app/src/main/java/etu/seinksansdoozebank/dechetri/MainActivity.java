@@ -1,5 +1,6 @@
 package etu.seinksansdoozebank.dechetri;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -75,12 +76,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.navigation_disconnect) {
-            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.remove(getString(R.string.shared_preferences_key_role));
-            editor.apply();
-            finish();
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.alert_disconnect_title)
+                    .setMessage(R.string.alert_disconnect_message)
+                    .setPositiveButton(R.string.alert_disconnect_yes, (dialog, which) -> disconnect())
+                    .setNegativeButton(R.string.alert_disconnect_no, null)
+                    .show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void disconnect(){
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(getString(R.string.shared_preferences_key_role));
+        editor.apply();
+        finish();
     }
 }
