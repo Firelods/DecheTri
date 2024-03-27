@@ -40,7 +40,7 @@ public class WasteMapFragment extends Fragment {
     private FragmentWasteMapBinding binding;
     private MapView map;
     private IMapController mapController;
-    private static final String  TAG = "WasteMapFragment";
+    private static final String TAG = "WasteMapFragment";
     private LocationManager locationManager;
     Drawable markerDrawable;
 
@@ -72,17 +72,17 @@ public class WasteMapFragment extends Fragment {
 
         return view;
     }
+
     @Override
     public void onPause() {
         super.onPause();
-        // Pause map view to free resources
-        map.onPause(); // Ensure this method is called on the map
+        map.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        map.onResume(); // Ensure this method is called on the map
+        map.onResume();
         if (checkLocationPermission()) {
             updateMapToCurrentLocation();
         }
@@ -91,10 +91,9 @@ public class WasteMapFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Here you can nullify or clear any resources related to the map if needed
         map.onDetach();
-
     }
+
     private boolean checkLocationPermission() {
         Context context = getContext();
         if (context == null) return false;
