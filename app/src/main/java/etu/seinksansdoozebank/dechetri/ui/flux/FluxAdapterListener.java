@@ -5,7 +5,7 @@ import android.widget.ImageButton;
 
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 
-public interface FLuxAdapterListener {
+public interface FluxAdapterListener {
     void onClickBin(ImageButton bin, Announcement item);
 
     Context getContext();

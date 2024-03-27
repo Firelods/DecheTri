@@ -1,6 +1,7 @@
 package etu.seinksansdoozebank.dechetri.ui.flux;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import etu.seinksansdoozebank.dechetri.databinding.FragmentFluxBinding;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementList;
 
-public class FluxFragment extends Fragment implements FLuxAdapterListener {
+public class FluxFragment extends Fragment implements FluxAdapterListener {
 
     private FragmentFluxBinding binding;
     private FluxAdapter fluxAdapter;
@@ -35,7 +36,7 @@ public class FluxFragment extends Fragment implements FLuxAdapterListener {
         listViewFlux = binding.listViewFlux;
 
         // Create an adapter
-        fluxAdapter = new FluxAdapter(getActivity(), announcementList.getAnnouncementList());
+        fluxAdapter = new FluxAdapter(this, announcementList.getAnnouncementList());
         listViewFlux.setAdapter(fluxAdapter);
 
         return root;
@@ -51,6 +52,8 @@ public class FluxFragment extends Fragment implements FLuxAdapterListener {
     @Override
     public void onClickBin(ImageButton bin, Announcement item) {
         // remove item from list
+        Log.d("FluxFragment", "onClickBin: " + item);
         announcementList.remove(item);
+        fluxAdapter.notifyDataSetChanged();
     }
 }
