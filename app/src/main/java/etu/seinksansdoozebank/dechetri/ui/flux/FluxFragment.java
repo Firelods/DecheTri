@@ -52,8 +52,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
     @Override
     public void onClickBin(ImageButton bin, Announcement item) {
         // remove item from list
-        Log.d("FluxFragment", "onClickBin: " + item);
-        announcementList.remove(item);
+        announcementList.getAnnouncementList().remove(item);
         fluxAdapter.notifyDataSetChanged();
     }
 }
