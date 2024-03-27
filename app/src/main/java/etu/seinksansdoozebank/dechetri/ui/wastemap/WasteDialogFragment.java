@@ -64,17 +64,10 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 String address = waste.getAddress();
-                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(address));
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Uri.encode(address));
 
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-
-                if (mapIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
-                    startActivity(mapIntent);
-                } else {
-                    // Aucune application n'est disponible pour gérer l'intent
-                    Toast.makeText(getActivity(), "Aucune application de navigation trouvée", Toast.LENGTH_SHORT).show();
-                }
+                startActivity(mapIntent);
             }
         });
         return binding.getRoot();
@@ -92,7 +85,6 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         super.onDestroyView();
         binding = null;
     }
-
 
 
 }
