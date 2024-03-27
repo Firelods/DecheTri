@@ -1,110 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:orientation="vertical"
     tools:context=".ui.wastereport.WasteDetailsReportFragment">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/WasteIdentificationTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Identification du déchet"
             android:textAlignment="center"
-            android:textSize="35sp"
-            android:text="Identification du déchet" />
+            android:textSize="35sp" />
+    </LinearLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="50dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical">
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="Nom du déchet" />
+            android:text="Nom du déchet"
+            android:textSize="30sp" />
 
         <EditText
             android:id="@+id/NameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="Saisir le nom ..." />
+            android:hint="Saisir le nom ..."
+            android:textSize="20sp" />
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="15dp"/>
+            android:layout_height="15dp" />
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="Description" />
+            android:text="Description"
+            android:textSize="30sp" />
 
         <EditText
             android:id="@+id/DescriptionInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="Saisir une description..." />
+            android:hint="Saisir une description..."
+            android:textSize="20sp" />
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="15dp"/>
+            android:layout_height="15dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="Localisation" />
+            android:text="Localisation"
+            android:textSize="30sp" />
 
         <EditText
             android:id="@+id/LocalisationInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="Saisir la localisation..." />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="80dp"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-
-            <Button
-                android:id="@+id/PrecedentButton"
-                android:layout_width="120sp"
-                android:layout_height="80sp"
-                android:text="Précédent"
-                android:textAlignment="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintHorizontal_bias="0.42"
-                app:layout_constraintEnd_toEndOf="@+id/ValidateButton"
-                tools:ignore="MissingConstraints" />
-
-            <Button
-                android:id="@+id/ValidateButton"
-                android:layout_width="120sp"
-                android:layout_height="80sp"
-                android:text="Confirmer"
-                android:textAlignment="center"
-                app:layout_constraintStart_toEndOf="@+id/PrecedentButton"
-                tools:ignore="MissingConstraints" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:hint="Saisir la localisation..."
+            android:textSize="20sp" />
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="70dp"
+        android:orientation="horizontal">
 
-</FrameLayout>
+        <Button
+            android:id="@+id/PrecedentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Précédent"
+            tools:ignore="MissingConstraints" />
+        <Space
+            android:layout_width="110dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/ValidateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirmer"
+            tools:ignore="MissingConstraints" />
+    </LinearLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
