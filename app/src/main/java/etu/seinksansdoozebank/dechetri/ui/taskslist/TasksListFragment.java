@@ -14,12 +14,13 @@ import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.databinding.FragmentTasksListBinding;
 import etu.seinksansdoozebank.dechetri.model.taskslist.Task;
+import etu.seinksansdoozebank.dechetri.model.taskslist.TaskList;
 
 public class TasksListFragment extends Fragment implements TasksListAdapterListener {
     private FragmentTasksListBinding binding;
     private ListView listViewTasks;
-    private List<Task> taskList;
     private TasksListAdapter taskListAdapter;
+    private final TaskList taskList = new TaskList();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -27,14 +28,6 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
         View root = binding.getRoot();
 
         listViewTasks = binding.listViewTasks;
-
-        // Create a list of flux
-        taskList = new ArrayList<>();
-        taskList.add(new Task("Task 1", "Waste type 1", "Address 1"));
-        taskList.add(new Task("Task 2", "Waste type 2", "Address 2"));
-        taskList.add(new Task("Task 3", "Waste type 3", "Address 3"));
-        taskList.add(new Task("Task 4", "Waste type 4", "Address 4"));
-        taskList.add(new Task("Task 5", "Waste type 5", "Address 5"));
 
         // Create an adapter
         taskListAdapter = new TasksListAdapter(getActivity(), taskList);
