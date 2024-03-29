@@ -36,7 +36,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         listViewFlux = binding.listViewFlux;
 
         // Create an adapter
-        fluxAdapter = new FluxAdapter(this, announcementList.getAnnouncementList());
+        fluxAdapter = new FluxAdapter(this, announcementList);
         listViewFlux.setAdapter(fluxAdapter);
 
         return root;
@@ -52,7 +52,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
     @Override
     public void onClickBin(ImageButton bin, Announcement item) {
         // remove item from list
-        announcementList.getAnnouncementList().remove(item);
+        announcementList.remove(item);
         fluxAdapter.notifyDataSetChanged();
     }
 }
