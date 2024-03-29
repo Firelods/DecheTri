@@ -1,6 +1,5 @@
 package etu.seinksansdoozebank.dechetri.ui.wastemap;
 
-import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
 
@@ -19,15 +17,9 @@ public class WasteMapFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        WasteMapViewModel wasteMapViewModel =
-                new ViewModelProvider(this).get(WasteMapViewModel.class);
 
         binding = FragmentWasteMapBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        final TextView textView = binding.textWasteMap;
-        wasteMapViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
+        return binding.getRoot();
     }
 
     @Override
