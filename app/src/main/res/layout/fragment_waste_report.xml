@@ -84,7 +84,6 @@
             android:text="Pellicule"/>
     </LinearLayout>
 
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,7 +96,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Annuler"
-            app:layout_constraintEnd_toStartOf="@id/confirmButton"
+            app:layout_constraintStart_toEndOf="@id/confirmButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/CameraButton" />
         <Space
@@ -116,6 +115,15 @@
             app:layout_constraintTop_toBottomOf="@id/CameraButton" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@null"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 
