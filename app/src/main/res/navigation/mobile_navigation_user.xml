@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_report"
-        android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.WasteReportFragment"
+        android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.WasteDetailsReportFragment"
         android:label="@string/title_report"
         tools:layout="@layout/fragment_waste_report" />
 
