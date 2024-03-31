@@ -46,6 +46,9 @@ public class WasteDetailsReportFragment extends Fragment {
             updateLocation(lastKnownLocation);
         }
 
+        locationListener = location -> updateLocation(location);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
         confirmButton = view.findViewById(R.id.ValidateButton);
         confirmButton.setOnClickListener(v -> {
             //TODO : ajouter le déchet à la liste des déchets en ayant enregistrer toutes les informations actuelles / passer au fragment d'après
