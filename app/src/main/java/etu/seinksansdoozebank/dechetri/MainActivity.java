@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
 
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
         navView.setSelectedItemId(navView.getMenu().getItem(0).getItemId());
-
+        NavigationUI.setupWithNavController(binding.navView, navController);
 
     }
 
