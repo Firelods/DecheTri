@@ -28,6 +28,16 @@
         android:id="@+id/navigation_report"
         android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.WasteReportFragment"
         android:label="@string/title_report"
-        tools:layout="@layout/fragment_waste_report" />
+        tools:layout="@layout/fragment_waste_report" >
+        <action
+            android:id="@+id/action_currentFragment_to_wasteReportFragment"
+            app:destination="@id/navigation_location_choice" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_location_choice"
+        android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.LocationChoiceFragment"
+        android:label="LocationChoice"
+        tools:layout="@layout/fragment_location_choice" />
 
 </navigation>
