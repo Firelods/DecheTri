@@ -10,6 +10,9 @@
     <string name="title_report">Signalement</string>
     <string name="title_stat">Statistiques</string>
     <string name="title_tasklist">Liste de tâches</string>
+    <string name="intinerary">Itinéraire</string>
+    <string name="confirm_ramassage">Confirmer le ramassage</string>
+    <string name="placeholder">placeholder</string>
     <string name="title_disconnect">Se déconnecter</string>
 
     <!--    RoleChoice Activity-->
