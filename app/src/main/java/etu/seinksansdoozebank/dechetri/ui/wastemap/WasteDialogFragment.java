@@ -57,7 +57,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             double longitude = getArguments().getDouble("longitude");
             String address = getArguments().getString("address");
             wasteAddress.setText(address);
-            waste = new Waste(name, latitude, longitude, address);
+            waste = new Waste(name, latitude, longitude, address,null);
         }
         buttonItinary.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("QueryPermissionsNeeded")

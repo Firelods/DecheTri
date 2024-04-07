@@ -8,6 +8,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -22,6 +25,7 @@ import java.io.IOException;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteReportBinding;
+import etu.seinksansdoozebank.dechetri.ui.wastemap.Waste;
 
 public class WasteReportFragment extends Fragment {
     private FragmentWasteReportBinding binding;
@@ -29,6 +33,9 @@ public class WasteReportFragment extends Fragment {
     private ActivityResultLauncher<Intent> takePictureLauncher;
 
     Button validateButton;
+    private Uri photoUri;
+
+    private NavController navController;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -47,9 +54,7 @@ public class WasteReportFragment extends Fragment {
                         // Récupérer l'URI de l'image sélectionnée
                         if (data != null) {
                             validateButton.setVisibility(View.VISIBLE);
-                            Uri photoUri = data.getData();
-                            binding.imageView.setImageURI(photoUri);
-                            //TODO : afficher la photo selectionnée dans la view d'après.
+                            photoUri = data.getData();
                         }
                     } else {
                         Toast.makeText(requireContext(), "Aucune image sélectionnée", Toast.LENGTH_SHORT).show();
@@ -62,12 +67,9 @@ public class WasteReportFragment extends Fragment {
                        validateButton.setVisibility(View.VISIBLE);
                         Intent data = result.getData();
                         Bitmap photoBitmap = (Bitmap) data.getExtras().get("data");
-                        // Afficher l'image dans l'ImageView
                         if (photoBitmap != null) {
-                            Uri photoUri = saveBitmapToStorage(photoBitmap);
-                            binding.imageView.setImageURI(photoUri);
+                            saveBitmapToStorage(photoBitmap);
                         }
-                        //TODO : afficher la photo prise dans la view d'après.
                     } else {
                         Toast.makeText(requireContext(), "Aucune photo capturée", Toast.LENGTH_SHORT).show();
                     }
@@ -87,10 +89,6 @@ public class WasteReportFragment extends Fragment {
         validateButton = view.findViewById(R.id.confirmButton);
         validateButton.setVisibility(View.GONE);
 
-        // Écouteur de clic pour le bouton ou tout autre déclencheur d'événement
-        binding.confirmButton.setOnClickListener(view1 -> {
-  //TODO : changer de vue et mettre sur waste details report
-        });
 
         //Si on clique sur le bouton de la pellicule alors on ouvre le service du téléphone.
         binding.LibraryPhoto.setOnClickListener(new View.OnClickListener() {
@@ -110,44 +108,54 @@ public class WasteReportFragment extends Fragment {
         });
 
         //Si on clique sur le bouton de l'appareil photo  alors on ouvre le service du téléphone.
-        binding.CameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
-                    //Créer l'activité pour lancer l'appareil photo
-                    takePictureLauncher.launch(takePictureIntent);
-                } else {
-               // si erreur alors afficher un message d'information
-                    Toast.makeText(requireContext(), "L'application de l'appareil photo n'est pas disponible", Toast.LENGTH_SHORT).show();
-                }
+        binding.CameraButton.setOnClickListener(view12 -> {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+                //Créer l'activité pour lancer l'appareil photo
+                takePictureLauncher.launch(takePictureIntent);
+            } else {
+           // si erreur alors afficher un message d'information
+                Toast.makeText(requireContext(), "L'application de l'appareil photo n'est pas disponible", Toast.LENGTH_SHORT).show();
             }
         });
+
+        navController = NavHostFragment.findNavController(this);
+        //Lors de la validation on créé un déchet avec la photo et tous les autres paramètres nuls
+        binding.confirmButton.setOnClickListener(view12 -> {
+            Waste waste=new Waste(null,0,0,null,photoUri);
+                navController.navigate(R.id.navigation_map); // Naviguer vers le fragment carte
+        });
+
+        //go back
+        binding.cancelButton.setOnClickListener(view12 -> {
+            navController.navigate(R.id.navigation_flux); // Naviguer vers le fragment carte
+        });
+
+
     }
 
-    private Uri saveBitmapToStorage(Bitmap bitmap) {
-        // Créez un répertoire de stockage où vous souhaitez enregistrer l'image
+    private void saveBitmapToStorage(Bitmap bitmap) {
+        // Créez un répertoire de stockage où on enregistre l'image
         File imagesDir = new File(requireActivity().getExternalFilesDir(null), "images");
         if (!imagesDir.exists()) {
-            imagesDir.mkdirs(); // Créez le répertoire s'il n'existe pas déjà
+            imagesDir.mkdirs();
         }
 
-        // Créez un fichier dans ce répertoire avec un nom unique
+        // Créez un fichier dans le repertoire avec un nom de reférence unique
         String fileName = "image_" + System.currentTimeMillis() + ".jpg";
         File imageFile = new File(imagesDir, fileName);
 
         try {
-            // Écrivez le Bitmap dans le fichier en utilisant un OutputStream
+            // écriture du Bitmap dans le fichier en utilisant un OutputStream
             FileOutputStream outputStream = new FileOutputStream(imageFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
             outputStream.close();
+            // enregistrement de ce bitmap en format Uri
+            photoUri=Uri.fromFile(imageFile);
 
-            // Renvoyez l'URI du fichier enregistré
-            return Uri.fromFile(imageFile);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
     }
 

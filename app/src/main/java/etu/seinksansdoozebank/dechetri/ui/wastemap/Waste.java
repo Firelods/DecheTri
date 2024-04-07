@@ -1,5 +1,8 @@
 package etu.seinksansdoozebank.dechetri.ui.wastemap;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
+
 public class Waste {
     private final String name;
     private final double latitude;
@@ -7,11 +10,14 @@ public class Waste {
 
     private final String address;
 
-    public Waste(String name, double latitude, double longitude, String address) {
+    private final Uri photo;
+
+    public Waste(String name, double latitude, double longitude, String address, Uri photo) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
+        this.photo=photo;
     }
 
     public String getName() {
@@ -29,4 +35,5 @@ public class Waste {
     public String getAddress() {
         return address;
     }
+
 }

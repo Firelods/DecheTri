@@ -23,4 +23,14 @@
         android:label="@string/title_report"
         tools:layout="@layout/fragment_waste_report" />
 
+    <action
+        android:id="@+id/fragment_waste_report"
+        app:destination="@id/navigation_map"
+        />
+
+    <action
+        android:id="@+id/fragment_waste_report"
+        app:destination="@id/navigation_flux"
+        tools:ignore="DuplicateIds" />
+
 </navigation>
