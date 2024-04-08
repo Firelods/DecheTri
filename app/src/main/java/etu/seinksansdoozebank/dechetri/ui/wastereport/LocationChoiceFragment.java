@@ -82,10 +82,13 @@ public class LocationChoiceFragment extends Fragment {
         if (lastKnownLocation != null) {
             GeoPoint startPoint = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
             mapController.setCenter(startPoint);
+            addMarkerAtLocation(startPoint, true);
+
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, location -> {
                 GeoPoint startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                 mapController.setCenter(startPoint);
+                addMarkerAtLocation(startPoint, true);
             });
         }
         mapController.setZoom(15.0);
@@ -96,7 +99,7 @@ public class LocationChoiceFragment extends Fragment {
         map.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 GeoPoint geoPoint = (GeoPoint) map.getProjection().fromPixels((int) event.getX(), (int) event.getY());
-                addMarkerAtLocation(geoPoint);
+                addMarkerAtLocation(geoPoint, false);
                 Log.v(TAG, "Location selected: " + geoPoint);
                 v.performClick();
             }
@@ -104,16 +107,19 @@ public class LocationChoiceFragment extends Fragment {
         });
     }
 
-    private void addMarkerAtLocation(GeoPoint location) {
+    private void addMarkerAtLocation(GeoPoint location, boolean isCurrentLocation) {
 
-        map.getOverlays().clear();
 
         Marker marker = new Marker(map);
         marker.setPosition(location);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
+        if (isCurrentLocation) {
+            marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
+        } else {
+            marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.location));
+        }
 
-        marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
         marker.setTitle("Nouveau déchet");
 
         map.getOverlays().add(marker);
@@ -124,18 +130,18 @@ public class LocationChoiceFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        map.onResume(); // Pour gérer le cycle de vie de la carte
+        map.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        map.onPause(); // Pour gérer le cycle de vie de la carte
+        map.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        map.onDetach(); // Pour nettoyer les ressources de la carte
+        map.onDetach();
     }
 }

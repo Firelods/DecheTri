@@ -28,6 +28,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
@@ -152,27 +153,16 @@ public class WasteMapFragment extends Fragment {
     }
 
     private void addMarker(GeoPoint startPoint) {
-        OverlayItem locationMarker = new OverlayItem("Votre Position", "Vous êtes ici", startPoint);
-        locationMarker.setMarker(markerDrawable);
+        Marker marker = new Marker(map);
+        marker.setPosition(startPoint);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
-        ArrayList<OverlayItem> items = new ArrayList<>();
-        items.add(locationMarker);
 
-        ItemizedIconOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(
-                items,
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        return true;
-                    }
+        marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
+        marker.setTitle("Votre position");
 
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        return true;
-                    }
-                }, requireContext());
+        map.getOverlays().add(marker);
 
-        map.getOverlays().add(locationOverlay);
         map.invalidate();
     }
 
