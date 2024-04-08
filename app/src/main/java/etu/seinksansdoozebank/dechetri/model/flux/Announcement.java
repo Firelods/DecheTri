@@ -12,9 +12,13 @@ public class Announcement {
         this.description = description;
     }
 
-    public String getTitle() {
-        return title;
+    public Announcement(String title, String date, String description, String eventDate) {
+        this.title = title;
+        this.date = date;
+        this.description = description;
     }
+
+    public String getTitle() {return title;}
 
     public String getDate() {
         return date;
