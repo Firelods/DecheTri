@@ -10,10 +10,9 @@
     <color name="green_700">#027125</color>
     <color name="green_900">#014015</color>
     <color name="white_500">#E4F1E9</color>
+    <color name="white_100">#FBFDFC</color>
     <color name="brown_100">#EDEAEB</color>
     <color name="brown_200">#B5AFB0</color>
     <color name="brown_500">#54494B</color>
     <color name="brown_700">#302628</color>
-
-    <color name="lightgrey">#AAAAAAAA</color>
 </resources>
