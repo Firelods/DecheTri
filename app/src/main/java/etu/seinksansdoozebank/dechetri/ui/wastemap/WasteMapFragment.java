@@ -66,7 +66,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
                 Log.v(TAG, "Location permission denied");
             }
         });
-
+        setupMapView();
         if (checkLocationPermission()) {
             updateMapToCurrentLocation();
             WasteList wasteList = new WasteList();
@@ -204,6 +204,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
         wasteDialogFragment.show(getParentFragmentManager(), "wasteDetails");
     }
+
     @Override
     public void onLocationChanged(@NonNull Location location) {
         setLocationOnPoint(location);
