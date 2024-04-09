@@ -85,10 +85,10 @@ public class MainActivity extends AppCompatActivity {
                     .setNegativeButton(R.string.alert_disconnect_no, null).create();
             alertDialog.show();
             Button buttonPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            buttonPositive.setTextColor(getResources().getColor(R.color.orange_400));
+            buttonPositive.setTextColor(getResources().getColor(R.color.orange_600, null));
             Button buttonNegative = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            buttonNegative.setBackgroundColor(getResources().getColor(R.color.green_700));
-            buttonNegative.setTextColor(getResources().getColor(R.color.white_100));
+            buttonNegative.setBackgroundColor(getResources().getColor(R.color.green_700, null));
+            buttonNegative.setTextColor(getResources().getColor(R.color.white_100, null));
         }
         return super.onOptionsItemSelected(item);
     }
