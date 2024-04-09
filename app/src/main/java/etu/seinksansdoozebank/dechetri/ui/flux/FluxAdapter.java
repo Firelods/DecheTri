@@ -51,6 +51,7 @@ public class FluxAdapter extends BaseAdapter {
 
         // (1) : Réutilisation des layouts
         listItem = convertView == null ? mInflater.inflate(R.layout.item_flux, parent, false) : convertView;
+        listItem.setElevation(5);
 
         if (!announcementList.isEmpty()) {
             // (2) : Récupération des TextView de notre layout
