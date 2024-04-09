@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -67,7 +68,6 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         });
 
         if (checkLocationPermission()) {
-            setupMapView();
             updateMapToCurrentLocation();
             WasteList wasteList = new WasteList();
             addWastePointsOnMap(wasteList);
@@ -103,14 +103,16 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         map.setTileSource(TileSourceFactory.MAPNIK);
         map.setMultiTouchControls(true);
         mapController = map.getController();
+        map.setMinZoomLevel(5.0);
+        mapController.setZoom(10.0);
+        mapController.setCenter(new GeoPoint(46.603354, 1.888334));
     }
 
 
-
-
     private void updateMapToCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if ((ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                || locationManager == null || !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             return;
         }
         if (getContext() != null && checkLocationPermission()) {
@@ -224,7 +226,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
-        LocationListener.super.onProviderDisabled(provider);
+        Toast.makeText(getContext(), "Veuillez activer la localisation", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -236,9 +238,12 @@ public class WasteMapFragment extends Fragment implements LocationListener {
     @Override
     public void onResume() {
         super.onResume();
-        map.onResume();
         if (checkLocationPermission()) {
+            map.onResume();
             updateMapToCurrentLocation();
+        } else {
+            // toast message to say that the location permission is needed
+            Toast.makeText(getContext(), "La localisation est nécessaire pour signaler le déchet", Toast.LENGTH_SHORT).show();
         }
     }
 
