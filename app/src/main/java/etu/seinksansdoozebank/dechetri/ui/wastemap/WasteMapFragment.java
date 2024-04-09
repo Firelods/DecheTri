@@ -46,6 +46,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
     private LocationManager locationManager;
     Drawable markerDrawable;
     private ActivityResultLauncher<String> requestPermissionLauncher;
+    private ItemizedIconOverlay<OverlayItem> currentLocationOverlay;
 
     @Nullable
     @Override
@@ -141,25 +142,24 @@ public class WasteMapFragment extends Fragment implements LocationListener {
     private void addMarker(GeoPoint startPoint) {
         OverlayItem locationMarker = new OverlayItem("Votre Position", "Vous êtes ici", startPoint);
         locationMarker.setMarker(markerDrawable);
-
         ArrayList<OverlayItem> items = new ArrayList<>();
         items.add(locationMarker);
+        ItemizedIconOverlay<OverlayItem> newLocationOverlay = new ItemizedIconOverlay<>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+            @Override
+            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                return true;
+            }
 
-        ItemizedIconOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(
-                items,
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        return true;
-                    }
-                }, requireContext());
-
-        map.getOverlays().add(locationOverlay);
+            @Override
+            public boolean onItemLongPress(final int index, final OverlayItem item) {
+                return true;
+            }
+        }, requireContext());
+        if (currentLocationOverlay != null) {
+            map.getOverlays().remove(currentLocationOverlay);
+        }
+        map.getOverlays().add(newLocationOverlay);
+        currentLocationOverlay = newLocationOverlay;
         map.invalidate();
     }
 
@@ -207,7 +207,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        setLocationOnPoint(location);
+        addMarker(new GeoPoint(location.getLatitude(), location.getLongitude()));
     }
 
     @Override
