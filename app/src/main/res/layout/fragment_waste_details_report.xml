@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:orientation="vertical"
+    tools:context=".ui.wastereport.WasteDetailsReportFragment">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/WasteIdentificationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Identification du déchet"
+            android:textAlignment="center"
+            android:textSize="35sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nom du déchet"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/NameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Saisir le nom ..."
+            android:textSize="20sp"
+            android:autofillHints="nom du déchet" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/DescriptionInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Saisir une description..."
+            android:autofillHints="description"
+            android:textSize="20sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Localisation"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/LocalisationInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Saisir la localisation..."
+            android:autofillHints="Localisation"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="70dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/PrecedentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Précédent"
+            tools:ignore="MissingConstraints" />
+        <Space
+            android:layout_width="110dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/ValidateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirmer"
+            tools:ignore="MissingConstraints" />
+    </LinearLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
