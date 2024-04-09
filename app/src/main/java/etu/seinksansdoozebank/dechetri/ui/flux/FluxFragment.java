@@ -39,6 +39,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         fluxAdapter = new FluxAdapter(this, announcementList);
         listViewFlux.setAdapter(fluxAdapter);
 
+
         return root;
     }
 

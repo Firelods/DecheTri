@@ -54,7 +54,7 @@ public class FluxAdapter extends BaseAdapter {
 
         if (!announcementList.isEmpty()) {
             // (2) : Récupération des TextView de notre layout
-            TextView appName = listItem.findViewById(R.id.flux_app_name);
+           // TextView appName = listItem.findViewById(R.id.flux_app_name);
             TextView title = listItem.findViewById(R.id.flux_title);
             TextView date = listItem.findViewById(R.id.flux_time);
             TextView description = listItem.findViewById(R.id.flux_description);
@@ -64,7 +64,7 @@ public class FluxAdapter extends BaseAdapter {
             Announcement announcement = announcementList.get(i);
 
             // (4) : Renseignement des valeurs
-            appName.setText(announcement.getAppName());
+            //appName.setText(announcement.getAppName());
             title.setText(announcement.getTitle());
             date.setText(announcement.getDate());
             description.setText(announcement.getDescription());
