@@ -1,15 +1,16 @@
 package etu.seinksansdoozebank.dechetri;
 
-import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -77,12 +78,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.navigation_disconnect) {
-            new AlertDialog.Builder(this)
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.alert_disconnect_title)
                     .setMessage(R.string.alert_disconnect_message)
                     .setPositiveButton(R.string.alert_disconnect_yes, (dialog, which) -> disconnect())
-                    .setNegativeButton(R.string.alert_disconnect_no, null)
-                    .show();
+                    .setNegativeButton(R.string.alert_disconnect_no, null).create();
+            alertDialog.show();
+            Button buttonPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            buttonPositive.setTextColor(getResources().getColor(R.color.orange_400));
+            Button buttonNegative = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            buttonNegative.setBackgroundColor(getResources().getColor(R.color.green_700));
+            buttonNegative.setTextColor(getResources().getColor(R.color.white_100));
         }
         return super.onOptionsItemSelected(item);
     }
