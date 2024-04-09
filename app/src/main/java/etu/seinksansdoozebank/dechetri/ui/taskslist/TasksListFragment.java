@@ -9,12 +9,8 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import etu.seinksansdoozebank.dechetri.databinding.FragmentTasksListBinding;
-import etu.seinksansdoozebank.dechetri.model.taskslist.Task;
-import etu.seinksansdoozebank.dechetri.model.taskslist.TaskList;
+import etu.seinksansdoozebank.dechetri.model.task.TaskList;
 
 public class TasksListFragment extends Fragment implements TasksListAdapterListener {
     private FragmentTasksListBinding binding;

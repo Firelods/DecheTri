@@ -64,9 +64,8 @@ public class FluxAdapter extends BaseAdapter {
             Announcement announcement = announcementList.get(i);
 
             // (4) : Renseignement des valeurs
-            appName.setText(announcement.getAppName());
             title.setText(announcement.getTitle());
-            date.setText(announcement.getDate());
+            date.setText(announcement.getPublicationDate().toString());
             description.setText(announcement.getDescription());
 
             SharedPreferences sharedPreferences = activity.getContext().getSharedPreferences(activity.getContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
