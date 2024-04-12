@@ -148,7 +148,9 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
         marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
         marker.setTitle("Votre position");
-
+        if (currentLocationMarker != null) {
+            map.getOverlays().remove(currentLocationMarker);
+        }
         map.getOverlays().add(marker);
         currentLocationMarker = marker;
 
@@ -235,7 +237,6 @@ public class WasteMapFragment extends Fragment implements LocationListener {
             map.onResume();
             updateMapToCurrentLocation();
         } else {
-            // toast message to say that the location permission is needed
             Toast.makeText(getContext(), "La localisation est nécessaire pour signaler le déchet", Toast.LENGTH_SHORT).show();
         }
     }
