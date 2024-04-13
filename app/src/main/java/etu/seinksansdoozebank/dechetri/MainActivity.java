@@ -16,9 +16,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
-import etu.seinksansdoozebank.dechetri.model.task.Task;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -68,10 +66,6 @@ public class MainActivity extends AppCompatActivity {
         });
         navView.setSelectedItemId(navView.getMenu().getItem(0).getItemId());
         NavigationUI.setupWithNavController(binding.navView, navController);
-
-        Log.d("MainActivity", "onCreate: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        APIController apiController = new APIController("http://138.197.176.101:8080/");
-        apiController.assignTask(new Task("1", "2", "1"));
     }
 
     @Override
