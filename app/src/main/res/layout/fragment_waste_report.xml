@@ -12,8 +12,7 @@
         android:id="@+id/waste_report"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        tools:ignore="MissingConstraints">
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/textViewTitle"
@@ -99,6 +98,7 @@
             android:id="@+id/cancelButton"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/orange_400"
             android:padding="16dp"
             android:text="Annuler"
             app:layout_constraintEnd_toStartOf="@id/confirmButton"
