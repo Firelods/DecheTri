@@ -53,7 +53,7 @@ public class WasteReportFragment extends Fragment {
                         Intent data = result.getData();
                         // Récupérer l'URI de l'image sélectionnée
                         if (data != null) {
-                            validateButton.setVisibility(View.VISIBLE);
+                            validateButton.setEnabled(true);
                             photoUri = data.getData();
                         }
                     } else {
@@ -64,7 +64,7 @@ public class WasteReportFragment extends Fragment {
         takePictureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == getActivity().RESULT_OK) {
-                       validateButton.setVisibility(View.VISIBLE);
+                        validateButton.setEnabled(true);
                         Intent data = result.getData();
                         Bitmap photoBitmap = (Bitmap) data.getExtras().get("data");
                         if (photoBitmap != null) {
@@ -87,7 +87,7 @@ public class WasteReportFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         validateButton = view.findViewById(R.id.confirmButton);
-        validateButton.setVisibility(View.GONE);
+        validateButton.setEnabled(false);
 
 
         //Si on clique sur le bouton de la pellicule alors on ouvre le service du téléphone.
