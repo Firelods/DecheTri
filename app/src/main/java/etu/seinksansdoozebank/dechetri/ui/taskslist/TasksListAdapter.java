@@ -48,7 +48,7 @@ public class TasksListAdapter extends BaseAdapter {
 
         // (1) : Réutilisation des layouts
         listItem = convertView == null ? mInflater.inflate(R.layout.item_taskslist, parent, false) : convertView;
-
+        listItem.setElevation(5);
         if (!taskList.isEmpty()) {
             // (2) : Récupération des TextView de notre layout
             TextView name = listItem.findViewById(R.id.taskList_title);
