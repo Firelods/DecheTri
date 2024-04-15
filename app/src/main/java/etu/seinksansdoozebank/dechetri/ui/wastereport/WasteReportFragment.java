@@ -39,7 +39,7 @@ public class WasteReportFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        binding = FragmentWasteReportBinding.inflate(inflater, container, false);
+        View view = inflater.inflate(R.layout.fragment_waste_report, container, false);
 
         //Si on appuie sur le bouton annuler alors on reviens en arrière.
         binding.cancelButton.setOnClickListener(view1 -> requireActivity().onBackPressed());
@@ -68,13 +68,13 @@ public class WasteReportFragment extends Fragment {
                         Intent data = result.getData();
                         Bitmap photoBitmap = (Bitmap) data.getExtras().get("data");
                         if (photoBitmap != null) {
-                            saveBitmapToStorage(photoBitmap);
+                            convertBitmapToUri(photoBitmap);
                         }
                     } else {
                         Toast.makeText(requireContext(), "Aucune photo capturée", Toast.LENGTH_SHORT).show();
                     }
                 });
-        return binding.getRoot();
+        return view;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class WasteReportFragment extends Fragment {
 
     }
 
-    private void saveBitmapToStorage(Bitmap bitmap) {
+    private void convertBitmapToUri(Bitmap bitmap) {
         // Créez un répertoire de stockage où on enregistre l'image
         File imagesDir = new File(requireActivity().getExternalFilesDir(null), "images");
         if (!imagesDir.exists()) {
