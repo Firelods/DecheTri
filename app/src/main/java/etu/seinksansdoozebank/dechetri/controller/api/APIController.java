@@ -182,6 +182,7 @@ public class APIController {
      * Delete a waste by its id (DELETE method)
      *
      * @param idWaste String
+     * @param callback Callback
      * @route /waste/{id}
      */
     public static Call deleteWaste(String idWaste, Callback callback) {
@@ -191,6 +192,7 @@ public class APIController {
     /**
      * Delete a waste by its id (DELETE method)
      *
+     * @param callback Callback
      * @route /waste/type/all
      */
     public static Call getWasteType(Callback callback) {
@@ -200,6 +202,7 @@ public class APIController {
     /**
      * Get all waste reported (GET method)
      *
+     * @param callback Callback
      * @return List<Waste>
      * @route /waste/all
      */
@@ -212,31 +215,45 @@ public class APIController {
     /**
      * Get all announcement news (GET method)
      *
+     * @param callback Callback
      * @return List<Announcement>
      * @route /announcement/news
      */
-    public List<Announcement> getAnnouncementNews() {
-        return null;
+    public static Call getAnnouncementNews(Callback callback) {
+        return get("announcement/news", callback);
     }
 
     /**
      * Get all announcement events (GET method)
      *
+     * @param callback Callback
      * @return List<Announcement>
      * @route /announcement/events
      */
-    public List<Announcement> getAnnouncementEvents() {
-        return null;
+    public static Call getAnnouncementEvents(Callback callback) {
+        return get("announcement/events", callback);
     }
 
     /**
      * Get all announcement news (GET method)
      *
-     * @return List<Announcement>
+     * @param callback Callback
      * @route /announcement/type/all
+     * @return List<Announcement>
      */
-    public List<AnnouncementType> getAnnouncementType() {
-        return null;
+    public static Call getAnnouncementType(Callback callback) {
+        return get("announcement/type/all", callback);
+    }
+
+    /**
+     * Get all announcement (GET method)
+     *
+     * @param callback Callback
+     * @route /announcement/all
+     * @return
+     */
+    public static Call getAnnouncement(Callback callback) {
+        return get("announcement/all", callback);
     }
 
     /**
@@ -245,8 +262,8 @@ public class APIController {
      * @param idAnnouncement
      * @route /announcement/{id}
      */
-    public void deleteAnnouncement(String idAnnouncement) {
-
+    public static Call deleteAnnouncement(String idAnnouncement, Callback callback) {
+        return delete("announcement/" + idAnnouncement, callback);
     }
 
     /* User */
