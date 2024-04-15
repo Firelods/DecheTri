@@ -4,12 +4,8 @@ import android.util.Log;
 
 import java.util.List;
 
-import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
-import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementType;
 import etu.seinksansdoozebank.dechetri.model.user.Role;
-import etu.seinksansdoozebank.dechetri.model.user.User;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
-import etu.seinksansdoozebank.dechetri.model.waste.WasteType;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -91,12 +87,15 @@ public class APIController {
     /**
      * Get all tasks (PUT method)
      *
-     * @return List<Task>
-     * @route /task/assign
+     * @param wasteId    String
+     * @param employeeId String
+     * @param callback   Callback
+     * @return Call
      * {
      * "idAssignee": "string",
      * "idWasteToCollect": "string"
      * }
+     * @route /task/assign
      */
     public static Call assignTask(String wasteId, String employeeId, Callback callback) {
         String json = "{\n" +
@@ -110,11 +109,13 @@ public class APIController {
     /**
      * Mark a task as completed (PATCH method)
      *
-     * @param idTask String
-     * @route /task/complete/{id-task}
+     * @param idTask   String
+     * @param callback Callback
+     * @return Call
      * {
      * "id-task": "string"
      * }
+     * @route /task/complete/{id-task}
      */
     public static Call completeTask(String idTask, Callback callback) {
         String json = "{\n" +
@@ -127,7 +128,8 @@ public class APIController {
      * Get all tasks assigned to an employee (GET method)
      *
      * @param idEmploye String
-     * @return List<Task>
+     * @param callback  Callback
+     * @return Call
      * @route /task/list/{id-employee}
      */
     public static Call getEmployeAssignee(String idEmploye, Callback callback) {
@@ -139,8 +141,9 @@ public class APIController {
     /**
      * Report a waste (POST method)
      *
-     * @param waste Waste
-     * @route /waste/report
+     * @param waste    Waste
+     * @param callback Callback
+     * @return Call
      * {
      * "name": "string",
      * "type": "WasteType",
@@ -151,6 +154,7 @@ public class APIController {
      * "longitude": 0,
      * "image": "string"
      * }
+     * @route /waste/report
      */
     public static Call reportWaste(Waste waste, Callback callback) {
         String imageBase64 = android.util.Base64.encodeToString(waste.getImageData(), android.util.Base64.DEFAULT);
@@ -171,7 +175,9 @@ public class APIController {
     /**
      * Get a waste by its id (GET method)
      *
-     * @param idWaste String
+     * @param idWaste  String
+     * @param callback Callback
+     * @return Call
      * @route /waste/{id}
      */
     public static Call getWaste(String idWaste, Callback callback) {
@@ -181,8 +187,9 @@ public class APIController {
     /**
      * Delete a waste by its id (DELETE method)
      *
-     * @param idWaste String
+     * @param idWaste  String
      * @param callback Callback
+     * @return Call
      * @route /waste/{id}
      */
     public static Call deleteWaste(String idWaste, Callback callback) {
@@ -193,6 +200,7 @@ public class APIController {
      * Delete a waste by its id (DELETE method)
      *
      * @param callback Callback
+     * @return Call
      * @route /waste/type/all
      */
     public static Call getWasteType(Callback callback) {
@@ -203,7 +211,7 @@ public class APIController {
      * Get all waste reported (GET method)
      *
      * @param callback Callback
-     * @return List<Waste>
+     * @return Call
      * @route /waste/all
      */
     public static Call getWasteList(Callback callback) {
@@ -216,7 +224,7 @@ public class APIController {
      * Get all announcement news (GET method)
      *
      * @param callback Callback
-     * @return List<Announcement>
+     * @return Call
      * @route /announcement/news
      */
     public static Call getAnnouncementNews(Callback callback) {
@@ -227,7 +235,7 @@ public class APIController {
      * Get all announcement events (GET method)
      *
      * @param callback Callback
-     * @return List<Announcement>
+     * @return Call
      * @route /announcement/events
      */
     public static Call getAnnouncementEvents(Callback callback) {
@@ -238,8 +246,8 @@ public class APIController {
      * Get all announcement news (GET method)
      *
      * @param callback Callback
+     * @return Call
      * @route /announcement/type/all
-     * @return List<Announcement>
      */
     public static Call getAnnouncementType(Callback callback) {
         return get("announcement/type/all", callback);
@@ -249,8 +257,8 @@ public class APIController {
      * Get all announcement (GET method)
      *
      * @param callback Callback
+     * @return Call
      * @route /announcement/all
-     * @return
      */
     public static Call getAnnouncement(Callback callback) {
         return get("announcement/all", callback);
@@ -259,7 +267,9 @@ public class APIController {
     /**
      * Create an announcement (POST method)
      *
-     * @param idAnnouncement
+     * @param idAnnouncement String
+     * @param callback       Callback
+     * @return Call
      * @route /announcement/{id}
      */
     public static Call deleteAnnouncement(String idAnnouncement, Callback callback) {
@@ -271,32 +281,35 @@ public class APIController {
     /**
      * Get all users (GET method)
      *
-     * @param role Role
-     * @return List<User>
+     * @param role     Role
+     * @param callback Callback
+     * @return Call
      * @route /user/{role}/all
      */
-    public List<User> getUserByRole(Role role) {
-        return null;
+    public static Call getUserByRole(Role role, Callback callback) {
+        return get("user/" + role + "/all", callback);
     }
 
     /**
      * Get a user by its id (GET method)
      *
-     * @param idUser String
-     * @return User
+     * @param idUser   String
+     * @param callback Callback
+     * @return Call
      * @route /user/{id}
      */
-    public User getUser(String idUser) {
-        return null;
+    public static Call getUser(String idUser, Callback callback) {
+        return get("user/" + idUser, callback);
     }
 
     /**
      * Create a user (POST method)
      *
-     * @param role Role
+     * @param callback Callback
+     * @return Call
      * @route /user/role/all
      */
-    public List<Role> getAllRole(Role role) {
-        return null;
+    public static Call getAllRole(Callback callback) {
+        return get("user/role/all", callback);
     }
 }
