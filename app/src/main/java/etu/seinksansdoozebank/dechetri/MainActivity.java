@@ -7,8 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,11 +14,21 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.IOException;
+import java.util.Date;
+
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
-import etu.seinksansdoozebank.dechetri.model.task.Task;
+import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteType;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "512Bank";
 
     private ActivityMainBinding binding;
 
@@ -62,16 +70,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         navView.setOnItemSelectedListener(item -> {
-            Log.d("MainActivity", "onNavigationItemSelected: " + item.getTitle());
+            Log.d(TAG + "MainActivity", "onNavigationItemSelected: " + item.getTitle());
             getSupportActionBar().setTitle(item.getTitle());
             return true;
         });
         navView.setSelectedItemId(navView.getMenu().getItem(0).getItemId());
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        Log.d("MainActivity", "onCreate: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        APIController apiController = new APIController("http://138.197.176.101:8080/");
-        apiController.assignTask(new Task("1", "2", "1"));
+        Log.d(TAG + "MainActivity", "onCreate: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        APIController.deleteWaste("5", new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d(TAG + "MainActivity", "onFailure: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                Log.d(TAG + "MainActivity", "onResponse: " + response.body().string());
+            }
+        });
     }
 
     @Override
@@ -98,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void disconnect(){
+    private void disconnect() {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(getString(R.string.shared_preferences_key_role));

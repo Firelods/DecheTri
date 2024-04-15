@@ -2,36 +2,87 @@ package etu.seinksansdoozebank.dechetri.controller.api;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
-
-import java.io.IOException;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementType;
-import etu.seinksansdoozebank.dechetri.model.task.Task;
 import etu.seinksansdoozebank.dechetri.model.user.Role;
 import etu.seinksansdoozebank.dechetri.model.user.User;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteType;
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class APIController {
-    private String baseUrl;
-    private OkHttpClient client;
+    private static final String TAG = "512Bank";
+    private static final String BASE_URL = "http://138.197.176.101:8080/";
+    private static final OkHttpClient client = new OkHttpClient();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public APIController(String baseUrl) {
-        this.baseUrl = baseUrl;
-        this.client = new OkHttpClient();
+    private static Call put(String url, String json, Callback callback) {
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(BASE_URL + url)
+                .put(body)
+                .build();
+        Log.d(TAG + "APIController", "put: " + request);
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        Log.d(TAG + "APIController", "put: " + call);
+        return call;
     }
 
-    public String getUrl() {
-        return baseUrl;
+    private static Call post(String url, String json, Callback callback) {
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(BASE_URL + url)
+                .post(body)
+                .build();
+        Log.d(TAG + "APIController", "post: " + request);
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        Log.d(TAG + "APIController", "post: " + call);
+        return call;
+    }
+
+    private static Call get(String url, Callback callback) {
+        Request request = new Request.Builder()
+                .url(BASE_URL + url)
+                .get()
+                .build();
+        Log.d(TAG + "APIController", "get: " + request);
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        Log.d(TAG + "APIController", "get: " + call);
+        return call;
+    }
+
+    private static Call delete(String url, Callback callback) {
+        Request request = new Request.Builder()
+                .url(BASE_URL + url)
+                .delete()
+                .build();
+        Log.d(TAG + "APIController", "delete: " + request);
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        return call;
+    }
+
+    private static Call patch(String url, String json, Callback callback) {
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(BASE_URL + url)
+                .patch(body)
+                .build();
+        Log.d(TAG + "APIController", "patch: " + request);
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        Log.d(TAG + "APIController", "patch: " + call);
+        return call;
     }
 
 
@@ -40,45 +91,36 @@ public class APIController {
     /**
      * Get all tasks (PUT method)
      *
-     * @param task Task
+     * @return List<Task>
      * @route /task/assign
+     * {
+     * "idAssignee": "string",
+     * "idWasteToCollect": "string"
+     * }
      */
-    public void assignTask(Task task) {
-        // Convert the task object to a JSON string
-        Gson gson = new Gson();
-        String taskJson = gson.toJson(task);
-
-        // Create a RequestBody with the JSON string
-        RequestBody requestBody = RequestBody.create(taskJson, JSON);
-
-        Log.d("APIController", "Request body: " + taskJson);
-
-        // Build the Request object
-        Request request = new Request.Builder()
-                .url(baseUrl + "/task/assign")
-                .put(requestBody)
-                .build();
-
-        // Execute the request and handle the response
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
-            }
-            // Handle the successful response here
-            Log.d("APIController", response.body().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static Call assignTask(String wasteId, String employeeId, Callback callback) {
+        String json = "{\n" +
+                "  \"idAssignee\": \"" + employeeId + "\",\n" +
+                "  \"idWasteToCollect\": \"" + wasteId + "\"\n" +
+                "}";
+        Log.d(TAG + "APIController", "assignTask: " + json);
+        return put("task/assign", json, callback);
     }
 
     /**
      * Mark a task as completed (PATCH method)
      *
-     * @param task Task
+     * @param idTask String
      * @route /task/complete/{id-task}
+     * {
+     * "id-task": "string"
+     * }
      */
-    public void completeTask(Task task) {
-
+    public static Call completeTask(String idTask, Callback callback) {
+        String json = "{\n" +
+                "  \"id-task\": \"" + idTask + "\"\n" +
+                "}";
+        return post("task/complete/" + idTask, json, callback);
     }
 
     /**
@@ -88,8 +130,8 @@ public class APIController {
      * @return List<Task>
      * @route /task/list/{id-employee}
      */
-    public List<User> getEmployeAssignee(String idEmploye) {
-        return null;
+    public static Call getEmployeAssignee(String idEmploye, Callback callback) {
+        return get("task/list/" + idEmploye, callback);
     }
 
     /* Waste */
@@ -99,9 +141,31 @@ public class APIController {
      *
      * @param waste Waste
      * @route /waste/report
+     * {
+     * "name": "string",
+     * "type": "WasteType",
+     * "description": "string",
+     * "userReporterId": "string",
+     * "address": "string",
+     * "latitude": 0,
+     * "longitude": 0,
+     * "image": "string"
+     * }
      */
-    public void reportWaste(Waste waste) {
-
+    public static Call reportWaste(Waste waste, Callback callback) {
+        String imageBase64 = android.util.Base64.encodeToString(waste.getImageData(), android.util.Base64.DEFAULT);
+        Log.d(TAG + "APIController", "reportWaste: " + imageBase64);
+        String json = "{\n" +
+                "  \"name\": \"" + waste.getName() + "\",\n" +
+                "  \"type\": \"" + waste.getType() + "\",\n" +
+                "  \"description\": \"" + waste.getDescription() + "\",\n" +
+                "  \"userReporterId\": \"" + waste.getUserReporterId() + "\",\n" +
+                "  \"address\": \"" + waste.getAddress() + "\",\n" +
+                "  \"latitude\": " + waste.getLatitude() + ",\n" +
+                "  \"longitude\": " + waste.getLongitude() + ",\n" +
+                "  \"image\": \"" + imageBase64 + "\"\n" +
+                "}";
+        return post("waste/report", json, callback);
     }
 
     /**
@@ -110,8 +174,8 @@ public class APIController {
      * @param idWaste String
      * @route /waste/{id}
      */
-    public void getWaste(String idWaste) {
-
+    public static Call getWaste(String idWaste, Callback callback) {
+        return get("waste/" + idWaste, callback);
     }
 
     /**
@@ -120,8 +184,8 @@ public class APIController {
      * @param idWaste String
      * @route /waste/{id}
      */
-    public void deleteWaste(String idWaste) {
-
+    public static Call deleteWaste(String idWaste, Callback callback) {
+        return delete("waste/" + idWaste, callback);
     }
 
     /**
@@ -129,8 +193,8 @@ public class APIController {
      *
      * @route /waste/type/all
      */
-    public void getWasteType() {
-
+    public static Call getWasteType(Callback callback) {
+        return get("waste/type/all", callback);
     }
 
     /**
@@ -139,16 +203,17 @@ public class APIController {
      * @return List<Waste>
      * @route /waste/all
      */
-    public List<WasteType> getWasteList() {
-        return null;
+    public static Call getWasteList(Callback callback) {
+        return get("waste/all", callback);
     }
 
     /* Announcement */
 
     /**
      * Get all announcement news (GET method)
-     * @route /announcement/news
+     *
      * @return List<Announcement>
+     * @route /announcement/news
      */
     public List<Announcement> getAnnouncementNews() {
         return null;
@@ -156,8 +221,9 @@ public class APIController {
 
     /**
      * Get all announcement events (GET method)
-     * @route /announcement/events
+     *
      * @return List<Announcement>
+     * @route /announcement/events
      */
     public List<Announcement> getAnnouncementEvents() {
         return null;
@@ -165,8 +231,9 @@ public class APIController {
 
     /**
      * Get all announcement news (GET method)
-     * @route /announcement/type/all
+     *
      * @return List<Announcement>
+     * @route /announcement/type/all
      */
     public List<AnnouncementType> getAnnouncementType() {
         return null;
@@ -174,6 +241,7 @@ public class APIController {
 
     /**
      * Create an announcement (POST method)
+     *
      * @param idAnnouncement
      * @route /announcement/{id}
      */
@@ -185,9 +253,10 @@ public class APIController {
 
     /**
      * Get all users (GET method)
+     *
      * @param role Role
-     * @route /user/{role}/all
      * @return List<User>
+     * @route /user/{role}/all
      */
     public List<User> getUserByRole(Role role) {
         return null;
@@ -195,9 +264,10 @@ public class APIController {
 
     /**
      * Get a user by its id (GET method)
+     *
      * @param idUser String
-     * @route /user/{id}
      * @return User
+     * @route /user/{id}
      */
     public User getUser(String idUser) {
         return null;
@@ -205,6 +275,7 @@ public class APIController {
 
     /**
      * Create a user (POST method)
+     *
      * @param role Role
      * @route /user/role/all
      */
