@@ -1,5 +1,6 @@
 package etu.seinksansdoozebank.dechetri.ui.flux;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +17,7 @@ import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementList;
 
 public class FluxFragment extends Fragment implements FluxAdapterListener {
-
+    private final String TAG = "512Bank " + getClass().getSimpleName();
     private FragmentFluxBinding binding;
     private FluxAdapter fluxAdapter;
     private ListView listViewFlux;
@@ -51,8 +52,20 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
 
     @Override
     public void onClickBin(ImageButton bin, Announcement item) {
-        // remove item from list
-        announcementList.remove(item);
-        fluxAdapter.notifyDataSetChanged();
+        // Create a popup to confirm the deletion
+        // (1) : Create a dialog
+        Log.d(TAG, "onClickBin: " + item);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Suppression");
+        builder.setMessage("Etes vous sur de vouloir supprimer ce message ?");
+        builder.setPositiveButton("Confirmer", (dialog, which) -> {
+            // (2) : Remove item from list
+            announcementList.remove(item);
+            fluxAdapter.notifyDataSetChanged();
+        });
+        builder.setNegativeButton("Annuler", (dialog, which) -> {
+            // (3) : Do nothing
+        });
+        builder.show();
     }
 }
