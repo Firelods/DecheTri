@@ -35,4 +35,5 @@
 
     <!--    Flux    -->
     <string name="bin_image">bin image</string>
+    <string name="bn_add_annoucement">The button to publish an new announcement</string>
 </resources>

@@ -3,30 +3,39 @@ package etu.seinksansdoozebank.dechetri.ui.flux;
 
 import android.Manifest;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import java.util.Calendar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.Date;
-import java.util.TimeZone;
+import java.util.GregorianCalendar;
+
+import etu.seinksansdoozebank.dechetri.R;
+import java.util.Calendar;
 
 
 import etu.seinksansdoozebank.dechetri.databinding.FragmentFluxBinding;
@@ -46,7 +55,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
     private AnnouncementList announcementList = new AnnouncementList();
 
     public FluxFragment() {
-        // do nothing
+        // Required empty public constructor
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -60,6 +69,17 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         // Create an adapter
         fluxAdapter = new FluxAdapter(this, announcementList);
         listViewFlux.setAdapter(fluxAdapter);
+
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences(getContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
+        String role = sharedPreferences.getString(getContext().getString(R.string.shared_preferences_key_role), getContext().getResources().getString(R.string.role_user_title));
+
+        FloatingActionButton btn_add_announcement = root.findViewById(R.id.btn_add_announcement);
+        if (role.equals(getContext().getString(R.string.role_admin_title))) {
+            btn_add_announcement.setVisibility(View.VISIBLE);
+            btn_add_announcement.setOnClickListener(v -> showNewAnnouncementDialog());
+        } else {
+            btn_add_announcement.setVisibility(View.GONE);
+        }
 
 
         return root;
@@ -91,9 +111,6 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
             ContentResolver cr = getContext().getContentResolver();
             addEventToCalendar(cr, this.item);
         }
-
-
-
     }
 
     private void addEventToCalendar(ContentResolver cr, Announcement announcement) {
@@ -149,4 +166,52 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
 
 
 
+
+    private void showNewAnnouncementDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle("Nouvelle annonce")
+                .setView(R.layout.add_announcement)
+                .setPositiveButton("Ajouter", null)
+                .setNegativeButton("Annuler", null).create();
+        alertDialog.create();
+        alertDialog.show();
+        Button btn_add_date = alertDialog.findViewById(R.id.btn_add_date);
+        DatePicker datePicker = alertDialog.findViewById(R.id.date_picker);
+        TextView tv_date_label = alertDialog.findViewById(R.id.tv_date_label);
+        if (btn_add_date != null) {
+            btn_add_date.setOnClickListener(v1 -> {
+                if (tv_date_label != null && datePicker != null) {
+                    if (tv_date_label.getVisibility() == View.GONE) {
+                        tv_date_label.setVisibility(View.VISIBLE);
+                        datePicker.setVisibility(View.VISIBLE);
+                        btn_add_date.setText("Enlever la date");
+                    } else {
+                        tv_date_label.setVisibility(View.GONE);
+                        datePicker.setVisibility(View.GONE);
+                        btn_add_date.setText("Ajouter une date");
+                    }
+                }
+            });
+        } else {
+            throw new RuntimeException("btn_add_date is null");
+        }
+        Button buttonPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        buttonPositive.setOnClickListener(v -> {
+            EditText et_title = alertDialog.findViewById(R.id.etxt_title);
+            EditText et_description = alertDialog.findViewById(R.id.etxt_description);
+            String title;
+            String description;
+            Date date;
+            if (et_title != null && et_description != null && datePicker != null) {
+                title = et_title.getText().toString();
+                description = et_description.getText().toString();
+                date = new GregorianCalendar(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth()).getTime();
+                announcementList.add(new Announcement(title, date.toString(), description));
+                fluxAdapter.notifyDataSetChanged();
+                alertDialog.dismiss();
+            }
+        });
+        buttonPositive.setBackgroundColor(getResources().getColor(R.color.green_700, null));
+        buttonPositive.setTextColor(getResources().getColor(R.color.white_100, null));
+    }
 }
