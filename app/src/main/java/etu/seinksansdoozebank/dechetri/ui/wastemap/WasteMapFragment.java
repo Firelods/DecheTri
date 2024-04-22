@@ -37,6 +37,8 @@ import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
+import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
 
 public class WasteMapFragment extends Fragment implements LocationListener {
     private FragmentWasteMapBinding binding;
