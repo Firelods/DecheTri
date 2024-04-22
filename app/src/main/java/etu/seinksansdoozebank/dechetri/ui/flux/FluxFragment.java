@@ -184,11 +184,11 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
                     if (tv_date_label.getVisibility() == View.GONE) {
                         tv_date_label.setVisibility(View.VISIBLE);
                         datePicker.setVisibility(View.VISIBLE);
-                        btn_add_date.setText("Enlever la date");
+                        btn_add_date.setText(R.string.remove_date_text);
                     } else {
                         tv_date_label.setVisibility(View.GONE);
                         datePicker.setVisibility(View.GONE);
-                        btn_add_date.setText("Ajouter une date");
+                        btn_add_date.setText(R.string.add_date_text);
                     }
                 }
             });

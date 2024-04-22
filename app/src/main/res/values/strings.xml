@@ -36,4 +36,6 @@
     <!--    Flux    -->
     <string name="bin_image">bin image</string>
     <string name="bn_add_annoucement">The button to publish an new announcement</string>
+    <string name="remove_date_text">Enlever la date</string>
+    <string name="add_date_text">Ajouter une date</string>
 </resources>
