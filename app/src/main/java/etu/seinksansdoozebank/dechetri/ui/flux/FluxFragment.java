@@ -33,6 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 import etu.seinksansdoozebank.dechetri.R;
 import java.util.Calendar;
@@ -70,8 +71,8 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         fluxAdapter = new FluxAdapter(this, announcementList);
         listViewFlux.setAdapter(fluxAdapter);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(getContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
-        String role = sharedPreferences.getString(getContext().getString(R.string.shared_preferences_key_role), getContext().getResources().getString(R.string.role_user_title));
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(requireContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
+        String role = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_role), requireContext().getResources().getString(R.string.role_user_title));
 
         FloatingActionButton btn_add_announcement = root.findViewById(R.id.btn_add_announcement);
         if (role.equals(getContext().getString(R.string.role_admin_title))) {
@@ -168,7 +169,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
 
 
     private void showNewAnnouncementDialog() {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+        AlertDialog alertDialog = new AlertDialog.Builder(requireContext())
                 .setTitle("Nouvelle annonce")
                 .setView(R.layout.add_announcement)
                 .setPositiveButton("Ajouter", null)
@@ -209,6 +210,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
                 announcementList.add(new Announcement(title, date.toString(), description));
                 fluxAdapter.notifyDataSetChanged();
                 alertDialog.dismiss();
+                Toast.makeText(getContext(), "Annonce publiée avec succès", Toast.LENGTH_SHORT).show();
             }
         });
         buttonPositive.setBackgroundColor(getResources().getColor(R.color.green_700, null));

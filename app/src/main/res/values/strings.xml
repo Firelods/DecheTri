@@ -38,4 +38,8 @@
     <string name="bn_add_annoucement">The button to publish an new announcement</string>
     <string name="remove_date_text">Enlever la date</string>
     <string name="add_date_text">Ajouter une date</string>
+    <string name="add_announcement_title">Titre</string>
+    <string name="add_announcement_description">Description</string>
+    <string name="add_announcement_add_a_date">Ajouter une date</string>
+    <string name="add_announcement_event_date">Date de l\'évènement</string>
 </resources>

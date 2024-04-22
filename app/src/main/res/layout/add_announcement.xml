@@ -7,14 +7,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:labelFor="@id/etxt_title"
-            android:text="Titre"
+            android:text="@string/add_announcement_title"
             style="@style/LabelStyle" />
 
         <EditText
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:labelFor="@id/etxt_description"
-            android:text="Description"
+            android:text="@string/add_announcement_description"
             style="@style/LabelStyle" />
 
         <EditText
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:text="Ajouter une date"
+            android:text="@string/add_announcement_add_a_date"
             android:textColor="@color/green_700"
             android:background="@drawable/border_button" />
 
@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:labelFor="@id/etxt_description"
-            android:text="Date de l'évènement"
+            android:text="@string/add_announcement_event_date"
             android:visibility="gone"
             style="@style/LabelStyle" />
 
