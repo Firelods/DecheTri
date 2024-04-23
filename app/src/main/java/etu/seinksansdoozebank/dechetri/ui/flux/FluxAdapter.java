@@ -57,6 +57,7 @@ public class FluxAdapter extends BaseAdapter {
 
         // (1) : Réutilisation des layouts
         listItem = convertView == null ? mInflater.inflate(R.layout.item_flux, parent, false) : convertView;
+        listItem.setElevation(5);
 
         if (!announcementList.isEmpty()) {
             // (2) : Récupération des TextView de notre layout
@@ -80,15 +81,12 @@ public class FluxAdapter extends BaseAdapter {
             }
 
             // (4) : Renseignement des valeurs
-            //appName.setText(announcement.getAppName());
             title.setText(announcement.getTitle());
-            date.setText(announcement.getEventDate().toString());
+            date.setText(announcement.getPublicationDate().toString());
             description.setText(announcement.getDescription());
 
             SharedPreferences sharedPreferences = activity.getContext().getSharedPreferences(activity.getContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
             String role = sharedPreferences.getString(activity.getContext().getString(R.string.shared_preferences_key_role), activity.getContext().getResources().getString(R.string.role_user_title));
-
-
 
             if (role.equals(activity.getContext().getString(R.string.role_admin_title))) {
                 imageButton.setVisibility(View.VISIBLE);

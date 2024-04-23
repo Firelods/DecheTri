@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/calendar"
-            android:background="@color/lightgrey"
+            android:background="@android:color/white"
             android:gravity="end"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
@@ -45,7 +45,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="bottom">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -78,24 +79,14 @@
                 android:textColor="@android:color/black" />
         </LinearLayout>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/add_card"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom"
-            android:backgroundTint="@color/lightgrey"
-            card_view:cardElevation="0dp">
 
-            <!-- Image of Bin -->
-            <ImageButton
-                android:id="@+id/flux_image_bin"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="TODO"
-                android:src="@drawable/baseline_delete_24" />
-
-        </androidx.cardview.widget.CardView>
+        <ImageButton
+            android:id="@+id/flux_image_bin"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="TODO"
+            android:src="@drawable/baseline_delete_24" />
     </LinearLayout>
 
 

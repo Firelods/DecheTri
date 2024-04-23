@@ -1,23 +1,34 @@
 package etu.seinksansdoozebank.dechetri;
 
-import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.IOException;
+import java.util.Date;
+
+import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
+import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteType;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "512Bank";
 
     private ActivityMainBinding binding;
 
@@ -59,13 +70,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         navView.setOnItemSelectedListener(item -> {
-            Log.d("MainActivity", "onNavigationItemSelected: " + item.getTitle());
+            Log.d(TAG + "MainActivity", "onNavigationItemSelected: " + item.getTitle());
             getSupportActionBar().setTitle(item.getTitle());
             return true;
         });
         navView.setSelectedItemId(navView.getMenu().getItem(0).getItemId());
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+        Log.d(TAG + "MainActivity", "onCreate: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        APIController.deleteWaste("5", new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d(TAG + "MainActivity", "onFailure: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                Log.d(TAG + "MainActivity", "onResponse: " + response.body().string());
+            }
+        });
     }
 
     @Override
@@ -77,17 +101,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.navigation_disconnect) {
-            new AlertDialog.Builder(this)
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.alert_disconnect_title)
                     .setMessage(R.string.alert_disconnect_message)
                     .setPositiveButton(R.string.alert_disconnect_yes, (dialog, which) -> disconnect())
-                    .setNegativeButton(R.string.alert_disconnect_no, null)
-                    .show();
+                    .setNegativeButton(R.string.alert_disconnect_no, null).create();
+            alertDialog.show();
+            Button buttonPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            buttonPositive.setTextColor(getResources().getColor(R.color.orange_600, null));
+            Button buttonNegative = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            buttonNegative.setBackgroundColor(getResources().getColor(R.color.green_700, null));
+            buttonNegative.setTextColor(getResources().getColor(R.color.white_100, null));
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void disconnect(){
+    private void disconnect() {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(getString(R.string.shared_preferences_key_role));
