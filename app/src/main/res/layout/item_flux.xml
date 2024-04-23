@@ -27,16 +27,18 @@
             android:textColor="@android:color/black" />
 
         <!-- App Name -->
-        <TextView
-            android:id="@+id/flux_app_name"
+
+
+        <ImageButton
+            android:id="@+id/calendar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/calendar"
+            android:background="@android:color/white"
             android:gravity="end"
-            android:paddingStart="4dp"
             android:paddingTop="4dp"
-            android:paddingEnd="8dp"
             android:paddingBottom="4dp"
-            android:textColor="@android:color/black" />
+             />
     </LinearLayout>
 
     <!-- Title and Description Layout -->

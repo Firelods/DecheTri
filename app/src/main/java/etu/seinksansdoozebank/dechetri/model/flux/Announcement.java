@@ -10,6 +10,7 @@ public class Announcement {
     private AnnouncementType type;
     private Date publicationDate;
     private Date eventDate;
+
     public Announcement(String id, String title, String description, AnnouncementType type, Date eventDate) {
         this.id = id;
         this.title = title;
@@ -66,4 +67,7 @@ public class Announcement {
     public void setEventDate(Date eventDate) {
         this.eventDate = eventDate;
     }
+
+
+
 }

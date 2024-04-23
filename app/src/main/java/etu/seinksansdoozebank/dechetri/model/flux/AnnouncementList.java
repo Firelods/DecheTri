@@ -2,7 +2,6 @@ package etu.seinksansdoozebank.dechetri.model.flux;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class AnnouncementList extends ArrayList<Announcement> {
 
