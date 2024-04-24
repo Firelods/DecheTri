@@ -16,16 +16,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.io.IOException;
-import java.util.Date;
-
-import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
-import etu.seinksansdoozebank.dechetri.model.waste.Waste;
-import etu.seinksansdoozebank.dechetri.model.waste.WasteType;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "512Bank";
@@ -70,26 +61,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         navView.setOnItemSelectedListener(item -> {
-            Log.d(TAG + "MainActivity", "onNavigationItemSelected: " + item.getTitle());
             getSupportActionBar().setTitle(item.getTitle());
             return true;
         });
         navView.setSelectedItemId(navView.getMenu().getItem(0).getItemId());
         NavigationUI.setupWithNavController(binding.navView, navController);
-
-        Log.d(TAG + "MainActivity", "onCreate: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-        APIController.deleteWaste("5", new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(TAG + "MainActivity", "onFailure: " + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                Log.d(TAG + "MainActivity", "onResponse: " + response.body().string());
-            }
-        });
     }
 
     @Override
