@@ -2,6 +2,9 @@ package etu.seinksansdoozebank.dechetri.ui.flux;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +13,6 @@ import android.content.pm.PackageManager;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.util.Log;
@@ -18,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -36,13 +37,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import etu.seinksansdoozebank.dechetri.R;
 
 import java.util.Calendar;
-import java.util.Objects;
 
 
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
@@ -63,7 +62,15 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
 
     private final static int PERMISSION_REQUEST_CALENDAR = 100;
 
-    private AnnouncementList announcementList = new AnnouncementList();
+    private final AnnouncementList announcementList = new AnnouncementList();
+
+    private Context context;
+
+    private Calendar pickedDate;
+
+    TextView etxt_date;
+
+
 
     public FluxFragment() {
         // Required empty public constructor
@@ -71,7 +78,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
+        context = requireContext();
         binding = FragmentFluxBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -172,6 +179,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private void showNewAnnouncementDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.add_announcement_title)
@@ -181,19 +189,28 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         alertDialog.create();
         alertDialog.show();
         Button btn_add_date = alertDialog.findViewById(R.id.btn_add_date);
-        DatePicker datePicker = alertDialog.findViewById(R.id.date_picker);
+        etxt_date = alertDialog.findViewById(R.id.tv_date);
+        assert etxt_date != null;
+        etxt_date.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                showDateTimePicker();
+            }
+            return true;
+        });
         TextView tv_date_label = alertDialog.findViewById(R.id.tv_date_label);
         if (btn_add_date != null) {
             btn_add_date.setOnClickListener(v1 -> {
-                if (tv_date_label != null && datePicker != null) {
+                if (tv_date_label != null && etxt_date != null) {
                     if (tv_date_label.getVisibility() == View.GONE) {
+                        showDateTimePicker();
                         tv_date_label.setVisibility(View.VISIBLE);
-                        datePicker.setVisibility(View.VISIBLE);
+                        etxt_date.setVisibility(View.VISIBLE);
                         btn_add_date.setText(R.string.remove_date_text);
                     } else {
                         tv_date_label.setVisibility(View.GONE);
-                        datePicker.setVisibility(View.GONE);
+                        etxt_date.setVisibility(View.GONE);
                         btn_add_date.setText(R.string.add_date_text);
+                        pickedDate = null;
                     }
                 }
             });
@@ -206,20 +223,10 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
             EditText et_description = alertDialog.findViewById(R.id.etxt_description);
             String title;
             String description;
-            Date date;
-            if (et_title != null && et_description != null && datePicker != null) {
+            if (et_title != null && et_description != null && etxt_date != null) {
                 title = et_title.getText().toString();
                 description = et_description.getText().toString();
-                if (datePicker.getVisibility() == View.VISIBLE) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        date = Date.from(new GregorianCalendar(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth()).toInstant());
-                    } else {
-                        date = new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-                    }
-                    publishAnnouncement(title, description, date);
-                } else {
-                    publishAnnouncement(title, description, null);
-                }
+                publishAnnouncement(title, description, pickedDate);
                 alertDialog.dismiss();
             }
         });
@@ -227,7 +234,20 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         buttonPositive.setTextColor(getResources().getColor(R.color.white_100, null));
     }
 
-    private void publishAnnouncement(String title, String description, Date eventDate) {
+    public void showDateTimePicker() {
+        final Calendar currentDate = Calendar.getInstance();
+        pickedDate = Calendar.getInstance();
+        new DatePickerDialog(context, (view, year, monthOfYear, dayOfMonth) -> {
+            pickedDate.set(year, monthOfYear, dayOfMonth);
+            new TimePickerDialog(context, (view1, hourOfDay, minute) -> {
+                pickedDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                pickedDate.set(Calendar.MINUTE, minute);
+                etxt_date.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US).format(pickedDate.getTime()));
+            }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
+        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
+    }
+
+    private void publishAnnouncement(String title, String description, Calendar eventDate) {
         Callback onResponse = new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -261,7 +281,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
             APIController.createAnnouncementNews(title, description, onResponse);
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-            String formattedEventDate = sdf.format(eventDate);
+            String formattedEventDate = sdf.format(new Date(eventDate.getTimeInMillis()));
             APIController.createAnnouncementEvent(title, description, formattedEventDate, onResponse);
         }
     }
