@@ -9,8 +9,10 @@ import android.content.pm.PackageManager;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.util.Log;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,17 +33,23 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Objects;
+import java.util.Locale;
 
 import etu.seinksansdoozebank.dechetri.R;
 import java.util.Calendar;
 
 
+import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentFluxBinding;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementList;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class FluxFragment extends Fragment implements FluxAdapterListener {
 
@@ -81,8 +89,6 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         } else {
             btn_add_announcement.setVisibility(View.GONE);
         }
-
-
         return root;
     }
 
@@ -206,14 +212,59 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
             if (et_title != null && et_description != null && datePicker != null) {
                 title = et_title.getText().toString();
                 description = et_description.getText().toString();
-                date = new GregorianCalendar(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth()).getTime();
-                announcementList.add(new Announcement(title, date.toString(), description));
-                fluxAdapter.notifyDataSetChanged();
+                if (datePicker.getVisibility() == View.VISIBLE) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        date = Date.from(new GregorianCalendar(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth()).toInstant());
+                    } else {
+                        date = new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+                    }
+                    publishAnnouncement(title, description, date);
+                } else {
+                    publishAnnouncement(title, description, null);
+                }
                 alertDialog.dismiss();
-                Toast.makeText(getContext(), "Annonce publiée avec succès", Toast.LENGTH_SHORT).show();
             }
         });
         buttonPositive.setBackgroundColor(getResources().getColor(R.color.green_700, null));
         buttonPositive.setTextColor(getResources().getColor(R.color.white_100, null));
+    }
+
+    private void publishAnnouncement(String title, String description, Date eventDate) {
+        Callback onResponse = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                String message = e.getMessage();
+                Log.e("APIController", "Error while creating announcement : " + message);
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce : " + message, Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    requireActivity().runOnUiThread(() -> {
+                        fluxAdapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(), "Annonce publiée avec succès", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    requireActivity().runOnUiThread(() -> {
+                        try {
+                            assert response.body() != null;
+                            String body = response.body().string();
+                            Log.e("APIController", "Error while creating announcement : " + body);
+                            Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce : " + body, Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                }
+            }
+        };
+        if (eventDate == null) {
+            APIController.createAnnouncementNews(title, description, onResponse);
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            String formattedEventDate = sdf.format(eventDate);
+            APIController.createAnnouncementEvent(title, description, formattedEventDate, onResponse);
+        }
     }
 }

@@ -2,8 +2,6 @@ package etu.seinksansdoozebank.dechetri.controller.api;
 
 import android.util.Log;
 
-import java.util.List;
-
 import etu.seinksansdoozebank.dechetri.model.user.Role;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import okhttp3.Call;
@@ -28,7 +26,6 @@ public class APIController {
         Log.d(TAG + "APIController", "put: " + request);
         Call call = client.newCall(request);
         call.enqueue(callback);
-        Log.d(TAG + "APIController", "put: " + call);
         return call;
     }
 
@@ -41,7 +38,6 @@ public class APIController {
         Log.d(TAG + "APIController", "post: " + request);
         Call call = client.newCall(request);
         call.enqueue(callback);
-        Log.d(TAG + "APIController", "post: " + call);
         return call;
     }
 
@@ -53,7 +49,6 @@ public class APIController {
         Log.d(TAG + "APIController", "get: " + request);
         Call call = client.newCall(request);
         call.enqueue(callback);
-        Log.d(TAG + "APIController", "get: " + call);
         return call;
     }
 
@@ -121,7 +116,7 @@ public class APIController {
         String json = "{\n" +
                 "  \"id-task\": \"" + idTask + "\"\n" +
                 "}";
-        return post("task/complete/" + idTask, json, callback);
+        return put("task/complete/" + idTask, json, callback);
     }
 
     /**
@@ -227,8 +222,13 @@ public class APIController {
      * @return Call
      * @route /announcement/news
      */
-    public static Call getAnnouncementNews(Callback callback) {
-        return get("announcement/news", callback);
+    public static Call createAnnouncementNews(String title, String description, Callback callback) {
+        String json = "{\n" +
+                "  \"title\": \"" + title + "\",\n" +
+                "  \"description\": \"" + description + "\"\n" +
+                "}";
+        Log.d(TAG + "APIController", json);
+        return post("announcement/news", json, callback);
     }
 
     /**
@@ -238,8 +238,14 @@ public class APIController {
      * @return Call
      * @route /announcement/events
      */
-    public static Call getAnnouncementEvents(Callback callback) {
-        return get("announcement/events", callback);
+    public static Call createAnnouncementEvent(String title, String description, String eventDate, Callback callback) {
+        String json = "{\n" +
+                "  \"title\": \"" + title + "\",\n" +
+                "  \"description\": \"" + description + "\",\n" +
+                "  \"eventDate\": \"" + eventDate + "\"\n" +
+                "}";
+        Log.d(TAG + "APIController", json);
+        return post("announcement/event", json, callback);
     }
 
     /**
