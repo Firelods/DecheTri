@@ -72,7 +72,6 @@ public class APIController {
         Log.d(TAG + "APIController", "patch: " + request);
         Call call = client.newCall(request);
         call.enqueue(callback);
-        Log.d(TAG + "APIController", "patch: " + call);
         return call;
     }
 

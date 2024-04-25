@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:labelFor="@id/etxt_title"
-            android:text="@string/add_announcement_title"
+            android:text="@string/add_announcement_input_title"
             style="@style/LabelStyle" />
 
         <EditText
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:labelFor="@id/etxt_description"
-            android:text="@string/add_announcement_description"
+            android:text="@string/add_announcement_input_description"
             style="@style/LabelStyle" />
 
         <EditText

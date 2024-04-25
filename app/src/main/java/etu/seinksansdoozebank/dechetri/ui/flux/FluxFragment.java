@@ -6,13 +6,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
-import android.util.Log;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +40,9 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import etu.seinksansdoozebank.dechetri.R;
+
 import java.util.Calendar;
+import java.util.Objects;
 
 
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
@@ -83,7 +85,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         String role = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_role), requireContext().getResources().getString(R.string.role_user_title));
 
         FloatingActionButton btn_add_announcement = root.findViewById(R.id.btn_add_announcement);
-        if (role.equals(getContext().getString(R.string.role_admin_title))) {
+        if (role.equals(requireContext().getString(R.string.role_admin_title))) {
             btn_add_announcement.setVisibility(View.VISIBLE);
             btn_add_announcement.setOnClickListener(v -> showNewAnnouncementDialog());
         } else {
@@ -108,14 +110,14 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
 
     @Override
     public void onClickCalendar(ImageButton calendar, Announcement item) {
-        this.item=item;
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+        this.item = item;
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
 
             requestPermissions(new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, PERMISSION_REQUEST_CALENDAR);
 
         } else {
-            ContentResolver cr = getContext().getContentResolver();
+            ContentResolver cr = requireContext().getContentResolver();
             addEventToCalendar(cr, this.item);
         }
     }
@@ -142,7 +144,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis());
-        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis() + (1 * 60 * 60 * 1000)); // 1 heure après le début
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis() + (60 * 60 * 1000)); // 1 heure après le début
 
         // Vérifier si une application capable de gérer cet Intent est disponible
         PackageManager packageManager = context.getPackageManager();
@@ -160,7 +162,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
         if (requestCode == PERMISSION_REQUEST_CALENDAR) {
             // Vérifier si l'autorisation a été accordée
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                ContentResolver cr = getContext().getContentResolver();
+                ContentResolver cr = requireContext().getContentResolver();
                 addEventToCalendar(cr, item);
             } else {
                 Toast toast = Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_LONG);
@@ -170,16 +172,12 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
     }
 
 
-
-
-
-
     private void showNewAnnouncementDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(requireContext())
-                .setTitle("Nouvelle annonce")
+                .setTitle(R.string.add_announcement_title)
                 .setView(R.layout.add_announcement)
-                .setPositiveButton("Ajouter", null)
-                .setNegativeButton("Annuler", null).create();
+                .setPositiveButton(R.string.add_announcement_publish, null)
+                .setNegativeButton(R.string.add_announcement_cancel, null).create();
         alertDialog.create();
         alertDialog.show();
         Button btn_add_date = alertDialog.findViewById(R.id.btn_add_date);
@@ -239,11 +237,11 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
                 if (response.isSuccessful()) {
                     requireActivity().runOnUiThread(() -> {
                         fluxAdapter.notifyDataSetChanged();
-                        Toast.makeText(getContext(), "Annonce publiée avec succès", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
                     });
                 } else {
                     requireActivity().runOnUiThread(() -> {
@@ -251,7 +249,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener {
                             assert response.body() != null;
                             String body = response.body().string();
                             Log.e("APIController", "Error while creating announcement : " + body);
-                            Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce : " + body, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.add_announcement_result_error + " : " + body, Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
