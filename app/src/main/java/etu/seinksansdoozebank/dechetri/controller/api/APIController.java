@@ -85,7 +85,7 @@ public class APIController {
     /* task */
 
     /**
-     * Get all tasks (PUT method)
+     * Assign a task to an employee (PUT method)
      *
      * @param wasteId    String
      * @param employeeId String
@@ -107,7 +107,7 @@ public class APIController {
     }
 
     /**
-     * Mark a task as completed (PATCH method)
+     * Mark a task as completed (PUT method)
      *
      * @param idTask   String
      * @param callback Callback
@@ -197,7 +197,7 @@ public class APIController {
     }
 
     /**
-     * Delete a waste by its id (DELETE method)
+     * Get all waste type (GET method)
      *
      * @param callback Callback
      * @return Call
@@ -221,7 +221,7 @@ public class APIController {
     /* Announcement */
 
     /**
-     * Get all announcement news (GET method)
+     * Create an announcement of type NEWS (POST method)
      *
      * @param callback Callback
      * @return Call
@@ -232,7 +232,7 @@ public class APIController {
     }
 
     /**
-     * Get all announcement events (GET method)
+     * Create an announcement of type EVENT (POST method)
      *
      * @param callback Callback
      * @return Call
@@ -243,7 +243,7 @@ public class APIController {
     }
 
     /**
-     * Get all announcement news (GET method)
+     * Get all announcement (GET method)
      *
      * @param callback Callback
      * @return Call
@@ -260,12 +260,12 @@ public class APIController {
      * @return Call
      * @route /announcement/all
      */
-    public static Call getAnnouncement(Callback callback) {
+    public static Call getAllAnnouncement(Callback callback) {
         return get("announcement/all", callback);
     }
 
     /**
-     * Create an announcement (POST method)
+     * Delete an announcement by its id (DELETE method)
      *
      * @param idAnnouncement String
      * @param callback       Callback
@@ -279,7 +279,7 @@ public class APIController {
     /* User */
 
     /**
-     * Get all users (GET method)
+     * Get all user by role (GET method)
      *
      * @param role     Role
      * @param callback Callback
@@ -303,7 +303,7 @@ public class APIController {
     }
 
     /**
-     * Create a user (POST method)
+     * Get all roles (GET method)
      *
      * @param callback Callback
      * @return Call
