@@ -1,7 +1,10 @@
 package etu.seinksansdoozebank.dechetri.ui.wastemap;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -30,11 +33,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 /**
- * <p>A fragment that shows the details of waste on click of map.</p>
- * <p>You can show this modal bottom sheet from your activity like this:</p>
- * <pre>
- *     WasteDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
- * </pre>
+ * A fragment that shows the details of waste on click of map.</p>
  */
 public class WasteDialogFragment extends BottomSheetDialogFragment {
 
@@ -75,6 +74,19 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             }
         });
 
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
+        String defaultRole = getResources().getString(R.string.role_user_title); //user by default
+        String role = sharedPreferences.getString(getString(R.string.shared_preferences_key_role), defaultRole);
+        if (role.equals(getString(R.string.role_admin_title))) {
+            this.configureDeleteButton(buttonDelete);
+        } else {
+            buttonDelete.setVisibility(View.GONE);
+        }
+        return binding.getRoot();
+    }
+
+    private void configureDeleteButton(Button buttonDelete) {
+        buttonDelete.setVisibility(View.VISIBLE);
         buttonDelete.setOnClickListener(v -> APIController.deleteWaste(waste.getId(), new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -93,7 +105,6 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 }
             }
         }));
-        return binding.getRoot();
     }
 
 
