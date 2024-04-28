@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import java.util.Date;
+import java.io.IOException;
 
 import etu.seinksansdoozebank.dechetri.R;
+import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteDialogBinding;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * <p>A fragment that shows the details of waste on click of map.</p>
@@ -35,11 +40,6 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
     private FragmentWasteDialogBinding binding;
 
-    private Button buttonItinary;
-    private TextView wasteAddress;
-
-    private TextView wasteName;
-
     private Waste waste;
 
     @Nullable
@@ -49,24 +49,19 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
         binding = FragmentWasteDialogBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        buttonItinary = view.findViewById(R.id.buttonItinerary);
-        wasteAddress = view.findViewById(R.id.wasteAddress);
-        wasteName = view.findViewById(R.id.wasteName);
+        Button buttonItinary = view.findViewById(R.id.buttonItinerary);
+        TextView wasteAddress = view.findViewById(R.id.wasteAddress);
+        TextView wasteName = view.findViewById(R.id.wasteName);
+        Button buttonDelete = view.findViewById(R.id.btnDelete);
 
         if (getArguments() != null) {
-            String id = getArguments().getString("id");
-            String name = getArguments().getString("name");
-            wasteName.setText(name);
-            String type = getArguments().getString("type");
-            String description = getArguments().getString("description");
-            byte[] imageData = getArguments().getByteArray("imageData");
-            Date date = (Date) getArguments().getSerializable("date");
-            String address = getArguments().getString("address");
-            wasteAddress.setText(address);
-            double latitude = getArguments().getDouble("latitude");
-            double longitude = getArguments().getDouble("longitude");
-            String userReporterId = getArguments().getString("userReporterId");
-            waste = new Waste(id, name, null, description, imageData, date, address, latitude, longitude, userReporterId);
+            waste = (Waste) getArguments().getParcelable("waste");
+            if (waste != null) {
+                wasteName.setText(waste.getName());
+                wasteAddress.setText(waste.getAddress());
+            } else {
+                Log.e("WasteDialogFragment", "Given waste is null");
+            }
         }
         buttonItinary.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("QueryPermissionsNeeded")
@@ -79,8 +74,26 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 startActivity(mapIntent);
             }
         });
-        return binding.getRoot();
 
+        buttonDelete.setOnClickListener(v -> APIController.deleteWaste(waste.getId(), new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la suppression du déchet : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                if (response.isSuccessful()) {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), "Déchet supprimé avec succès.", Toast.LENGTH_SHORT).show();
+                        dismiss();
+                    });
+                } else {
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la suppression du déchet : " + response.message(), Toast.LENGTH_SHORT).show());
+                }
+            }
+        }));
+        return binding.getRoot();
     }
 
 

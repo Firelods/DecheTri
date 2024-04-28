@@ -197,10 +197,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         WasteDialogFragment wasteDialogFragment = new WasteDialogFragment();
 
         Bundle args = new Bundle();
-        args.putString("name", waste.getName());
-        args.putDouble("latitude", waste.getLatitude());
-        args.putDouble("longitude", waste.getLongitude());
-        args.putString("address", waste.getAddress());
+        args.putParcelable("waste", waste);
 
         wasteDialogFragment.setArguments(args);
 
