@@ -18,8 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.util.Date;
+
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteDialogBinding;
+import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 
 /**
  * <p>A fragment that shows the details of waste on click of map.</p>
@@ -51,13 +54,19 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         wasteName = view.findViewById(R.id.wasteName);
 
         if (getArguments() != null) {
+            String id = getArguments().getString("id");
             String name = getArguments().getString("name");
             wasteName.setText(name);
-            double latitude = getArguments().getDouble("latitude");
-            double longitude = getArguments().getDouble("longitude");
+            String type = getArguments().getString("type");
+            String description = getArguments().getString("description");
+            byte[] imageData = getArguments().getByteArray("imageData");
+            Date date = (Date) getArguments().getSerializable("date");
             String address = getArguments().getString("address");
             wasteAddress.setText(address);
-            waste = new Waste(name, latitude, longitude, address,null);
+            double latitude = getArguments().getDouble("latitude");
+            double longitude = getArguments().getDouble("longitude");
+            String userReporterId = getArguments().getString("userReporterId");
+            waste = new Waste(id, name, null, description, imageData, date, address, latitude, longitude, userReporterId);
         }
         buttonItinary.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("QueryPermissionsNeeded")
