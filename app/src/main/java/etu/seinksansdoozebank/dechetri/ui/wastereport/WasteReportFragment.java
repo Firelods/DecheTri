@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
+import androidx.fragment.app.FragmentTransaction;
 
 
 import android.provider.MediaStore;
@@ -22,8 +22,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -32,6 +30,7 @@ import android.Manifest;
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteReportBinding;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.ui.wastemap.WasteMapFragment;
 
 
 public class WasteReportFragment extends Fragment {
@@ -44,17 +43,14 @@ public class WasteReportFragment extends Fragment {
     Button validateButton;
     private byte[] chosenImage;
 
-    private NavController navController;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentWasteReportBinding.inflate(inflater, container, false);
 
         View view = inflater.inflate(R.layout.fragment_waste_report, container, false);
 
-        //Si on appuie sur le bouton annuler alors on reviens en arrière.
-        binding.cancelButton.setOnClickListener(view1 -> requireActivity().onBackPressed());
-
-
+        //Si on appuie sur le bouton annuler alors on revient en arrière.
+        view.findViewById(R.id.cancelButton).setOnClickListener(view1 -> requireActivity().onBackPressed());
 
          pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -133,10 +129,9 @@ public class WasteReportFragment extends Fragment {
 
 
         //Lors de la validation on créé un déchet avec la photo et tous les autres paramètres nuls
-        view.findViewById(R.id.confirmButton).setOnClickListener(view12 -> {
+        view.findViewById(R.id.confirmButton).setOnClickListener(view1 -> {
             //TODO: changer la description du déchet
-            //Waste waste=new Waste(null,"c",null,"description",null,null);
-
+            Waste waste = new Waste( null, null, null, null, chosenImage, null, null, 0, 0,null);
         });
 
     }
