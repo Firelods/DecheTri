@@ -1,5 +1,6 @@
 package etu.seinksansdoozebank.dechetri.ui.wastereport;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,10 +8,11 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
+
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -19,25 +21,33 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+
+import android.Manifest;
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteReportBinding;
-import etu.seinksansdoozebank.dechetri.ui.wastemap.Waste;
+import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+
 
 public class WasteReportFragment extends Fragment {
+    private static final int CAMERA_PERMISSION_CODE = 100 ;
+    private static final int LIBRARY_PERMISSION_CODE =200 ;
     private FragmentWasteReportBinding binding;
     private ActivityResultLauncher<Intent> pickImageLauncher;
     private ActivityResultLauncher<Intent> takePictureLauncher;
 
     Button validateButton;
-    private Uri photoUri;
+    private byte[] chosenImage;
 
     private NavController navController;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWasteReportBinding.inflate(inflater, container, false);
 
         View view = inflater.inflate(R.layout.fragment_waste_report, container, false);
 
@@ -54,7 +64,11 @@ public class WasteReportFragment extends Fragment {
                         // Récupérer l'URI de l'image sélectionnée
                         if (data != null) {
                             validateButton.setEnabled(true);
-                            photoUri = data.getData();
+                            try {
+                                chosenImage = convertUriToByte(data.getData());
+                            } catch (IOException e) {
+                               throw new RuntimeException(e);
+                            }
                         }
                     } else {
                         Toast.makeText(requireContext(), "Aucune image sélectionnée", Toast.LENGTH_SHORT).show();
@@ -68,7 +82,11 @@ public class WasteReportFragment extends Fragment {
                         Intent data = result.getData();
                         Bitmap photoBitmap = (Bitmap) data.getExtras().get("data");
                         if (photoBitmap != null) {
-                            convertBitmapToUri(photoBitmap);
+                            try {
+                                chosenImage = convertBitmapToByte(photoBitmap);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     } else {
                         Toast.makeText(requireContext(), "Aucune photo capturée", Toast.LENGTH_SHORT).show();
@@ -91,73 +109,104 @@ public class WasteReportFragment extends Fragment {
 
 
         //Si on clique sur le bouton de la pellicule alors on ouvre le service du téléphone.
-        binding.LibraryPhoto.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.LibraryPhoto).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //création d'une intent pour ouvrir la pellicule
-                Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                if (pickPhotoIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
-                    //On lance l'instance créée pour ouvrir la pellicule
-                    pickImageLauncher.launch(pickPhotoIntent);
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    selectPictureFromGallery();
                 } else {
-                    //Si erreur
-                    Toast.makeText(requireContext(), "L'application de galerie n'est pas disponible", Toast.LENGTH_SHORT).show();
+                    // Si la permission n'est pas accordée, demandez la permission
+                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, LIBRARY_PERMISSION_CODE);
                 }
             }
         });
 
         //Si on clique sur le bouton de l'appareil photo  alors on ouvre le service du téléphone.
-        binding.CameraButton.setOnClickListener(view12 -> {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
-                //Créer l'activité pour lancer l'appareil photo
-                takePictureLauncher.launch(takePictureIntent);
+        view.findViewById(R.id.CameraButton).setOnClickListener(view12 -> {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                takePictureWithCamera();
             } else {
-           // si erreur alors afficher un message d'information
-                Toast.makeText(requireContext(), "L'application de l'appareil photo n'est pas disponible", Toast.LENGTH_SHORT).show();
+                // Si la permission n'est pas accordée, demandez la permission
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
             }
         });
 
-        navController = NavHostFragment.findNavController(this);
+
         //Lors de la validation on créé un déchet avec la photo et tous les autres paramètres nuls
-        binding.confirmButton.setOnClickListener(view12 -> {
-            Waste waste=new Waste(null,0,0,null,photoUri);
-                navController.navigate(R.id.navigation_map); // Naviguer vers le fragment carte
-        });
+        view.findViewById(R.id.confirmButton).setOnClickListener(view12 -> {
+            //TODO: changer la description du déchet
+            //Waste waste=new Waste(null,"c",null,"description",null,null);
 
-        //go back
-        binding.cancelButton.setOnClickListener(view12 -> {
-            navController.navigate(R.id.navigation_flux); // Naviguer vers le fragment carte
         });
-
 
     }
 
-    private void convertBitmapToUri(Bitmap bitmap) {
-        // Créez un répertoire de stockage où on enregistre l'image
-        File imagesDir = new File(requireActivity().getExternalFilesDir(null), "images");
-        if (!imagesDir.exists()) {
-            imagesDir.mkdirs();
+  private byte[] convertBitmapToByte(Bitmap bitmapImage) throws IOException{
+      ByteArrayOutputStream stream = new ByteArrayOutputStream();
+      bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+      return stream.toByteArray();
+  }
+
+    private byte[] convertUriToByte(Uri uri) throws IOException {
+        InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, bytesRead);
         }
+        return byteBuffer.toByteArray();
+    }
 
-        // Créez un fichier dans le repertoire avec un nom de reférence unique
-        String fileName = "image_" + System.currentTimeMillis() + ".jpg";
-        File imageFile = new File(imagesDir, fileName);
 
-        try {
-            // écriture du Bitmap dans le fichier en utilisant un OutputStream
-            FileOutputStream outputStream = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            outputStream.flush();
-            outputStream.close();
-            // enregistrement de ce bitmap en format Uri
-            photoUri=Uri.fromFile(imageFile);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case CAMERA_PERMISSION_CODE :
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    takePictureWithCamera();
+                } else {
+                    // Permission is denied, show a message or handle accordingly
+                    Toast.makeText(requireContext(), "Permission de la caméra refusée", Toast.LENGTH_SHORT).show();
+                };
+            case LIBRARY_PERMISSION_CODE : // Si on a la permission de la pellicule
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    selectPictureFromGallery();
+                } else {
+                    // Permission is denied, show a message or handle accordingly
+                    Toast.makeText(requireContext(), "Permission de la pellicule refusée", Toast.LENGTH_SHORT).show();
+                };
+            default :
+                Toast.makeText(requireContext(), "Permission refusée", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void takePictureWithCamera(){
+        // Si la permission est accordée, lancez l'intent pour ouvrir l'appareil photo
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            // Créez l'activité pour lancer l'appareil photo
+            takePictureLauncher.launch(takePictureIntent);
+        } else {
+            // si erreur alors afficher un message d'information
+            Toast.makeText(requireContext(), "L'application de l'appareil photo n'est pas disponible", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void selectPictureFromGallery(){
+        // Si la permission est accordée, lancez l'intent pour ouvrir la galerie
+        Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        if (pickPhotoIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            // Lancez l'intent pour ouvrir la galerie
+            pickImageLauncher.launch(pickPhotoIntent);
+        } else {
+            // si erreur alors afficher un message d'information
+            Toast.makeText(requireContext(), "L'application de galerie n'est pas disponible", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 
 }
