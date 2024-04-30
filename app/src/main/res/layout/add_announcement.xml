@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="10dp"
+    android:paddingTop="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/etxt_title"
+            android:text="@string/add_announcement_input_title"
+            style="@style/LabelStyle" />
+
+        <EditText
+            android:id="@+id/etxt_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
+            android:autofillHints="name"
+            android:inputType="text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/etxt_description"
+            android:text="@string/add_announcement_input_description"
+            style="@style/LabelStyle" />
+
+        <EditText
+            android:id="@+id/etxt_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"
+            android:autofillHints="name"
+            android:fontFamily="sans-serif"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:id="@+id/btn_add_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/add_announcement_add_a_date"
+            android:textColor="@color/green_700"
+            android:background="@drawable/border_button" />
+
+        <TextView
+            android:id="@+id/tv_date_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/tv_date"
+            android:text="@string/add_announcement_event_date"
+            android:visibility="gone"
+            style="@style/LabelStyle" />
+
+        <EditText
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="sans-serif"
+            android:autofillHints="date"
+            android:inputType="datetime" />
+    </LinearLayout>
+
+</ScrollView>
