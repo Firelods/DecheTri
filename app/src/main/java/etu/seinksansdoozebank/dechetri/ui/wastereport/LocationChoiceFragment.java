@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -32,7 +35,7 @@ import java.util.List;
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentLocationChoiceBinding;
 
-public class LocationChoiceFragment extends Fragment  implements LocationListener{
+public class LocationChoiceFragment extends Fragment implements LocationListener {
     private FragmentLocationChoiceBinding binding;
     private AccessibleMapView map;
     private static final String TAG = "LocationChoiceFragment";
@@ -41,13 +44,27 @@ public class LocationChoiceFragment extends Fragment  implements LocationListene
     private LocationManager locationManager;
     private Marker currentLocationMarker;
     private Marker currentWasteLocationMarker;
+    private Button validateButton;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentLocationChoiceBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
+        validateButton = binding.validateButton;
+        // deactivate button if no location is selected
+        validateButton.setEnabled(false);
+        validateButton.setOnClickListener(v -> {
+            if (currentWasteLocationMarker != null) {
+                GeoPoint location = currentWasteLocationMarker.getPosition();
+                Log.v(TAG, "Location selected: " + location);
+                Bundle bundle = new Bundle();
+                bundle.putDouble("latitude", location.getLatitude());
+                bundle.putDouble("longitude", location.getLongitude());
+                NavController navController = Navigation.findNavController(view);
+                navController.navigate(R.id.action_navigation_location_choice_to_navigation_waste_detail_report, bundle);
+            }
+        });
         Context ctx = getContext();
         if (ctx != null) {
             markerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.photo_library);
@@ -130,11 +147,15 @@ public class LocationChoiceFragment extends Fragment  implements LocationListene
         }
         map.getOverlays().add(marker);
         currentWasteLocationMarker = marker;
-
+        validateButton.setEnabled(true);
         map.invalidate();
     }
 
     private void addMarkerAtLocation(GeoPoint location) {
+        if (map == null) {
+            Log.e(TAG, "MapView is not initialized");
+            return;
+        }
         Marker marker = new Marker(map);
         marker.setPosition(location);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
@@ -155,6 +176,10 @@ public class LocationChoiceFragment extends Fragment  implements LocationListene
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        // if map is not initialized yet, do nothing
+        if (map == null) {
+            return;
+        }
         addMarkerAtLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
     }
 
@@ -182,6 +207,9 @@ public class LocationChoiceFragment extends Fragment  implements LocationListene
     @Override
     public void onPause() {
         super.onPause();
+        if (locationManager != null && checkLocationPermission()) {
+            locationManager.removeUpdates(this);
+        }
         map.onPause();
     }
 
@@ -190,6 +218,9 @@ public class LocationChoiceFragment extends Fragment  implements LocationListene
         super.onResume();
         if (checkLocationPermission()) {
             map.onResume();
+            if (locationManager != null) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this);
+            }
             updateMapToCurrentLocation();
         } else {
             Toast.makeText(getContext(), "La localisation est nécessaire pour signaler le déchet", Toast.LENGTH_SHORT).show();

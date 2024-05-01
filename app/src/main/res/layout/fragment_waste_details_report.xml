@@ -78,6 +78,12 @@
             android:hint="Saisir la localisation..."
             android:autofillHints="Localisation"
             android:textSize="20sp" />
+        <TextView
+            android:id="@+id/locationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lat : , Long :"
+            android:textSize="15sp" />
 
     </LinearLayout>
 
