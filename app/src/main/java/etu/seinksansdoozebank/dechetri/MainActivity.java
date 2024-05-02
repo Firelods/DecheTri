@@ -2,12 +2,9 @@ package etu.seinksansdoozebank.dechetri;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -16,9 +13,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "512Bank";
 
     private ActivityMainBinding binding;
 
@@ -60,13 +60,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         navView.setOnItemSelectedListener(item -> {
-            Log.d("MainActivity", "onNavigationItemSelected: " + item.getTitle());
             getSupportActionBar().setTitle(item.getTitle());
             return true;
         });
         navView.setSelectedItemId(navView.getMenu().getItem(0).getItemId());
         NavigationUI.setupWithNavController(binding.navView, navController);
-
     }
 
     @Override
@@ -93,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void disconnect(){
+    private void disconnect() {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(getString(R.string.shared_preferences_key_role));

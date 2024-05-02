@@ -38,6 +38,8 @@ import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
+import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
 
 public class WasteMapFragment extends Fragment implements LocationListener {
     private FragmentWasteMapBinding binding;
@@ -189,10 +191,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         WasteDialogFragment wasteDialogFragment = new WasteDialogFragment();
 
         Bundle args = new Bundle();
-        args.putString("name", waste.getName());
-        args.putDouble("latitude", waste.getLatitude());
-        args.putDouble("longitude", waste.getLongitude());
-        args.putString("address", waste.getAddress());
+        args.putParcelable("waste", waste);
 
         wasteDialogFragment.setArguments(args);
 
