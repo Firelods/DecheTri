@@ -38,9 +38,9 @@
             android:id="@+id/NameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="nom du déchet"
             android:hint="Saisir le nom ..."
-            android:textSize="20sp"
-            android:autofillHints="nom du déchet" />
+            android:textSize="20sp" />
 
         <Space
             android:layout_width="match_parent"
@@ -57,8 +57,8 @@
             android:id="@+id/DescriptionInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Saisir une description..."
             android:autofillHints="description"
+            android:hint="Saisir une description..."
             android:textSize="20sp" />
 
         <Space
@@ -71,27 +71,40 @@
             android:text="Localisation"
             android:textSize="30sp" />
 
-        <EditText
-            android:id="@+id/LocalisationInput"
+        <com.faltenreich.skeletonlayout.SkeletonLayout
+            android:id="@+id/skeletonLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Saisir la localisation..."
-            android:autofillHints="Localisation"
-            android:textSize="20sp" />
-        <TextView
-            android:id="@+id/locationText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lat : , Long :"
-            android:textSize="15sp" />
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/LocalisationInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="Localisation"
+                    android:hint="Saisir la localisation..."
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/locationText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lat : , Long :"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </com.faltenreich.skeletonlayout.SkeletonLayout>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginTop="70dp"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
@@ -100,6 +113,7 @@
             android:layout_height="wrap_content"
             android:text="Précédent"
             tools:ignore="MissingConstraints" />
+
         <Space
             android:layout_width="110dp"
             android:layout_height="match_parent" />

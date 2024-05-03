@@ -26,7 +26,7 @@ public class WasteReportFragment extends Fragment {
 
         confirmButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(view);
-            navController.navigate(R.id.action_currentFragment_to_wasteReportFragment);
+            navController.navigate(R.id.action_navigation_report_to_navigation_location_choice);
         });
         return binding.getRoot();
     }

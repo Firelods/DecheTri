@@ -40,7 +40,6 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
     private AccessibleMapView map;
     private static final String TAG = "LocationChoiceFragment";
     private IMapController mapController;
-    private Drawable markerDrawable;
     private LocationManager locationManager;
     private Marker currentLocationMarker;
     private Marker currentWasteLocationMarker;
@@ -67,7 +66,6 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
         });
         Context ctx = getContext();
         if (ctx != null) {
-            markerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.photo_library);
             Configuration.getInstance().load(ctx, ctx.getSharedPreferences("osmdroid", Context.MODE_PRIVATE));
             locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         }
@@ -141,7 +139,7 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
 
 
         marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.location));
-        marker.setTitle("Votre position");
+        marker.setTitle("Nouveau déchet");
         if (currentWasteLocationMarker != null) {
             map.getOverlays().remove(currentWasteLocationMarker);
         }
@@ -152,7 +150,7 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
     }
 
     private void addMarkerAtLocation(GeoPoint location) {
-        if (map == null) {
+        if (map == null || map.getRepository() == null) {
             Log.e(TAG, "MapView is not initialized");
             return;
         }
@@ -162,7 +160,7 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
 
         marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
 
-        marker.setTitle("Nouveau déchet");
+        marker.setTitle("Votre localisation");
 
         if (currentLocationMarker != null) {
             map.getOverlays().remove(currentLocationMarker);
