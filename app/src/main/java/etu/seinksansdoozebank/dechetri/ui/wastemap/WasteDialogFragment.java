@@ -5,22 +5,23 @@ import static android.content.Context.MODE_PRIVATE;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
-
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.io.IOException;
 
@@ -52,12 +53,16 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         TextView wasteAddress = view.findViewById(R.id.wasteAddress);
         TextView wasteName = view.findViewById(R.id.wasteName);
         Button buttonDelete = view.findViewById(R.id.btnDelete);
+        ImageView wasteImage = view.findViewById(R.id.wasteImage);
 
         if (getArguments() != null) {
-            waste = (Waste) getArguments().getParcelable("waste");
+            waste = getArguments().getParcelable("waste");
             if (waste != null) {
                 wasteName.setText(waste.getName());
                 wasteAddress.setText(waste.getAddress());
+                byte[] imageBytes = waste.getImageData();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                wasteImage.setImageBitmap(bitmap);
             } else {
                 Log.e("WasteDialogFragment", "Given waste is null");
             }
@@ -118,6 +123,5 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         super.onDestroyView();
         binding = null;
     }
-
 
 }
