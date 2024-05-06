@@ -3,14 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="20dp"
-    android:orientation="horizontal"
-    android:background="@drawable/shape">
+    android:background="@drawable/shape"
+    android:orientation="horizontal">
 
 
     <LinearLayout
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/circle" />
+        android:background="@drawable/circle">
+
+        <ImageView
+            android:id="@+id/taskList_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
 
     <LinearLayout
@@ -21,14 +27,14 @@
             android:id="@+id/taskList_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
             android:layout_gravity="center"
             android:gravity="start"
             android:paddingStart="8dp"
             android:paddingTop="4dp"
             android:paddingEnd="4dp"
             android:paddingBottom="4dp"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
     </LinearLayout>
 
 

@@ -33,4 +33,13 @@
         android:layout_marginTop="16dp"
         android:text="@string/confirm_ramassage" />
 
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/delete_waste"
+        android:textColor="@color/orange_600"
+        android:visibility="gone" />
+
 </LinearLayout>

@@ -10,10 +10,13 @@
     <string name="title_report">Signalement</string>
     <string name="title_stat">Statistiques</string>
     <string name="title_tasklist">Liste de tâches</string>
+    <string name="title_disconnect">Se déconnecter</string>
+
+    <!--    WasteDialog Fragment-->
     <string name="intinerary">Itinéraire</string>
     <string name="confirm_ramassage">Confirmer le ramassage</string>
+    <string name="delete_waste">Supprimer ce signalement</string>
     <string name="placeholder">placeholder</string>
-    <string name="title_disconnect">Se déconnecter</string>
 
     <!--    RoleChoice Activity-->
     <string name="role_choice_title">Choix du rôle d\'utilisation de l\'application</string>
