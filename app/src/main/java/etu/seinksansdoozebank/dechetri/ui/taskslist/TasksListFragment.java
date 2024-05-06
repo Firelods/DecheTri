@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -73,7 +74,9 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
             APIController.getWaste(task.getIdWasteToCollect(), new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    Log.d(TAG + "TasksListFragment", "onFailure: " + e.getMessage());
+                    String message = e.getMessage();
+                    Log.e("APIController", "Error while getting waste : " + message);
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des déchets : " + message, Toast.LENGTH_SHORT).show());
                 }
 
                 @Override

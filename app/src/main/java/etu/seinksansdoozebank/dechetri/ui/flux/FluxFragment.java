@@ -110,7 +110,9 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         APIController.deleteAnnouncement(item.getId(), new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(TAG + "FluxFragment", "onFailure: " + e.getMessage());
+                String message = e.getMessage();
+                Log.e("APIController", "Error while removing announcement : " + message);
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce : " + message, Toast.LENGTH_SHORT).show());
             }
 
             @Override
