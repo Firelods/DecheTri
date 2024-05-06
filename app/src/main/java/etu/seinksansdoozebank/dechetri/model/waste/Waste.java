@@ -4,11 +4,9 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import java.util.Arrays;
 import java.util.Date;
 
 public class Waste implements Parcelable {
