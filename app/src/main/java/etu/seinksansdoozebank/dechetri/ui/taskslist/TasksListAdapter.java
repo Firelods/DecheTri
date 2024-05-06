@@ -64,7 +64,7 @@ public class TasksListAdapter extends BaseAdapter {
             // (2) : Récupération des TextView de notre layout
             TextView title = listItem.findViewById(R.id.taskList_title);
             ImageView image = listItem.findViewById(R.id.taskList_image);
-            Waste waste = this.getWasteById(taskList.get(position).getIdWasteToCollect());
+            Waste waste = this.wasteList.stream().filter(w -> w.getId().equals(taskList.get(position).getIdWasteToCollect())).findFirst().orElse(null);
 
             // (3) : Renseignement des valeurs
             title.setText(waste.getName());
@@ -89,14 +89,5 @@ public class TasksListAdapter extends BaseAdapter {
         canvas.drawCircle(diameter / 2f, diameter / 2f, diameter / 2f, paint);
 
         return output;
-    }
-
-    private Waste getWasteById(String id) {
-        for (Waste waste : wasteList) {
-            if (waste.getId().equals(id)) {
-                return waste;
-            }
-        }
-        return null;
     }
 }

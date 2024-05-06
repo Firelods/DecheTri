@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,6 +35,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
     private TasksListAdapter taskListAdapter;
     private final List<Task> taskList = new ArrayList<>();
     private final List<Waste> wasteList = new ArrayList<>();
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,32 +43,45 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
         View root = binding.getRoot();
 
         listViewTasks = binding.listViewTasks;
+        swipeRefreshLayout = binding.swipeRefreshLayout;
 
+        swipeRefreshLayout.setOnRefreshListener(this::getEmployeAssignee);
 
+        getEmployeAssignee();
+
+        // Create an adapter
+        taskListAdapter = new TasksListAdapter(requireActivity(), taskList, wasteList);
+        listViewTasks.setAdapter(taskListAdapter);
+        return root;
+    }
+
+    private void getEmployeAssignee() {
+        swipeRefreshLayout.setRefreshing(true);
         APIController.getEmployeAssignee("2", new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(TAG + "TasksListFragment", "onFailure: " + e.getMessage());
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des tâches", Toast.LENGTH_SHORT).show());
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des tâches", Toast.LENGTH_SHORT).show());
+                    return;
+                }
                 String json = response.body().string();
                 Gson gson = new Gson();
                 Type taskListType = new TypeToken<List<Task>>() {
                 }.getType();
                 List<Task> tasks = gson.fromJson(json, taskListType);
                 if (tasks != null) {
+                    taskList.clear();
                     taskList.addAll(tasks);
                 }
                 getWasteList();
             }
         });
-
-        // Create an adapter
-        taskListAdapter = new TasksListAdapter(requireActivity(), taskList, wasteList);
-        listViewTasks.setAdapter(taskListAdapter);
-        return root;
     }
 
     private void getWasteList() {
@@ -81,6 +96,10 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des déchets", Toast.LENGTH_SHORT).show());
+                        return;
+                    }
                     String json = response.body().string();
                     Gson gson = new Gson();
                     Waste waste = gson.fromJson(json, Waste.class);
@@ -89,7 +108,10 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                     }
                     wasteList.add(waste);
                     // notify the listview that the data has changed
-                    requireActivity().runOnUiThread(() -> taskListAdapter.notifyDataSetChanged());
+                    requireActivity().runOnUiThread(() -> {
+                        taskListAdapter.notifyDataSetChanged();
+                        swipeRefreshLayout.setRefreshing(false);
+                    });
                 }
             });
         }
@@ -101,3 +123,4 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
         binding = null;
     }
 }
+
