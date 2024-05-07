@@ -20,8 +20,8 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
         }
     }
@@ -52,5 +52,7 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("org.osmdroid:osmdroid-android:6.1.14")
+    implementation("com.github.MKergall:osmbonuspack:6.9.0")
+    implementation("com.faltenreich:skeletonlayout:5.0.0")
     implementation("com.google.code.gson:gson:2.8.6")
 }

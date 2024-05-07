@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -78,7 +79,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         context = requireContext();
         binding = FragmentFluxBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        ListView listViewFlux = binding.listViewFlux;
+        RecyclerView listViewFlux = binding.listViewFlux;
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(announcementList::updateList);
         // Create an adapter

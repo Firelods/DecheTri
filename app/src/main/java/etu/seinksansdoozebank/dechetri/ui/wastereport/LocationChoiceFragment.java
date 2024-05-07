@@ -1,10 +1,4 @@
-package etu.seinksansdoozebank.dechetri.ui.wastemap;
-
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.activity.result.ActivityResultLauncher;
+package etu.seinksansdoozebank.dechetri.ui.wastereport;
 
 import android.Manifest;
 import android.content.Context;
@@ -13,57 +7,73 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.OverlayItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.R;
-import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
-import etu.seinksansdoozebank.dechetri.model.waste.Waste;
-import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
+import etu.seinksansdoozebank.dechetri.databinding.FragmentLocationChoiceBinding;
 
-public class WasteMapFragment extends Fragment implements LocationListener {
-    private FragmentWasteMapBinding binding;
-    private MapView map;
+public class LocationChoiceFragment extends Fragment implements LocationListener {
+    private FragmentLocationChoiceBinding binding;
+    private AccessibleMapView map;
+    private static final String TAG = "LocationChoiceFragment";
     private IMapController mapController;
-    private static final String TAG = "WasteMapFragment";
     private LocationManager locationManager;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Marker currentLocationMarker;
+    private Marker currentWasteLocationMarker;
+    private Button validateButton;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentWasteMapBinding.inflate(inflater, container, false);
+        binding = FragmentLocationChoiceBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
+        validateButton = binding.validateButton;
+        // deactivate button if no location is selected
+        validateButton.setEnabled(false);
+        validateButton.setOnClickListener(v -> {
+            if (currentWasteLocationMarker != null) {
+                GeoPoint location = currentWasteLocationMarker.getPosition();
+                Log.v(TAG, "Location selected: " + location);
+                Bundle bundle = new Bundle();
+                bundle.putDouble("latitude", location.getLatitude());
+                bundle.putDouble("longitude", location.getLongitude());
+                NavController navController = Navigation.findNavController(view);
+                navController.navigate(R.id.action_navigation_location_choice_to_navigation_waste_detail_report, bundle);
+            }
+        });
         initializeLocationManager();
 
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
                 Log.v(TAG, "Location permission granted");
                 setupMapView();
+                configureMapClick();
                 updateMapToCurrentLocation();
-                WasteList wasteList = new WasteList();
-                addWastePointsOnMap(wasteList);
             } else {
                 Log.v(TAG, "Location permission denied");
             }
@@ -71,11 +81,10 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         setupMapView();
         if (checkLocationPermission()) {
             updateMapToCurrentLocation();
-            WasteList wasteList = new WasteList();
-            addWastePointsOnMap(wasteList);
         } else {
             requestLocationPermission();
         }
+        configureMapClick();
 
         return view;
     }
@@ -87,6 +96,15 @@ public class WasteMapFragment extends Fragment implements LocationListener {
             locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         }
     }
+    private void requestLocationPermission() {
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+    private void setupMapView() {
+        map = binding.mapView1;
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setMultiTouchControls(true);
+        mapController = map.getController();
+    }
 
     private boolean checkLocationPermission() {
         Context context = getContext();
@@ -95,21 +113,6 @@ public class WasteMapFragment extends Fragment implements LocationListener {
                 ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestLocationPermission() {
-        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-    }
-
-    private void setupMapView() {
-        map = binding.mapView;
-        map.setTileSource(TileSourceFactory.MAPNIK);
-        map.setMultiTouchControls(true);
-        mapController = map.getController();
-        map.setMinZoomLevel(5.0);
-        mapController.setZoom(10.0);
-        mapController.setCenter(new GeoPoint(46.603354, 1.888334));
-    }
-
-
     private void updateMapToCurrentLocation() {
         if ((ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
@@ -117,7 +120,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
             return;
         }
         if (getContext() != null && checkLocationPermission()) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, (float) 0, this);
         }
         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         Log.v(TAG, "Last known location from GPS provider: " + lastKnownLocation);
@@ -136,68 +139,67 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         GeoPoint startPoint = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
         mapController.setCenter(startPoint);
         mapController.setZoom(15.0);
-        addMarker(startPoint);
+        addMarkerAtLocation(startPoint);
     }
 
-    private void addMarker(GeoPoint startPoint) {
+    private void configureMapClick() {
+        map.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                GeoPoint geoPoint = (GeoPoint) map.getProjection().fromPixels((int) event.getX(), (int) event.getY());
+                addWasteMarker(geoPoint);
+                Log.v(TAG, "Location selected: " + geoPoint);
+                v.performClick();
+            }
+            return false;
+        });
+    }
+
+    private void addMarker(GeoPoint location, int drawableId, String title, boolean isWasteMarker) {
+        if (map == null || map.getRepository() == null) {
+            Log.e(TAG, "MapView is not initialized");
+            return;
+        }
         Marker marker = new Marker(map);
-        marker.setPosition(startPoint);
+        marker.setPosition(location);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
+        marker.setIcon(ContextCompat.getDrawable(requireContext(), drawableId));
+        marker.setTitle(title);
 
-        marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
-        marker.setTitle(getString(R.string.votre_position));
-        if (currentLocationMarker != null) {
-            map.getOverlays().remove(currentLocationMarker);
+        if (isWasteMarker) {
+            if (currentWasteLocationMarker != null) {
+                map.getOverlays().remove(currentWasteLocationMarker);
+            }
+            currentWasteLocationMarker = marker;
+            validateButton.setEnabled(true);
+        } else {
+            if (currentLocationMarker != null) {
+                map.getOverlays().remove(currentLocationMarker);
+            }
+            currentLocationMarker = marker;
         }
-        map.getOverlays().add(marker);
-        currentLocationMarker = marker;
 
+        map.getOverlays().add(marker);
         map.invalidate();
     }
 
-    public void addWastePointsOnMap(List<Waste> wastes) {
-        ArrayList<OverlayItem> items = new ArrayList<>();
-
-        for (Waste location : wastes) {
-            GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
-            OverlayItem overlayItem = new OverlayItem(location.getAddress(), getString(R.string.dechet_ici), point);
-            overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), R.drawable.waste));
-            items.add(overlayItem);
-        }
-
-        ItemizedIconOverlay<OverlayItem> wasteOverlay = new ItemizedIconOverlay<>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-            @Override
-            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                showWasteDetails(wastes.get(index));
-                return true;
-            }
-
-            @Override
-            public boolean onItemLongPress(final int index, final OverlayItem item) {
-                // Gestion du long press, si nécessaire
-                return true;
-            }
-        }, requireContext());
-
-        map.getOverlays().add(wasteOverlay);
-        map.invalidate(); // Rafraîchit la carte pour afficher les nouveaux éléments
+    private void addWasteMarker(GeoPoint startPoint) {
+        addMarker(startPoint, R.drawable.location, getString(R.string.nouveau_dechet), true);
     }
 
-    public void showWasteDetails(Waste waste) {
-        WasteDialogFragment wasteDialogFragment = new WasteDialogFragment();
-
-        Bundle args = new Bundle();
-        args.putParcelable("waste", waste);
-
-        wasteDialogFragment.setArguments(args);
-
-        wasteDialogFragment.show(getParentFragmentManager(), "wasteDetails");
+    private void addMarkerAtLocation(GeoPoint location) {
+        addMarker(location, R.drawable.my_location, getString(R.string.votre_position), false);
     }
+
+
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        addMarker(new GeoPoint(location.getLatitude(), location.getLongitude()));
+        // if map is not initialized yet, do nothing
+        if (map == null) {
+            return;
+        }
+        addMarkerAtLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
     }
 
     @Override
@@ -220,9 +222,13 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         Toast.makeText(getContext(), getString(R.string.veuillez_activer_la_localisation), Toast.LENGTH_SHORT).show();
     }
 
+
     @Override
     public void onPause() {
         super.onPause();
+        if (locationManager != null && checkLocationPermission()) {
+            locationManager.removeUpdates(this);
+        }
         map.onPause();
     }
 
@@ -231,6 +237,9 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         super.onResume();
         if (checkLocationPermission()) {
             map.onResume();
+            if (locationManager != null) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this);
+            }
             updateMapToCurrentLocation();
         } else {
             Toast.makeText(getContext(), getString(R.string.la_localisation_est_necessaire), Toast.LENGTH_SHORT).show();

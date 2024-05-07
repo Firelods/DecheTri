@@ -73,9 +73,7 @@ public class FluxAdapter extends BaseAdapter {
 
             if(announcement.getType() == AnnouncementType.EVENT) {
                 imageButtonCalendar.setVisibility(View.VISIBLE);
-                imageButtonCalendar.setOnClickListener(v -> {
-                    ((FluxAdapterListener) activity).onClickCalendar(imageButtonCalendar, announcement);
-                });
+                imageButtonCalendar.setOnClickListener(v -> ((FluxAdapterListener) activity).onClickCalendar(imageButtonCalendar, announcement));
             }else{
                 imageButtonCalendar.setVisibility(View.GONE);
             }
