@@ -12,6 +12,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 
 import android.provider.MediaStore;
@@ -28,15 +30,11 @@ import java.io.InputStream;
 
 import android.Manifest;
 import etu.seinksansdoozebank.dechetri.R;
-import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteReportBinding;
-import etu.seinksansdoozebank.dechetri.model.waste.Waste;
-import etu.seinksansdoozebank.dechetri.ui.wastemap.WasteMapFragment;
 
 
 public class WasteReportFragment extends Fragment {
     private static final int CAMERA_PERMISSION_CODE = 100 ;
     private static final int LIBRARY_PERMISSION_CODE =200 ;
-    private FragmentWasteReportBinding binding;
     private ActivityResultLauncher<Intent> pickImageLauncher;
     private ActivityResultLauncher<Intent> takePictureLauncher;
 
@@ -45,12 +43,13 @@ public class WasteReportFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentWasteReportBinding.inflate(inflater, container, false);
+
 
         View view = inflater.inflate(R.layout.fragment_waste_report, container, false);
 
         //Si on appuie sur le bouton annuler alors on revient en arrière.
         view.findViewById(R.id.cancelButton).setOnClickListener(view1 -> requireActivity().onBackPressed());
+
 
          pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -94,7 +93,6 @@ public class WasteReportFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
     }
 
     @Override
@@ -131,7 +129,9 @@ public class WasteReportFragment extends Fragment {
         //Lors de la validation on créé un déchet avec la photo et tous les autres paramètres nuls
         view.findViewById(R.id.confirmButton).setOnClickListener(view1 -> {
             //TODO: changer la description du déchet
-            Waste waste = new Waste( null, null, null, null, chosenImage, null, null, 0, 0,null);
+            NavController navController= Navigation.findNavController(view);
+            navController.navigate(R.id.action_navigation_report_to_navigation_map);
+
         });
 
     }

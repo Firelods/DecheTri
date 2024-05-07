@@ -28,6 +28,10 @@
         android:id="@+id/navigation_report"
         android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.WasteReportFragment"
         android:label="@string/title_report"
-        tools:layout="@layout/fragment_waste_report" />
+        tools:layout="@layout/fragment_waste_report" >
+        <action
+            android:id="@+id/action_navigation_report_to_navigation_map"
+            app:destination="@id/navigation_map" />
+    </fragment>
 
 </navigation>
