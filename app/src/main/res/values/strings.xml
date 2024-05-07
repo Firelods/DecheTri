@@ -10,10 +10,13 @@
     <string name="title_report">Signalement</string>
     <string name="title_stat">Statistiques</string>
     <string name="title_tasklist">Liste de tâches</string>
+    <string name="title_disconnect">Se déconnecter</string>
+
+    <!--    WasteDialog Fragment-->
     <string name="intinerary">Itinéraire</string>
     <string name="confirm_ramassage">Confirmer le ramassage</string>
+    <string name="delete_waste">Supprimer ce signalement</string>
     <string name="placeholder">placeholder</string>
-    <string name="title_disconnect">Se déconnecter</string>
 
     <!--    RoleChoice Activity-->
     <string name="role_choice_title">Choix du rôle d\'utilisation de l\'application</string>
@@ -35,4 +38,22 @@
 
     <!--    Flux    -->
     <string name="bin_image">bin image</string>
+    <string name="bn_add_annoucement">The button to publish an new announcement</string>
+    <string name="remove_date_text">Enlever la date</string>
+    <string name="add_date_text">Ajouter une date</string>
+    <string name="add_announcement_input_title">Titre</string>
+    <string name="add_announcement_input_description">Description</string>
+    <string name="add_announcement_add_a_date">Ajouter une date</string>
+    <string name="add_announcement_event_date">Date de l\'évènement</string>
+    <string name="add_announcement_title">Nouvelle annonce</string>
+    <string name="add_announcement_publish">Publier</string>
+    <string name="add_announcement_cancel">Annuler</string>
+    <string name="add_announcement_result_success">Annonce publiée avec succès</string>
+    <string name="add_announcement_result_error">Erreur lors de la publication de l\'annonce</string>
+    <string name="waste_image">Image du déchet</string>
+    <string name="votre_position">Votre position</string>
+    <string name="dechet_ici">Déchet ici</string>
+    <string name="veuillez_activer_la_localisation">Veuillez activer la localisation</string>
+    <string name="la_localisation_est_necessaire">La localisation est nécessaire pour signaler le déchet</string>
+    <string name="nouveau_dechet">Nouveau déchet</string>
 </resources>

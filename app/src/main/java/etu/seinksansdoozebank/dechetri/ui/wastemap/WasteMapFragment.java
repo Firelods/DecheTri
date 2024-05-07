@@ -30,6 +30,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
     private LocationManager locationManager;
     Drawable markerDrawable;
     private ActivityResultLauncher<String> requestPermissionLauncher;
-    private ItemizedIconOverlay<OverlayItem> currentLocationOverlay;
+    private Marker currentLocationMarker;
 
     @Nullable
     @Override
@@ -142,26 +143,19 @@ public class WasteMapFragment extends Fragment implements LocationListener {
     }
 
     private void addMarker(GeoPoint startPoint) {
-        OverlayItem locationMarker = new OverlayItem("Votre Position", "Vous êtes ici", startPoint);
-        locationMarker.setMarker(markerDrawable);
-        ArrayList<OverlayItem> items = new ArrayList<>();
-        items.add(locationMarker);
-        ItemizedIconOverlay<OverlayItem> newLocationOverlay = new ItemizedIconOverlay<>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-            @Override
-            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                return true;
-            }
+        Marker marker = new Marker(map);
+        marker.setPosition(startPoint);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
-            @Override
-            public boolean onItemLongPress(final int index, final OverlayItem item) {
-                return true;
-            }
-        }, requireContext());
-        if (currentLocationOverlay != null) {
-            map.getOverlays().remove(currentLocationOverlay);
+
+        marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
+        marker.setTitle(getString(R.string.votre_position));
+        if (currentLocationMarker != null) {
+            map.getOverlays().remove(currentLocationMarker);
         }
-        map.getOverlays().add(newLocationOverlay);
-        currentLocationOverlay = newLocationOverlay;
+        map.getOverlays().add(marker);
+        currentLocationMarker = marker;
+
         map.invalidate();
     }
 
@@ -170,7 +164,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
         for (Waste location : wastes) {
             GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
-            OverlayItem overlayItem = new OverlayItem(location.getAddress(), "Déchet ici", point);
+            OverlayItem overlayItem = new OverlayItem(location.getAddress(), getString(R.string.dechet_ici), point);
             overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), R.drawable.waste));
             items.add(overlayItem);
         }
@@ -197,10 +191,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         WasteDialogFragment wasteDialogFragment = new WasteDialogFragment();
 
         Bundle args = new Bundle();
-        args.putString("name", waste.getName());
-        args.putDouble("latitude", waste.getLatitude());
-        args.putDouble("longitude", waste.getLongitude());
-        args.putString("address", waste.getAddress());
+        args.putParcelable("waste", waste);
 
         wasteDialogFragment.setArguments(args);
 
@@ -229,7 +220,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
-        Toast.makeText(getContext(), "Veuillez activer la localisation", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.veuillez_activer_la_localisation), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -245,8 +236,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
             map.onResume();
             updateMapToCurrentLocation();
         } else {
-            // toast message to say that the location permission is needed
-            Toast.makeText(getContext(), "La localisation est nécessaire pour signaler le déchet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.la_localisation_est_necessaire), Toast.LENGTH_SHORT).show();
         }
     }
 

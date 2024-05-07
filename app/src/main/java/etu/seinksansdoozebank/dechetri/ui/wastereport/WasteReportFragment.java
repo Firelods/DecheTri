@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 
 import android.provider.MediaStore;
@@ -21,12 +23,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import etu.seinksansdoozebank.dechetri.R;
+import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteReportBinding;
 
 import android.Manifest;
 import etu.seinksansdoozebank.dechetri.R;
@@ -127,11 +132,10 @@ public class WasteReportFragment extends Fragment {
 
 
         //Lors de la validation on créé un déchet avec la photo et tous les autres paramètres nuls
-        view.findViewById(R.id.confirmButton).setOnClickListener(view1 -> {
+        view.findViewById(R.id.confirmButton).setOnClickListener(v -> {
             //TODO: changer la description du déchet
-            NavController navController= Navigation.findNavController(view);
-            navController.navigate(R.id.action_navigation_report_to_navigation_map);
-
+            NavController navController = Navigation.findNavController(view);
+            navController.navigate(R.id.action_navigation_report_to_navigation_location_choice);
         });
 
     }
