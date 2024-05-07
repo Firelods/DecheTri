@@ -149,7 +149,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
 
         marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
-        marker.setTitle("Votre position");
+        marker.setTitle(getString(R.string.votre_position));
         if (currentLocationMarker != null) {
             map.getOverlays().remove(currentLocationMarker);
         }
@@ -164,7 +164,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
         for (Waste location : wastes) {
             GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
-            OverlayItem overlayItem = new OverlayItem(location.getAddress(), "Déchet ici", point);
+            OverlayItem overlayItem = new OverlayItem(location.getAddress(), getString(R.string.dechet_ici), point);
             overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), R.drawable.waste));
             items.add(overlayItem);
         }
@@ -220,7 +220,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
-        Toast.makeText(getContext(), "Veuillez activer la localisation", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.veuillez_activer_la_localisation), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -236,7 +236,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
             map.onResume();
             updateMapToCurrentLocation();
         } else {
-            Toast.makeText(getContext(), "La localisation est nécessaire pour signaler le déchet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.la_localisation_est_necessaire), Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -61,8 +61,12 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 wasteName.setText(waste.getName());
                 wasteAddress.setText(waste.getAddress());
                 byte[] imageBytes = waste.getImageData();
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                wasteImage.setImageBitmap(bitmap);
+                if (imageBytes != null){
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                    wasteImage.setImageBitmap(bitmap);
+                } else {
+                    Log.e("WasteDialogFragment", "Given waste image is null");
+                }
             } else {
                 Log.e("WasteDialogFragment", "Given waste is null");
             }

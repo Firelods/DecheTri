@@ -51,4 +51,9 @@
     <string name="add_announcement_result_success">Annonce publiée avec succès</string>
     <string name="add_announcement_result_error">Erreur lors de la publication de l\'annonce</string>
     <string name="waste_image">Image du déchet</string>
+    <string name="votre_position">Votre position</string>
+    <string name="dechet_ici">Déchet ici</string>
+    <string name="veuillez_activer_la_localisation">Veuillez activer la localisation</string>
+    <string name="la_localisation_est_necessaire">La localisation est nécessaire pour signaler le déchet</string>
+    <string name="nouveau_dechet">Nouveau déchet</string>
 </resources>

@@ -3,7 +3,6 @@ package etu.seinksansdoozebank.dechetri.ui.wastereport;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -132,24 +131,7 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
         });
     }
 
-    private void addWasteMarker(GeoPoint startPoint) {
-        Marker marker = new Marker(map);
-        marker.setPosition(startPoint);
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-
-
-        marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.location));
-        marker.setTitle("Nouveau déchet");
-        if (currentWasteLocationMarker != null) {
-            map.getOverlays().remove(currentWasteLocationMarker);
-        }
-        map.getOverlays().add(marker);
-        currentWasteLocationMarker = marker;
-        validateButton.setEnabled(true);
-        map.invalidate();
-    }
-
-    private void addMarkerAtLocation(GeoPoint location) {
+    private void addMarker(GeoPoint location, int drawableId, String title, boolean isWasteMarker) {
         if (map == null || map.getRepository() == null) {
             Log.e(TAG, "MapView is not initialized");
             return;
@@ -158,18 +140,34 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
         marker.setPosition(location);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
-        marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
+        marker.setIcon(ContextCompat.getDrawable(requireContext(), drawableId));
+        marker.setTitle(title);
 
-        marker.setTitle("Votre localisation");
-
-        if (currentLocationMarker != null) {
-            map.getOverlays().remove(currentLocationMarker);
+        if (isWasteMarker) {
+            if (currentWasteLocationMarker != null) {
+                map.getOverlays().remove(currentWasteLocationMarker);
+            }
+            currentWasteLocationMarker = marker;
+            validateButton.setEnabled(true);
+        } else {
+            if (currentLocationMarker != null) {
+                map.getOverlays().remove(currentLocationMarker);
+            }
+            currentLocationMarker = marker;
         }
-        map.getOverlays().add(marker);
-        currentLocationMarker = marker;
 
+        map.getOverlays().add(marker);
         map.invalidate();
     }
+
+    private void addWasteMarker(GeoPoint startPoint) {
+        addMarker(startPoint, R.drawable.location, getString(R.string.nouveau_dechet), true);
+    }
+
+    private void addMarkerAtLocation(GeoPoint location) {
+        addMarker(location, R.drawable.my_location, getString(R.string.votre_position), false);
+    }
+
 
 
     @Override
@@ -198,7 +196,7 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
-        Toast.makeText(getContext(), "Veuillez activer la localisation", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.veuillez_activer_la_localisation), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -221,7 +219,7 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
             }
             updateMapToCurrentLocation();
         } else {
-            Toast.makeText(getContext(), "La localisation est nécessaire pour signaler le déchet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.la_localisation_est_necessaire), Toast.LENGTH_SHORT).show();
         }
     }
 
