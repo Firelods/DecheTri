@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -40,6 +42,7 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
     private static final String TAG = "LocationChoiceFragment";
     private IMapController mapController;
     private LocationManager locationManager;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
     private Marker currentLocationMarker;
     private Marker currentWasteLocationMarker;
     private Button validateButton;
@@ -63,19 +66,39 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
                 navController.navigate(R.id.action_navigation_location_choice_to_navigation_waste_detail_report, bundle);
             }
         });
-        Context ctx = getContext();
-        if (ctx != null) {
-            Configuration.getInstance().load(ctx, ctx.getSharedPreferences("osmdroid", Context.MODE_PRIVATE));
-            locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
-        }
+        initializeLocationManager();
 
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                Log.v(TAG, "Location permission granted");
+                setupMapView();
+                configureMapClick();
+                updateMapToCurrentLocation();
+            } else {
+                Log.v(TAG, "Location permission denied");
+            }
+        });
         setupMapView();
-        updateMapToCurrentLocation();
+        if (checkLocationPermission()) {
+            updateMapToCurrentLocation();
+        } else {
+            requestLocationPermission();
+        }
         configureMapClick();
 
         return view;
     }
 
+    private void initializeLocationManager() {
+        Context ctx = getContext();
+        if (ctx != null) {
+            Configuration.getInstance().load(ctx, ctx.getSharedPreferences("osmdroid", Context.MODE_PRIVATE));
+            locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
+        }
+    }
+    private void requestLocationPermission() {
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+    }
     private void setupMapView() {
         map = binding.mapView1;
         map.setTileSource(TileSourceFactory.MAPNIK);
