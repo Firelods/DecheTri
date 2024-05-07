@@ -61,7 +61,7 @@ public class FluxAdapter extends BaseAdapter {
 
         if (!announcementList.isEmpty()) {
             // (2) : Récupération des TextView de notre layout
-           // TextView appName = listItem.findViewById(R.id.flux_app_name);
+            // TextView appName = listItem.findViewById(R.id.flux_app_name);
             TextView title = listItem.findViewById(R.id.flux_title);
             TextView date = listItem.findViewById(R.id.flux_time);
             TextView description = listItem.findViewById(R.id.flux_description);
@@ -73,7 +73,9 @@ public class FluxAdapter extends BaseAdapter {
 
             if(announcement.getType() == AnnouncementType.EVENT) {
                 imageButtonCalendar.setVisibility(View.VISIBLE);
-                imageButtonCalendar.setOnClickListener(v -> ((FluxAdapterListener) activity).onClickCalendar(imageButtonCalendar, announcement));
+                imageButtonCalendar.setOnClickListener(v -> {
+                    ((FluxAdapterListener) activity).onClickCalendar(imageButtonCalendar, announcement);
+                });
             }else{
                 imageButtonCalendar.setVisibility(View.GONE);
             }

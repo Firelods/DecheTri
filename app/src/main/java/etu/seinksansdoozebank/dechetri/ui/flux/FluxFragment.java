@@ -29,9 +29,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.faltenreich.skeletonlayout.Skeleton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
@@ -54,18 +54,12 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     private static final String TAG = "512Bank";
     private FragmentFluxBinding binding;
     private FluxAdapter fluxAdapter;
-
     private Announcement item;
-
     private static final int PERMISSION_REQUEST_CALENDAR = 100;
-
     // Initialize as empty list
     private AnnouncementList announcementList;
-
     private Context context;
-
     private Calendar pickedDate;
-
     TextView et_date;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -79,7 +73,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         context = requireContext();
         binding = FragmentFluxBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        RecyclerView listViewFlux = binding.listViewFlux;
+        ListView listViewFlux = binding.listViewFlux;
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(announcementList::updateList);
         // Create an adapter
