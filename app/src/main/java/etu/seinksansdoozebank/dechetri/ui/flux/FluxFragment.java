@@ -75,7 +75,9 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         View root = binding.getRoot();
         ListView listViewFlux = binding.listViewFlux;
         swipeRefreshLayout = binding.swipeRefreshLayout;
+        swipeRefreshLayout.setRefreshing(true);
         swipeRefreshLayout.setOnRefreshListener(announcementList::updateList);
+
         // Create an adapter
         fluxAdapter = new FluxAdapter(this, announcementList);
         listViewFlux.setAdapter(fluxAdapter);
@@ -115,6 +117,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 Log.d(TAG + "FluxFragment", "onResponse: " + response);
                 requireActivity().runOnUiThread(() -> {
+                    swipeRefreshLayout.setRefreshing(true);
                     announcementList.updateList();
                     Toast.makeText(getContext(), R.string.remove_announcement_result_success, Toast.LENGTH_SHORT).show();
                 });
@@ -267,6 +270,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 if (response.isSuccessful()) {
                     requireActivity().runOnUiThread(() -> {
+                        swipeRefreshLayout.setRefreshing(true);
                         announcementList.updateList();
                         Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
                     });

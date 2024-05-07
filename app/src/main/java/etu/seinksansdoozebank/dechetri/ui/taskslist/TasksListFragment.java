@@ -37,6 +37,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
     private final List<Waste> wasteList = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTasksListBinding.inflate(inflater, container, false);
