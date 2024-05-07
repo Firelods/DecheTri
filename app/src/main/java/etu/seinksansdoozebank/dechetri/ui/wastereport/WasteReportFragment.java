@@ -19,6 +19,7 @@ import androidx.navigation.Navigation;
 
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteReportBinding;
@@ -38,6 +40,8 @@ import etu.seinksansdoozebank.dechetri.R;
 
 
 public class WasteReportFragment extends Fragment {
+
+    private static final String TAG = "emma";
     private static final int CAMERA_PERMISSION_CODE = 100 ;
     private static final int LIBRARY_PERMISSION_CODE =200 ;
     private ActivityResultLauncher<Intent> pickImageLauncher;
@@ -133,9 +137,10 @@ public class WasteReportFragment extends Fragment {
 
         //Lors de la validation on créé un déchet avec la photo et tous les autres paramètres nuls
         view.findViewById(R.id.confirmButton).setOnClickListener(v -> {
-            //TODO: changer la description du déchet
+            Bundle bundle=new Bundle();
+            bundle.putByteArray("image",chosenImage);
             NavController navController = Navigation.findNavController(view);
-            navController.navigate(R.id.action_navigation_report_to_navigation_location_choice);
+            navController.navigate(R.id.action_navigation_report_to_navigation_location_choice,bundle);
         });
 
     }
