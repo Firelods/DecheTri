@@ -59,7 +59,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     private static final int PERMISSION_REQUEST_CALENDAR = 100;
 
     // Initialize as empty list
-    private final AnnouncementList announcementList = new AnnouncementList();
+    private AnnouncementList announcementList;
 
     private Context context;
 
@@ -72,12 +72,12 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         // Required empty public constructor
     }
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         context = requireContext();
         binding = FragmentFluxBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
         ListView listViewFlux = binding.listViewFlux;
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(announcementList::updateList);
@@ -301,6 +301,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        announcementList = new AnnouncementList(requireActivity(), context);
         announcementList.addObserver(this);
     }
 
