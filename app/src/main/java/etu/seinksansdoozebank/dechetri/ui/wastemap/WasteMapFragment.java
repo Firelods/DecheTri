@@ -9,7 +9,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -47,7 +46,6 @@ public class WasteMapFragment extends Fragment implements LocationListener {
     private IMapController mapController;
     private static final String TAG = "WasteMapFragment";
     private LocationManager locationManager;
-    Drawable markerDrawable;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Marker currentLocationMarker;
 
@@ -85,7 +83,6 @@ public class WasteMapFragment extends Fragment implements LocationListener {
     private void initializeLocationManager() {
         Context ctx = getContext();
         if (ctx != null) {
-            markerDrawable = ContextCompat.getDrawable(ctx, R.drawable.my_location);
             Configuration.getInstance().load(ctx, ctx.getSharedPreferences("osmdroid", Context.MODE_PRIVATE));
             locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         }
