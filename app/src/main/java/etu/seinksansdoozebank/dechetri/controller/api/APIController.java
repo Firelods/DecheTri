@@ -2,6 +2,7 @@ package etu.seinksansdoozebank.dechetri.controller.api;
 
 import android.util.Log;
 
+
 import etu.seinksansdoozebank.dechetri.model.user.Role;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import okhttp3.Call;
@@ -103,7 +104,7 @@ public class APIController {
     /**
      * Mark a task as completed (PUT method)
      *
-     * @param idTask   String
+     * @param idWaste   String
      * @param callback Callback
      * @return Call
      * {
@@ -111,11 +112,11 @@ public class APIController {
      * }
      * @route /task/complete/{id-task}
      */
-    public static Call completeTask(String idTask, Callback callback) {
+    public static Call completeTask(String idWaste, Callback callback) {
         String json = "{\n" +
-                "  \"id-task\": \"" + idTask + "\"\n" +
+                "  \"id-task\": \"" + idWaste + "\"\n" +
                 "}";
-        return put("task/complete/" + idTask, json, callback);
+        return put("task/complete/" + idWaste, json, callback);
     }
 
     /**

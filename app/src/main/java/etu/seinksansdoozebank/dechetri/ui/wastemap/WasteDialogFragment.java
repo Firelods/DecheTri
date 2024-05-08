@@ -53,6 +53,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         TextView wasteAddress = view.findViewById(R.id.wasteAddress);
         TextView wasteName = view.findViewById(R.id.wasteName);
         Button buttonDelete = view.findViewById(R.id.btnDelete);
+        Button buttonConfirm = view.findViewById(R.id.btnConfirm);
         ImageView wasteImage = view.findViewById(R.id.wasteImage);
 
         if (getArguments() != null) {
@@ -71,21 +72,47 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 Log.e("WasteDialogFragment", "Given waste is null");
             }
         }
-        buttonItinary.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("QueryPermissionsNeeded")
-            @Override
-            public void onClick(View v) {
-                String address = waste.getAddress();
-                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Uri.encode(address));
-
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                startActivity(mapIntent);
-            }
-        });
 
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String defaultRole = getResources().getString(R.string.role_user_title); //user by default
         String role = sharedPreferences.getString(getString(R.string.shared_preferences_key_role), defaultRole);
+        if (role.equals(getResources().getString(R.string.role_manager_title)) || role.equals(getResources().getString(R.string.role_employee_title))) {
+            buttonItinary.setVisibility(View.VISIBLE);
+            buttonConfirm.setVisibility(View.VISIBLE);
+            buttonItinary.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("QueryPermissionsNeeded")
+                @Override
+                public void onClick(View v) {
+                    String address = waste.getAddress();
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Uri.encode(address));
+
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    startActivity(mapIntent);
+                }
+            });
+
+            buttonConfirm.setOnClickListener(v -> APIController.completeTask(waste.getId(), new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error completing task : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) {
+                    requireActivity().runOnUiThread(() -> {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(getContext(), "Task completed", Toast.LENGTH_SHORT).show();
+                            dismiss();
+                        } else {
+                            Toast.makeText(getContext(), "Error completing task : " + response.message(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }));
+        } else {
+            buttonItinary.setVisibility(View.GONE);
+            buttonConfirm.setVisibility(View.GONE);
+        }
         if (role.equals(getString(R.string.role_admin_title))) {
             this.configureDeleteButton(buttonDelete);
         } else {
