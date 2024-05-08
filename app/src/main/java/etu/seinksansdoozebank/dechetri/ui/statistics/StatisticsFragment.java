@@ -47,38 +47,63 @@ public class StatisticsFragment extends Fragment {
 
         binding = FragmentStatisticsBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        String[] colorString = {"#FE6DA8", "#56B7F1", "#CDA67F", "#FED70E", "#FE6DA8", "#56B7F1", "#CDA67F", "#FED70E"};
 
-        PieChart mPieChart = (PieChart) view.findViewById(R.id.piechart);
-        int newsAnnoucement = 0;
-        int eventAnnoucement = 0;
-
-        for (Announcement announcement : new AnnouncementList()) {
-            if (announcement.getType().equals(AnnouncementType.NEWS)) {
-                newsAnnoucement++;
-            } else {
-                eventAnnoucement++;
-            }
+        buildPieChart(view, colorString);
+        buildBarChart(view, colorString);
+        return view;
         }
 
 
-            String[] colorString = {"#FE6DA8", "#56B7F1", "#CDA67F", "#FED70E", "#FE6DA8", "#56B7F1", "#CDA67F", "#FED70E"};
+    /**
+     * Build a pie chart with all the annoucements created sorted by the type : news and events
+     * @param view
+     * @param colorString
+     */
+        public void buildPieChart(@NonNull View view, @NonNull String[] colorString){
+            PieChart mPieChart = (PieChart) view.findViewById(R.id.piechart);
+            int newsAnnoucement = 0;
+            int eventAnnoucement = 0;
+
+            for (Announcement announcement : new AnnouncementList()) {
+                if (announcement.getType().equals(AnnouncementType.NEWS)) {
+                    newsAnnoucement++;
+                } else {
+                    eventAnnoucement++;
+                }
+            }
+
             int[] stats = {newsAnnoucement, eventAnnoucement};
             for (AnnouncementType announcementType : AnnouncementType.values()) {
                 mPieChart.addPieSlice(new PieModel(announcementType.getName(), stats[announcementType.ordinal()], Color.parseColor(colorString[announcementType.ordinal()])));
             }
 
             mPieChart.startAnimation();
+        }
 
+    /**
+     * Build a bar chart with all the wastes created sorted by their date
+     * @param view
+     * @param colorString
+     */
+        public void buildBarChart(@NonNull View view, @NonNull String[] colorString){
             BarChart mBarChart = (BarChart) view.findViewById(R.id.barchart);
+
             int numberOfWasteThisDay=1;
             int colorChosen=0;
+
             WasteList wasteList = new WasteList();
+            //On trie la liste des déchets dans l'ordre croissant
             List<Waste> sortedList = wasteList.stream()
-                .sorted(Comparator.comparing(Waste::getReportDate))
-                .collect(Collectors.toList());
+                    .sorted(Comparator.comparing(Waste::getReportDate))
+                    .collect(Collectors.toList());
+
             Waste previous=sortedList.get(0);
-            int listSize=wasteList.size();
+            int listSize=sortedList.size();
+
             for (int i = 1; i < listSize; i++){
+
+                //Initialisation des dates pour les comparer
                 Calendar previousDate= Calendar.getInstance();
                 previousDate.setTime(previous.getReportDate());
                 int previousDay=previousDate.get(Calendar.DAY_OF_MONTH);
@@ -90,8 +115,10 @@ public class StatisticsFragment extends Fragment {
                 int currentMonth=currentDate.get(Calendar.MONTH);
                 int currentYear=currentDate.get(Calendar.YEAR);
 
+                //Formattage de la date en JJ/MM/AAAA pour affichage
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String dateFormatted = sdf.format(previous.getReportDate());
+
                 if(previousDay!=currentDay || previousMonth!=currentMonth || previousYear!=currentYear){
                     previous=sortedList.get(i);
                     mBarChart.addBar(new BarModel(""+dateFormatted, numberOfWasteThisDay, Color.parseColor(colorString[colorChosen++])));
@@ -105,10 +132,7 @@ public class StatisticsFragment extends Fragment {
             }
             mBarChart.startAnimation();
 
-            return view;
         }
-
-
 
     @Override
     public void onDestroyView() {
