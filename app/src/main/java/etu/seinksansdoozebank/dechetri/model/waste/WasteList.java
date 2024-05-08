@@ -25,7 +25,7 @@ public class WasteList extends ArrayList<Waste> {
                 WasteType.HAZARDOUS,
                 "Discarded paper wrapper from a snack.",
                 null, // Assuming no image data for this example
-                new Date(),
+                new Date(124, 4, 6),
                 "456 Elm St, City, Country",
                 43.5700324777817,
                 7.114682674407959,
@@ -38,7 +38,7 @@ public class WasteList extends ArrayList<Waste> {
                 WasteType.HOUSEHOLD,
                 "Broken glass bottle found in the park.",
                 null, // Assuming no image data for this example
-                new Date(),
+                new Date(124, 4, 7),
                 "789 Oak St, City, Country",
                 43.57135770627582,
                 7.116297721862793,

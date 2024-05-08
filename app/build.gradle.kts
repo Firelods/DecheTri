@@ -54,5 +54,8 @@ dependencies {
     implementation("org.osmdroid:osmdroid-android:6.1.14")
     implementation("com.github.MKergall:osmbonuspack:6.9.0")
     implementation("com.faltenreich:skeletonlayout:5.0.0")
+    implementation("com.github.blackfizz:eazegraph:1.2.2@aar")
+    implementation("com.nineoldandroids:library:2.4.0")
 
 }
+
