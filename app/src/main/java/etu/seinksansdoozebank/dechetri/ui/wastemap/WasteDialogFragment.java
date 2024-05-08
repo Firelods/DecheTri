@@ -91,29 +91,24 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 }
             });
 
-            buttonConfirm.setOnClickListener(new View.OnClickListener() {
+            buttonConfirm.setOnClickListener(v -> APIController.completeTask(waste.getId(), new Callback() {
                 @Override
-                public void onClick(View v) {
-                    APIController.completeTask(waste.getId(), new Callback() {
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error completing task : " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                        }
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error completing task : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                }
 
-                        @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) {
-                            requireActivity().runOnUiThread(() -> {
-                                if (response.isSuccessful()) {
-                                    Toast.makeText(getContext(), "Task completed", Toast.LENGTH_SHORT).show();
-                                    dismiss();
-                                } else {
-                                    Toast.makeText(getContext(), "Error completing task : " + response.message(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) {
+                    requireActivity().runOnUiThread(() -> {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(getContext(), "Task completed", Toast.LENGTH_SHORT).show();
+                            dismiss();
+                        } else {
+                            Toast.makeText(getContext(), "Error completing task : " + response.message(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
-            });
+            }));
         } else {
             buttonItinary.setVisibility(View.GONE);
             buttonConfirm.setVisibility(View.GONE);
