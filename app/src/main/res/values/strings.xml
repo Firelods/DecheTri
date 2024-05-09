@@ -29,7 +29,7 @@
     <string name="alert_disconnect_no">Rester connecté</string>
     <string name="alert_delete_title">Supprimer</string>
     <string name="alert_delete_message">Etes vous sur de vouloir supprimer ce message ?</string>
-    <string name="alert_delete_yes">Confirmer</string>
+    <string name="alert_delete_yes">Supprimer</string>
     <string name="alert_delete_no">Annuler</string>
 
     <!--    SharedPreferences -->
