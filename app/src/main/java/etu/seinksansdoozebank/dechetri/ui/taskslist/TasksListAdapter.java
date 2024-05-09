@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,7 @@ public class TasksListAdapter extends BaseAdapter {
         // (1) : Réutilisation des layouts
         listItem = convertView == null ? mInflater.inflate(R.layout.item_taskslist, parent, false) : convertView;
         listItem.setElevation(5);
+
         if (!taskList.isEmpty() && !wasteList.isEmpty()) {
             // (2) : Récupération des TextView de notre layout
             TextView title = listItem.findViewById(R.id.taskList_title);
