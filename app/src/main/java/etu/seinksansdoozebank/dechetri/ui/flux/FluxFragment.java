@@ -1,14 +1,15 @@
 package etu.seinksansdoozebank.dechetri.ui.flux;
 
-
 import static android.content.Context.MODE_PRIVATE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -26,12 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.faltenreich.skeletonlayout.Skeleton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
@@ -51,7 +50,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class FluxFragment extends Fragment implements FluxAdapterListener, AnnouncementListObserver {
-    private static final String TAG = "512Bank";
+    private final String TAG = "512Bank " + getClass().getSimpleName();
     private FragmentFluxBinding binding;
     private FluxAdapter fluxAdapter;
     private Announcement item;
@@ -104,25 +103,41 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
 
     @Override
     public void onClickBin(ImageButton bin, Announcement item) {
-        // remove item from list
-        APIController.deleteAnnouncement(item.getId(), new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                String message = e.getMessage();
-                Log.e("APIController", "Error while removing announcement : " + message);
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce : " + message, Toast.LENGTH_SHORT).show());
-            }
+        // (1) : Create a dialog
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.alert_delete_title)
+                .setMessage(R.string.alert_delete_message)
+                .setPositiveButton(R.string.alert_delete_yes, (dialog, which) -> {
+                    // (2) : Remove item from list
+                    APIController.deleteAnnouncement(item.getId(), new Callback() {
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                            String message = e.getMessage();
+                            Log.e(TAG, "Error while removing announcement : " + message);
+                            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce : " + message, Toast.LENGTH_SHORT).show());
+                        }
 
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) {
-                Log.d(TAG + "FluxFragment", "onResponse: " + response);
-                requireActivity().runOnUiThread(() -> {
-                    swipeRefreshLayout.setRefreshing(true);
-                    announcementList.updateList();
-                    Toast.makeText(getContext(), R.string.remove_announcement_result_success, Toast.LENGTH_SHORT).show();
-                });
-            }
-        });
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) {
+                            Log.d(TAG, "onResponse: " + response);
+                            requireActivity().runOnUiThread(() -> {
+                                swipeRefreshLayout.setRefreshing(true);
+                                announcementList.updateList();
+                                Toast.makeText(getContext(), R.string.remove_announcement_result_success, Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                })
+                .setNegativeButton(R.string.alert_delete_no, (dialog, which) -> {
+                    // (3) : Do nothing
+                })
+                .show();
+
+        Button buttonPositive = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        buttonPositive.setTextColor(getResources().getColor(R.color.orange_600, null));
+        Button buttonNegative = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        buttonNegative.setBackgroundColor(getResources().getColor(R.color.green_700, null));
+        buttonNegative.setTextColor(getResources().getColor(R.color.white_100, null));
     }
 
     @Override
