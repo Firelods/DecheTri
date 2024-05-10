@@ -8,6 +8,9 @@
     <string name="title_flux">Activités</string>
     <string name="title_map">Carte</string>
     <string name="title_report">Signalement</string>
+    <string name="title_photo">Photo</string>
+    <string name="title_location">Position</string>
+    <string name="title_details">Détails</string>
     <string name="title_stat">Statistiques</string>
     <string name="title_tasklist">Liste de tâches</string>
     <string name="title_disconnect">Se déconnecter</string>
