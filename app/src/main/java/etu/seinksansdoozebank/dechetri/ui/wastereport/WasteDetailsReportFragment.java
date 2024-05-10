@@ -1,6 +1,8 @@
 package etu.seinksansdoozebank.dechetri.ui.wastereport;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -44,6 +47,8 @@ public class WasteDetailsReportFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_waste_details_report, container, false);
         localisationInput = view.findViewById(R.id.LocalisationInput);
         TextView locationTextView = view.findViewById(R.id.locationText);
+
+        ImageView wasteImage=view.findViewById(R.id.imageChosen);
         Button previousButton = view.findViewById(R.id.PrecedentButton);
         skeleton = view.findViewById(R.id.skeletonLayout);
         skeleton.showSkeleton();
@@ -57,7 +62,11 @@ public class WasteDetailsReportFragment extends Fragment {
         }
         double latitude = getArguments().getDouble("latitude");
         double longitude = getArguments().getDouble("longitude");
+        byte[] chosenImage=getArguments().getByteArray("image");
+        Bitmap imageChosenBitmap = BitmapFactory.decodeByteArray(chosenImage, 0, chosenImage.length);
+        wasteImage.setImageBitmap(Bitmap.createScaledBitmap(imageChosenBitmap, 600, 600, false));
         locationTextView.setText("Lat : " + latitude + " Long : " + longitude);
+
         fetchAddress(latitude, longitude, new GeocodeCallback() {
             @Override
             public void onAddressFound(String address) {

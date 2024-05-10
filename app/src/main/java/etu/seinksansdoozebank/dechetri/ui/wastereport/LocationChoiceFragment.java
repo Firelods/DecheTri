@@ -1,5 +1,7 @@
 package etu.seinksansdoozebank.dechetri.ui.wastereport;
 
+import static android.content.Intent.getIntent;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -31,6 +33,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;
 
+import java.util.Arrays;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.R;
@@ -53,6 +56,10 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
         binding = FragmentLocationChoiceBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         validateButton = binding.validateButton;
+        if (getArguments() == null) {
+            Log.e("LocationChoiceFragment", "Arguments are null");
+        }
+        byte[] chosenImage = getArguments().getByteArray("image");
         // deactivate button if no location is selected
         validateButton.setEnabled(false);
         validateButton.setOnClickListener(v -> {
@@ -60,8 +67,10 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
                 GeoPoint location = currentWasteLocationMarker.getPosition();
                 Log.v(TAG, "Location selected: " + location);
                 Bundle bundle = new Bundle();
+
                 bundle.putDouble("latitude", location.getLatitude());
                 bundle.putDouble("longitude", location.getLongitude());
+                bundle.putByteArray("image",chosenImage);
                 NavController navController = Navigation.findNavController(view);
                 navController.navigate(R.id.action_navigation_location_choice_to_navigation_waste_detail_report, bundle);
             }
