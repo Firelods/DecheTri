@@ -2,7 +2,6 @@ package etu.seinksansdoozebank.dechetri.controller.api;
 
 import android.util.Log;
 
-import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.model.user.Role;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
@@ -28,7 +27,6 @@ public class APIController {
         Log.d(TAG + "APIController", "put: " + request);
         Call call = client.newCall(request);
         call.enqueue(callback);
-        Log.d(TAG + "APIController", "put: " + call);
         return call;
     }
 
@@ -41,7 +39,6 @@ public class APIController {
         Log.d(TAG + "APIController", "post: " + request);
         Call call = client.newCall(request);
         call.enqueue(callback);
-        Log.d(TAG + "APIController", "post: " + call);
         return call;
     }
 
@@ -53,7 +50,6 @@ public class APIController {
         Log.d(TAG + "APIController", "get: " + request);
         Call call = client.newCall(request);
         call.enqueue(callback);
-        Log.d(TAG + "APIController", "get: " + call);
         return call;
     }
 
@@ -77,7 +73,6 @@ public class APIController {
         Log.d(TAG + "APIController", "patch: " + request);
         Call call = client.newCall(request);
         call.enqueue(callback);
-        Log.d(TAG + "APIController", "patch: " + call);
         return call;
     }
 
@@ -85,7 +80,7 @@ public class APIController {
     /* task */
 
     /**
-     * Get all tasks (PUT method)
+     * Assign a task to an employee (PUT method)
      *
      * @param wasteId    String
      * @param employeeId String
@@ -107,9 +102,9 @@ public class APIController {
     }
 
     /**
-     * Mark a task as completed (PATCH method)
+     * Mark a task as completed (PUT method)
      *
-     * @param idTask   String
+     * @param idWaste   String
      * @param callback Callback
      * @return Call
      * {
@@ -117,11 +112,11 @@ public class APIController {
      * }
      * @route /task/complete/{id-task}
      */
-    public static Call completeTask(String idTask, Callback callback) {
+    public static Call completeTask(String idWaste, Callback callback) {
         String json = "{\n" +
-                "  \"id-task\": \"" + idTask + "\"\n" +
+                "  \"id-task\": \"" + idWaste + "\"\n" +
                 "}";
-        return post("task/complete/" + idTask, json, callback);
+        return put("task/complete/" + idWaste, json, callback);
     }
 
     /**
@@ -197,7 +192,7 @@ public class APIController {
     }
 
     /**
-     * Delete a waste by its id (DELETE method)
+     * Get all waste type (GET method)
      *
      * @param callback Callback
      * @return Call
@@ -221,29 +216,40 @@ public class APIController {
     /* Announcement */
 
     /**
-     * Get all announcement news (GET method)
+     * Create an announcement of type NEWS (POST method)
      *
      * @param callback Callback
      * @return Call
      * @route /announcement/news
      */
-    public static Call getAnnouncementNews(Callback callback) {
-        return get("announcement/news", callback);
+    public static Call createAnnouncementNews(String title, String description, Callback callback) {
+        String json = "{\n" +
+                "  \"title\": \"" + title + "\",\n" +
+                "  \"description\": \"" + description + "\"\n" +
+                "}";
+        Log.d(TAG + "APIController", json);
+        return post("announcement/news", json, callback);
     }
 
     /**
-     * Get all announcement events (GET method)
+     * Create an announcement of type EVENT (POST method)
      *
      * @param callback Callback
      * @return Call
      * @route /announcement/events
      */
-    public static Call getAnnouncementEvents(Callback callback) {
-        return get("announcement/events", callback);
+    public static Call createAnnouncementEvent(String title, String description, String eventDate, Callback callback) {
+        String json = "{\n" +
+                "  \"title\": \"" + title + "\",\n" +
+                "  \"description\": \"" + description + "\",\n" +
+                "  \"eventDate\": \"" + eventDate + "\"\n" +
+                "}";
+        Log.d(TAG + "APIController", json);
+        return post("announcement/event", json, callback);
     }
 
     /**
-     * Get all announcement news (GET method)
+     * Get all announcement (GET method)
      *
      * @param callback Callback
      * @return Call
@@ -260,12 +266,12 @@ public class APIController {
      * @return Call
      * @route /announcement/all
      */
-    public static Call getAnnouncement(Callback callback) {
+    public static Call getAllAnnouncement(Callback callback) {
         return get("announcement/all", callback);
     }
 
     /**
-     * Create an announcement (POST method)
+     * Delete an announcement by its id (DELETE method)
      *
      * @param idAnnouncement String
      * @param callback       Callback
@@ -279,7 +285,7 @@ public class APIController {
     /* User */
 
     /**
-     * Get all users (GET method)
+     * Get all user by role (GET method)
      *
      * @param role     Role
      * @param callback Callback
@@ -303,7 +309,7 @@ public class APIController {
     }
 
     /**
-     * Create a user (POST method)
+     * Get all roles (GET method)
      *
      * @param callback Callback
      * @return Call

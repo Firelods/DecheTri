@@ -1,23 +1,13 @@
 package etu.seinksansdoozebank.dechetri.model.task;
 
 public class Task {
-    private String id;
     private String idAssignee;
     private String idWasteToCollect;
     private boolean completed;
-    public Task(String id, String idAssignee, String idWasteToCollect) {
-        this.id = id;
+    public Task(String idAssignee, String idWasteToCollect) {
         this.idAssignee = idAssignee;
         this.idWasteToCollect = idWasteToCollect;
         this.completed = false;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getIdAssignee() {
@@ -42,5 +32,14 @@ public class Task {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "idAssignee='" + idAssignee + '\'' +
+                ", idWasteToCollect='" + idWasteToCollect + '\'' +
+                ", completed=" + completed +
+                '}';
     }
 }

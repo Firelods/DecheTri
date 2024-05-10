@@ -16,6 +16,8 @@ import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
+import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementType;
+
 
 public class FluxAdapter extends BaseAdapter {
 
@@ -55,14 +57,23 @@ public class FluxAdapter extends BaseAdapter {
 
         if (!announcementList.isEmpty()) {
             // (2) : Récupération des TextView de notre layout
-            TextView appName = listItem.findViewById(R.id.flux_app_name);
             TextView title = listItem.findViewById(R.id.flux_title);
             TextView date = listItem.findViewById(R.id.flux_time);
             TextView description = listItem.findViewById(R.id.flux_description);
             ImageButton imageButton = listItem.findViewById(R.id.flux_image_bin);
+            ImageButton imageButtonCalendar = listItem.findViewById(R.id.calendar);
 
             // (3) : Récupération de l'item courant
             Announcement announcement = announcementList.get(i);
+
+            if (announcement.getType() == AnnouncementType.EVENT) {
+                imageButtonCalendar.setVisibility(View.VISIBLE);
+                imageButtonCalendar.setOnClickListener(v -> {
+                    ((FluxAdapterListener) activity).onClickCalendar(imageButtonCalendar, announcement);
+                });
+            } else {
+                imageButtonCalendar.setVisibility(View.GONE);
+            }
 
             // (4) : Renseignement des valeurs
             title.setText(announcement.getTitle());
@@ -82,7 +93,6 @@ public class FluxAdapter extends BaseAdapter {
                 imageButton.setVisibility(View.GONE);
             }
         }
-
         return listItem;
     }
 }

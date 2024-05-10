@@ -21,6 +21,23 @@
         android:id="@+id/navigation_report"
         android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.WasteReportFragment"
         android:label="@string/title_report"
-        tools:layout="@layout/fragment_waste_report" />
-
+        tools:layout="@layout/fragment_waste_report" >
+        <action
+            android:id="@+id/action_navigation_report_to_navigation_location_choice"
+            app:destination="@id/navigation_location_choice" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_waste_detail_report"
+        android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.WasteDetailsReportFragment"
+        android:label="WasteDetailReport"
+        tools:layout="@layout/fragment_waste_details_report" />
+    <fragment
+        android:id="@+id/navigation_location_choice"
+        android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.LocationChoiceFragment"
+        android:label="LocationChoice"
+        tools:layout="@layout/fragment_location_choice" >
+        <action
+            android:id="@+id/action_navigation_location_choice_to_navigation_waste_detail_report"
+            app:destination="@id/navigation_waste_detail_report" />
+    </fragment>
 </navigation>
