@@ -54,6 +54,7 @@
     <string name="add_announcement_publish">Publier</string>
     <string name="add_announcement_cancel">Annuler</string>
     <string name="add_announcement_result_success">Annonce publiée avec succès</string>
+    <string name="remove_announcement_result_success">Annonce supprimée avec succès</string>
     <string name="add_announcement_result_error">Erreur lors de la publication de l\'annonce</string>
     <string name="waste_image">Image du déchet</string>
     <string name="votre_position">Votre position</string>
