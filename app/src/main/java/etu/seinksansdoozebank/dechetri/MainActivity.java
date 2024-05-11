@@ -76,7 +76,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.navigation_disconnect) {
+        if (item.getItemId() == android.R.id.home) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+            navController.navigateUp();
+            return true;
+        } else if (item.getItemId() == R.id.navigation_disconnect) {
             disconnect();
         }
         return super.onOptionsItemSelected(item);
