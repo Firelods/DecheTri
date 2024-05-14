@@ -83,8 +83,8 @@
         <ImageButton
             android:id="@+id/flux_image_bin"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="35dp"
+            android:layout_height="50dp"
             android:contentDescription="TODO"
             android:src="@drawable/baseline_delete_24" />
     </LinearLayout>

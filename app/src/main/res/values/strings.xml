@@ -34,6 +34,10 @@
     <string name="alert_disconnect_message">Voulez-vous vraiment vous déconnecter ?</string>
     <string name="alert_disconnect_yes">Se déconnecter</string>
     <string name="alert_disconnect_no">Rester connecté</string>
+    <string name="alert_delete_title">Supprimer</string>
+    <string name="alert_delete_message">Etes vous sur de vouloir supprimer ce message ?</string>
+    <string name="alert_delete_yes">Supprimer</string>
+    <string name="alert_delete_no">Conserver</string>
 
     <!--    SharedPreferences -->
     <string name="shared_preferences_file_key">shared_preferences</string>
@@ -54,6 +58,7 @@
     <string name="add_announcement_publish">Publier</string>
     <string name="add_announcement_cancel">Annuler</string>
     <string name="add_announcement_result_success">Annonce publiée avec succès</string>
+    <string name="remove_announcement_result_success">Annonce supprimée avec succès</string>
     <string name="add_announcement_result_error">Erreur lors de la publication de l\'annonce</string>
     <string name="waste_image">Image du déchet</string>
     <string name="votre_position">Votre position</string>

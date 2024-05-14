@@ -4,16 +4,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.Objects;
 
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         navView.setOnItemSelectedListener(item -> {
-            getSupportActionBar().setTitle(item.getTitle());
+            Objects.requireNonNull(getSupportActionBar()).setTitle(item.getTitle());
             return true;
         });
         navView.setSelectedItemId(navView.getMenu().getItem(0).getItemId());
@@ -76,17 +76,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.navigation_disconnect) {
-            AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.alert_disconnect_title)
-                    .setMessage(R.string.alert_disconnect_message)
-                    .setPositiveButton(R.string.alert_disconnect_yes, (dialog, which) -> disconnect())
-                    .setNegativeButton(R.string.alert_disconnect_no, null).create();
-            alertDialog.show();
-            Button buttonPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            buttonPositive.setTextColor(getResources().getColor(R.color.orange_600, null));
-            Button buttonNegative = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            buttonNegative.setBackgroundColor(getResources().getColor(R.color.green_700, null));
-            buttonNegative.setTextColor(getResources().getColor(R.color.white_100, null));
+            disconnect();
         }
         return super.onOptionsItemSelected(item);
     }

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentStatisticsBinding;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementList;
+import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementListObserver;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementType;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
@@ -40,6 +42,9 @@ import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
 public class StatisticsFragment extends Fragment {
 
     private FragmentStatisticsBinding binding;
+    private String TAG="emma";
+    private AnnouncementList announcementList;
+    private List<AnnouncementListObserver> observers;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -64,7 +69,9 @@ public class StatisticsFragment extends Fragment {
             int newsAnnoucement = 0;
             int eventAnnoucement = 0;
 
-            for (Announcement announcement : new AnnouncementList()) {
+            announcementList = new AnnouncementList(requireActivity(),getContext());
+            Log.d(TAG, "buildPieChart: "    + announcementList);
+            for (Announcement announcement :announcementList) {
                 if (announcement.getType().equals(AnnouncementType.NEWS)) {
                     newsAnnoucement++;
                 } else {
@@ -92,6 +99,7 @@ public class StatisticsFragment extends Fragment {
             int colorChosen=0;
 
             WasteList wasteList = new WasteList();
+            Log.d(TAG, "buildBarChart: "+wasteList);
             //On trie la liste des déchets dans l'ordre croissant
             List<Waste> sortedList = wasteList.stream()
                     .sorted(Comparator.comparing(Waste::getReportDate))
@@ -137,5 +145,22 @@ public class StatisticsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+
+
+
+    public void addObserver(AnnouncementListObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(AnnouncementListObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers() {
+        for (AnnouncementListObserver observer : observers) {
+            observer.onAnnouncementListChanged();
+        }
     }
 }

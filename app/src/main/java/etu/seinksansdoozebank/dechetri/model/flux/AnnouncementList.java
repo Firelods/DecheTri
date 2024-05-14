@@ -1,20 +1,98 @@
 package etu.seinksansdoozebank.dechetri.model.flux;
 
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import etu.seinksansdoozebank.dechetri.controller.api.APIController;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class AnnouncementList extends ArrayList<Announcement> {
+    private static final String TAG = "512Bank";
+    private final List<AnnouncementListObserver> observers = new ArrayList<>();
+    private final FragmentActivity activity;
+    private final Context context;
 
-    public AnnouncementList() {
+    public AnnouncementList(FragmentActivity activity, Context context) {
         super();
-        this.add(new Announcement("0","Collecte de déchets", "Collecte de déchets le 12/12/2020 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", AnnouncementType.NEWS, new Date()));
-        this.add(new Announcement("1","Collecte de déchets", "Collecte de déchets le 12/12/2020", AnnouncementType.NEWS, new Date()));
-        this.add(new Announcement("2","Collecte de déchets", "Collecte de déchets le 12/12/2020", AnnouncementType.NEWS, new Date()));
-        this.add(new Announcement("3","Collecte de déchets", "Collecte de déchets le 12/12/2020", AnnouncementType.NEWS, new Date()));
-        this.add(new Announcement("4","Collecte de déchets", "Collecte de déchets le 12/12/2020", AnnouncementType.NEWS, new Date()));
-        this.add(new Announcement("5","Event", "Event le 12/12/2020", AnnouncementType.EVENT, new Date()));
-        this.add(new Announcement("6","Event", "Event le 12/12/2020", AnnouncementType.EVENT, new Date()));
-        this.add(new Announcement("7","Event", "Event le 12/12/2020", AnnouncementType.EVENT, new Date()));
-        this.add(new Announcement("8","Event", "Event le 12/12/2020", AnnouncementType.EVENT, new Date()));
+        this.context = context;
+        this.activity = activity;
+        this.init();
+    }
+
+    private void init() {
+        APIController.getAllAnnouncement(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                String message = e.getMessage();
+                Log.e("APIController", "Error while getting announcement : " + message);
+                activity.runOnUiThread(() -> Toast.makeText(context, "Erreur lors de la récupération des annonces : " + message, Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    activity.runOnUiThread(() -> Toast.makeText(context, "Erreur lors de la récupération des annonces", Toast.LENGTH_SHORT).show());
+                    return;
+                }
+                String json = response.body().string();
+                Log.d(TAG + "AnnouncementList", "onResponse: " + json);
+                Gson gson = new Gson();
+                Announcement[] announcements = gson.fromJson(json, Announcement[].class);
+                if (announcements != null) {
+                    AnnouncementList.this.addAll(Arrays.asList(announcements));
+                }
+            }
+        });
+    }
+
+    public void updateList() {
+        this.clear();
+        this.init();
+    }
+
+    public void addObserver(AnnouncementListObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(AnnouncementListObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers() {
+        for (AnnouncementListObserver observer : observers) {
+            observer.onAnnouncementListChanged();
+        }
+    }
+
+    @Override
+    public boolean add(Announcement announcement) {
+        boolean result = super.add(announcement);
+        if (result) {
+            notifyObservers();
+        }
+        return result;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends Announcement> c) {
+        boolean result = super.addAll(c);
+        if (result) {
+            notifyObservers();
+        }
+        return result;
     }
 }
