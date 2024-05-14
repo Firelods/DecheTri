@@ -59,7 +59,11 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     private AnnouncementList announcementList;
     private Context context;
     private Calendar pickedDate;
-    TextView et_date;
+    TextView tv_date_label;
+    TextView tv_date;
+    EditText et_title;
+    EditText et_description;
+    Button btn_add_date;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public FluxFragment() {
@@ -213,29 +217,23 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                 .setNegativeButton(R.string.add_announcement_cancel, null).create();
         alertDialog.create();
         alertDialog.show();
-        Button btn_add_date = alertDialog.findViewById(R.id.btn_add_date);
-        et_date = alertDialog.findViewById(R.id.tv_date);
-        assert et_date != null;
-        et_date.setOnTouchListener((v, event) -> {
+        btn_add_date = alertDialog.findViewById(R.id.btn_add_date);
+        tv_date = alertDialog.findViewById(R.id.et_date);
+        assert tv_date != null;
+        tv_date.setOnTouchListener((v, event) -> {
             if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                 showDateTimePicker();
             }
             return true;
         });
-        TextView tv_date_label = alertDialog.findViewById(R.id.tv_date_label);
+        tv_date_label = alertDialog.findViewById(R.id.tv_date_label);
         if (btn_add_date != null) {
             btn_add_date.setOnClickListener(v1 -> {
-                if (tv_date_label != null && et_date != null) {
+                if (tv_date_label != null && tv_date != null) {
                     if (tv_date_label.getVisibility() == View.GONE) {
                         showDateTimePicker();
-                        tv_date_label.setVisibility(View.VISIBLE);
-                        et_date.setVisibility(View.VISIBLE);
-                        btn_add_date.setText(R.string.remove_date_text);
                     } else {
-                        tv_date_label.setVisibility(View.GONE);
-                        et_date.setVisibility(View.GONE);
-                        btn_add_date.setText(R.string.add_date_text);
-                        pickedDate = null;
+                        changeDateInfoVisibility(false);
                     }
                 }
             });
@@ -244,11 +242,11 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         }
         Button buttonPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
         buttonPositive.setOnClickListener(v -> {
-            EditText et_title = alertDialog.findViewById(R.id.etxt_title);
-            EditText et_description = alertDialog.findViewById(R.id.etxt_description);
+            et_title = alertDialog.findViewById(R.id.etxt_title);
+            et_description = alertDialog.findViewById(R.id.etxt_description);
             String title;
             String description;
-            if (et_title != null && et_description != null && et_date != null) {
+            if (et_title != null && et_description != null && tv_date != null) {
                 title = et_title.getText().toString();
                 description = et_description.getText().toString();
                 publishAnnouncement(title, description, pickedDate);
@@ -259,6 +257,19 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         buttonPositive.setTextColor(getResources().getColor(R.color.white_100, null));
     }
 
+    private void changeDateInfoVisibility(boolean visible) {
+        if (visible) {
+            tv_date_label.setVisibility(View.VISIBLE);
+            tv_date.setVisibility(View.VISIBLE);
+            btn_add_date.setText(R.string.remove_date_text);
+        } else {
+            btn_add_date.setText(R.string.add_date_text);
+            tv_date_label.setVisibility(View.GONE);
+            tv_date.setVisibility(View.GONE);
+            pickedDate = null;
+        }
+    }
+
     public void showDateTimePicker() {
         final Calendar currentDate = Calendar.getInstance();
         pickedDate = Calendar.getInstance();
@@ -267,7 +278,8 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
             new TimePickerDialog(context, (view1, hourOfDay, minute) -> {
                 pickedDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 pickedDate.set(Calendar.MINUTE, minute);
-                et_date.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US).format(pickedDate.getTime()));
+                changeDateInfoVisibility(true);
+                tv_date.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US).format(pickedDate.getTime()));
             }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
     }
