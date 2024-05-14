@@ -18,12 +18,13 @@ import java.util.List;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementListObserver;
+import etu.seinksansdoozebank.dechetri.model.observable.Observable;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 
-public class WasteList extends ArrayList<Waste> {
+public class WasteList extends ArrayList<Waste> implements Observable<WasteListObservers>{
     private static final String TAG = "512Bank";
     private final List<WasteListObservers   > observers = new ArrayList<>();
 
@@ -66,8 +67,8 @@ public class WasteList extends ArrayList<Waste> {
     public void removeObserver(WasteListObservers observer) {
         observers.remove(observer);
     }
-
-    private void notifyObservers() {
+    @Override
+    public void notifyObservers() {
         for (WasteListObservers observer : observers) {
             observer.onWasteListChanged();
         }
