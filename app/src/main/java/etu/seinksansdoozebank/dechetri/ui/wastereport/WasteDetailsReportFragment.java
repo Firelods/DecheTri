@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,15 +49,13 @@ public class WasteDetailsReportFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_waste_details_report, container, false);
         localisationInput = view.findViewById(R.id.LocalisationInput);
         TextView locationTextView = view.findViewById(R.id.locationText);
-
+        Button validateButton = view.findViewById(R.id.ValidateButton);
+        TextView nameInput = view.findViewById(R.id.NameInput);
+        TextView descriptionInput = view.findViewById(R.id.DescriptionInput);
         ImageView wasteImage=view.findViewById(R.id.imageChosen);
-        Button previousButton = view.findViewById(R.id.PrecedentButton);
         skeleton = view.findViewById(R.id.skeletonLayout);
         skeleton.showSkeleton();
 
-        previousButton.setOnClickListener(v -> {
-            requireActivity().onBackPressed();// TODO: Demander au prof pour l'UX du bouton précédent
-        });
         if (getArguments() == null) {
             Log.e("WasteDetailsReportFragment", "Arguments are null");
             return view;
@@ -84,6 +84,30 @@ public class WasteDetailsReportFragment extends Fragment {
             }
         });
 
+        // Listener pour vérifier les changements de texte
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                validateButton.setEnabled(
+                        !nameInput.getText().toString().trim().isEmpty() &&
+                                !descriptionInput.getText().toString().trim().isEmpty() &&
+                                !localisationInput.getText().toString().trim().isEmpty()
+                );
+            }
+
+        };
+
+        nameInput.addTextChangedListener(textWatcher);
+        descriptionInput.addTextChangedListener(textWatcher);
+        localisationInput.addTextChangedListener(textWatcher);
         return view;
     }
 

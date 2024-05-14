@@ -69,4 +69,13 @@
     <string name="veuillez_activer_la_localisation">Veuillez activer la localisation</string>
     <string name="la_localisation_est_necessaire">La localisation est nécessaire pour signaler le déchet</string>
     <string name="nouveau_dechet">Nouveau déchet</string>
+    <string name="envoyer_le_signalement">Envoyer le signalement</string>
+    <string name="image_du_d_chet">Image du déchet</string>
+    <string name="lat_long">Lat : , Long :</string>
+    <string name="saisir_la_localisation">Saisir la localisation...</string>
+    <string name="localisation">Localisation</string>
+    <string name="saisir_une_description">Saisir une description...</string>
+    <string name="description">Description</string>
+    <string name="saisir_le_nom">Saisir le nom ...</string>
+    <string name="identification_du_d_chet">Identification du déchet</string>
 </resources>
