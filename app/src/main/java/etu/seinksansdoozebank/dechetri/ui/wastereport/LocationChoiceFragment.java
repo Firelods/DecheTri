@@ -261,6 +261,8 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
         if (locationManager != null) {
             locationManager.removeUpdates(this);
         }
-        map.onDetach();
+        if (map != null) {
+            map.onDetach();
+        }
     }
 }
