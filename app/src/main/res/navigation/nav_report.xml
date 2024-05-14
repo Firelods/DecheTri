@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_report"
+    android:label="@string/title_report"
+    app:startDestination="@id/navigation_photo">
+    <fragment
+        android:id="@+id/navigation_location_choice"
+        android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.LocationChoiceFragment"
+        tools:layout="@layout/fragment_location_choice"
+        android:label="@string/title_location">
+        <action
+            android:id="@+id/action_navigation_location_choice_to_navigation_waste_detail_report"
+            app:destination="@id/navigation_waste_detail_report" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_waste_detail_report"
+        android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.WasteDetailsReportFragment"
+        tools:layout="@layout/fragment_waste_details_report"
+        android:label="@string/title_details" />
+    <fragment
+        android:id="@+id/navigation_photo"
+        android:name="etu.seinksansdoozebank.dechetri.ui.wastereport.WasteReportFragment"
+        tools:layout="@layout/fragment_waste_report"
+        android:label="@string/title_photo">
+        <action
+            android:id="@+id/action_navigation_report_to_navigation_location_choice"
+            app:destination="@id/navigation_location_choice" />
+    </fragment>
+
+</navigation>

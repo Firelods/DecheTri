@@ -9,62 +9,63 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "512Bank";
-
-    private ActivityMainBinding binding;
-
-    private BottomNavigationView navView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        navView = findViewById(R.id.nav_view);
+        configNavigation();
+    }
+
+    public void configNavigation() {
+        BottomNavigationView bottomNavView = findViewById(R.id.nav_view);
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String defaultRole = getResources().getString(R.string.role_user_title); //user by default
         String role = sharedPreferences.getString(getString(R.string.shared_preferences_key_role), defaultRole);
-
-        navView.getMenu().clear(); //user menu by default
-        navView.inflateMenu(R.menu.menu_item_flux);
-        navView.inflateMenu(R.menu.menu_item_map);
-        navView.inflateMenu(R.menu.menu_item_report);
+//
+        bottomNavView.getMenu().clear(); //user menu by default
+        bottomNavView.inflateMenu(R.menu.menu_item_flux);
+        bottomNavView.inflateMenu(R.menu.menu_item_map);
+        bottomNavView.inflateMenu(R.menu.menu_item_report);
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
 
         if (role.equals(getString(R.string.role_admin_title))) {
-            navView.inflateMenu(R.menu.menu_item_statistics);
-            navController.setGraph(R.navigation.mobile_navigation_admin);
+            bottomNavView.inflateMenu(R.menu.menu_item_statistics);
+            navController.setGraph(R.navigation.nav_admin);
         } else if (role.equals(getString(R.string.role_user_title))) {
-            navController.setGraph(R.navigation.mobile_navigation_user);
+            navController.setGraph(R.navigation.nav_user);
         } else if (role.equals(getString(R.string.role_manager_title))) {
-            navView.inflateMenu(R.menu.menu_item_task_list);
-            navView.inflateMenu(R.menu.menu_item_statistics);
-            navView.setSelectedItemId(R.id.navigation_taskList);
-            navController.setGraph(R.navigation.mobile_navigation_manager);
+            bottomNavView.inflateMenu(R.menu.menu_item_task_list);
+            bottomNavView.inflateMenu(R.menu.menu_item_statistics);
+            navController.setGraph(R.navigation.nav_manager);
         } else if (role.equals(getString(R.string.role_employee_title))) {
-            navView.inflateMenu(R.menu.menu_item_task_list);
-            navController.setGraph(R.navigation.mobile_navigation_employee);
+            bottomNavView.inflateMenu(R.menu.menu_item_task_list);
+            navController.setGraph(R.navigation.nav_employee);
         }
 
-        navView.setOnItemSelectedListener(item -> {
-            Objects.requireNonNull(getSupportActionBar()).setTitle(item.getTitle());
-            return true;
-        });
-        navView.setSelectedItemId(navView.getMenu().getItem(0).getItemId());
-        NavigationUI.setupWithNavController(binding.navView, navController);
+        NavigationUI.setupWithNavController(bottomNavView, navController);
+        List<Integer> menuIds = new ArrayList<>();
+        for (int i = 0; i < bottomNavView.getMenu().size(); i++) {
+            menuIds.add(bottomNavView.getMenu().getItem(i).getItemId());
+        }
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(menuIds.stream().mapToInt(i -> i).toArray()).build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
     }
 
     @Override
@@ -75,7 +76,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.navigation_disconnect) {
+        if (item.getItemId() == android.R.id.home) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+            navController.navigateUp();
+            return true;
+        } else if (item.getItemId() == R.id.navigation_disconnect) {
             disconnect();
         }
         return super.onOptionsItemSelected(item);
