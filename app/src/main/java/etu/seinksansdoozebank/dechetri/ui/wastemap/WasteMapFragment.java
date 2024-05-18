@@ -1,11 +1,5 @@
 package etu.seinksansdoozebank.dechetri.ui.wastemap;
 
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.activity.result.ActivityResultLauncher;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -13,15 +7,20 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -34,26 +33,34 @@ import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteListObservable;
 
-public class WasteMapFragment extends Fragment implements LocationListener {
+public class WasteMapFragment extends Fragment implements LocationListener, WasteListObservable {
     private FragmentWasteMapBinding binding;
+    private WasteList wasteList;
     private MapView map;
     private IMapController mapController;
     private static final String TAG = "WasteMapFragment";
     private LocationManager locationManager;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Marker currentLocationMarker;
+    private final List<OverlayItem> items = new ArrayList<>();
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentWasteMapBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        swipeRefreshLayout = binding.swipeRefreshLayout;
+        swipeRefreshLayout.setRefreshing(true);
 
         initializeLocationManager();
 
@@ -62,7 +69,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
                 Log.v(TAG, "Location permission granted");
                 setupMapView();
                 updateMapToCurrentLocation();
-                WasteList wasteList = new WasteList();
+                wasteList = new WasteList();
                 addWastePointsOnMap(wasteList);
             } else {
                 Log.v(TAG, "Location permission denied");
@@ -71,11 +78,18 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         setupMapView();
         if (checkLocationPermission()) {
             updateMapToCurrentLocation();
-            WasteList wasteList = new WasteList();
+            wasteList = new WasteList();
             addWastePointsOnMap(wasteList);
         } else {
             requestLocationPermission();
         }
+
+        view.findViewById(R.id.btn_refresh_waste_point).setOnClickListener(v -> {
+            // Set to the swipeRefreshLayout view the elevetion of 5
+            swipeRefreshLayout.setElevation(5);
+            swipeRefreshLayout.setRefreshing(true);
+            wasteList = new WasteList();
+        });
 
         return view;
     }
@@ -144,7 +158,6 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         marker.setPosition(startPoint);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
-
         marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.my_location));
         marker.setTitle(getString(R.string.votre_position));
         if (currentLocationMarker != null) {
@@ -157,16 +170,31 @@ public class WasteMapFragment extends Fragment implements LocationListener {
     }
 
     public void addWastePointsOnMap(List<Waste> wastes) {
-        ArrayList<OverlayItem> items = new ArrayList<>();
+        Log.d(TAG, "addWastePointsOnMap: ");
+        if (wastes == null) {
+            return;
+        }
+        // Create a set to store the points of the new wastes
+        Set<GeoPoint> newWastePoints = wastes.stream()
+                .map(location -> new GeoPoint(location.getLatitude(), location.getLongitude()))
+                .collect(Collectors.toSet());
 
+        // Remove items that no longer exist in the updated list
+        items.removeIf(item -> !newWastePoints.contains(item.getPoint()));
+
+        // Add new items
         for (Waste location : wastes) {
             GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
-            OverlayItem overlayItem = new OverlayItem(location.getAddress(), getString(R.string.dechet_ici), point);
-            overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), R.drawable.waste));
-            items.add(overlayItem);
+            if (items.stream().noneMatch(overlayItem -> overlayItem.getPoint().equals(point))) {
+                OverlayItem overlayItem = new OverlayItem(location.getAddress(), getString(R.string.dechet_ici), point);
+                overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), R.drawable.waste));
+                items.add(overlayItem);
+            }
         }
 
-        ItemizedIconOverlay<OverlayItem> wasteOverlay = new ItemizedIconOverlay<>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+        // Clear and re-add the overlay to refresh the map
+        map.getOverlays().clear();
+        map.getOverlays().add(new ItemizedIconOverlay<>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
             @Override
             public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
                 showWasteDetails(wastes.get(index));
@@ -178,11 +206,10 @@ public class WasteMapFragment extends Fragment implements LocationListener {
                 // Gestion du long press, si nécessaire
                 return true;
             }
-        }, requireContext());
-
-        map.getOverlays().add(wasteOverlay);
+        }, requireContext()));
         map.invalidate(); // Rafraîchit la carte pour afficher les nouveaux éléments
     }
+
 
     public void showWasteDetails(Waste waste) {
         WasteDialogFragment wasteDialogFragment = new WasteDialogFragment();
@@ -197,6 +224,7 @@ public class WasteMapFragment extends Fragment implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        swipeRefreshLayout.setRefreshing(false);
         addMarker(new GeoPoint(location.getLatitude(), location.getLongitude()));
     }
 
@@ -235,6 +263,8 @@ public class WasteMapFragment extends Fragment implements LocationListener {
         } else {
             Toast.makeText(getContext(), getString(R.string.la_localisation_est_necessaire), Toast.LENGTH_SHORT).show();
         }
+        wasteList = new WasteList();
+        wasteList.addObserver(this);
     }
 
     @Override
@@ -244,5 +274,20 @@ public class WasteMapFragment extends Fragment implements LocationListener {
             locationManager.removeUpdates(this);
         }
         map.onDetach();
+        wasteList.removeObserver(this);
     }
+
+    @Override
+    public void onWasteListChanged() {
+        requireActivity().runOnUiThread(() -> {
+            Log.d(TAG, "onWasteListChanged: ");
+            swipeRefreshLayout.setRefreshing(false);
+            addWastePointsOnMap(wasteList);
+        });
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
 }
