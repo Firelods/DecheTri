@@ -62,6 +62,9 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setRefreshing(true);
 
+        // on scroll down disable swipeRefresh
+        swipeRefreshLayout.setOnChildScrollUpCallback((parent, child) -> true);
+
         initializeLocationManager();
 
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
