@@ -27,16 +27,16 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_add_announcement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/green_700"
-        android:contentDescription="@string/bn_add_annoucement"
-        android:src="@drawable/baseline_add_24"
-        app:layout_anchorGravity="bottom|end"
-        app:layout_anchor="@id/swipeRefreshLayout" />
+    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+    <!--        android:id="@+id/btn_add_announcement"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_gravity="end|bottom"-->
+    <!--        android:layout_margin="16dp"-->
+    <!--        android:backgroundTint="@color/green_700"-->
+    <!--        android:contentDescription="@string/bn_add_annoucement"-->
+    <!--        android:src="@drawable/baseline_add_32"-->
+    <!--        app:layout_anchorGravity="bottom|end"-->
+    <!--        app:layout_anchor="@id/swipeRefreshLayout" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

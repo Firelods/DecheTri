@@ -7,4 +7,10 @@
         android:title="@string/title_disconnect"
         />
 
+    <item
+        android:id="@+id/add_announcement"
+        android:icon="@drawable/baseline_add_circle_outline"
+        android:title="@string/add_announcement_title"
+        app:showAsAction="always" />
+
 </menu>

@@ -72,17 +72,6 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         // Create an adapter
         fluxAdapter = new FluxAdapter(this, announcementList);
         listViewFlux.setAdapter(fluxAdapter);
-
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(requireContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
-        String role = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_role), requireContext().getResources().getString(R.string.role_user_title));
-
-        FloatingActionButton btn_add_announcement = root.findViewById(R.id.btn_add_announcement);
-        if (role.equals(requireContext().getString(R.string.role_admin_title))) {
-            btn_add_announcement.setVisibility(View.VISIBLE);
-            btn_add_announcement.setOnClickListener(v -> showNewAnnouncementDialog());
-        } else {
-            btn_add_announcement.setVisibility(View.GONE);
-        }
         return root;
     }
 

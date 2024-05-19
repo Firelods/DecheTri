@@ -21,6 +21,8 @@ import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
+    private MenuItem addAnnouncementMenuItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
         bottomNavView.inflateMenu(R.menu.menu_item_report);
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (addAnnouncementMenuItem != null) {
+                if (destination.getId() == R.id.navigation_flux) {
+                    addAnnouncementMenuItem.setVisible(true);
+                } else {
+                    addAnnouncementMenuItem.setVisible(false);
+                }
+            }
+        });
 
         if (role.equals(getString(R.string.role_admin_title))) {
             bottomNavView.inflateMenu(R.menu.menu_item_statistics);
@@ -71,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        addAnnouncementMenuItem = menu.findItem(R.id.add_announcement);
         return super.onCreateOptionsMenu(menu);
     }
 
