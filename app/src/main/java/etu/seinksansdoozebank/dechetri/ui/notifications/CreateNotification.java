@@ -1,10 +1,13 @@
 package etu.seinksansdoozebank.dechetri.ui.notifications;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -14,6 +17,7 @@ import etu.seinksansdoozebank.dechetri.R;
 
 public class CreateNotification implements INotification {
     private int notificationId = 0;
+    private static final long NOTIFICATION_DURATION = 5000;
 
     @Override
     public void sendNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
@@ -36,9 +40,15 @@ public class CreateNotification implements INotification {
                             .setAutoCancel(true);
 
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                    notificationManager.notify(++notificationId, builder.build());
+                    int currentNotificationId = notificationId;
+                    notificationManager.notify(currentNotificationId, builder.build());
+
+                    // Remove the notification after a certain duration
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.postDelayed(() -> notificationManager.cancel(currentNotificationId), NOTIFICATION_DURATION);
+                    notificationId++;
                 } catch (SecurityException e) {
-                    Toast.makeText(context, R.string.send_notification_error, Toast.LENGTH_SHORT).show();
+                    // Handle security exception
                     e.printStackTrace();
                 }
             }
@@ -49,4 +59,5 @@ public class CreateNotification implements INotification {
             }
         });
     }
+
 }
