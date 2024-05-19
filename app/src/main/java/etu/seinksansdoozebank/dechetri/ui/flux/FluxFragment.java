@@ -6,6 +6,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Notification;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -45,6 +46,9 @@ import etu.seinksansdoozebank.dechetri.databinding.FragmentFluxBinding;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementList;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementListObserver;
+import etu.seinksansdoozebank.dechetri.ui.notifications.INotification;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationFactory;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationType;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -103,18 +107,19 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
 
     @Override
     public void onClickBin(ImageButton bin, Announcement item) {
-        // (1) : Create a dialog
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.alert_delete_title)
                 .setMessage(R.string.alert_delete_message)
                 .setPositiveButton(R.string.alert_delete_yes, (dialog, which) -> {
-                    // (2) : Remove item from list
                     APIController.deleteAnnouncement(item.getId(), new Callback() {
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             String message = e.getMessage();
-                            Log.e(TAG, "Error while removing announcement : " + message);
-                            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce : " + message, Toast.LENGTH_SHORT).show());
+                            Log.e(TAG, "Error while removing announcement: " + message);
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce: " + message, Toast.LENGTH_SHORT).show();
+                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Failed to delete announcement");
+                            });
                         }
 
                         @Override
@@ -124,12 +129,13 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                                 swipeRefreshLayout.setRefreshing(true);
                                 announcementList.updateList();
                                 Toast.makeText(getContext(), R.string.remove_announcement_result_success, Toast.LENGTH_SHORT).show();
+                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Announcement deleted successfully");
                             });
                         }
                     });
                 })
                 .setNegativeButton(R.string.alert_delete_no, (dialog, which) -> {
-                    // (3) : Do nothing
+                    // Do nothing
                 })
                 .show();
 
@@ -139,6 +145,13 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         buttonNegative.setBackgroundColor(getResources().getColor(R.color.green_700, null));
         buttonNegative.setTextColor(getResources().getColor(R.color.white_100, null));
     }
+
+    private void sendNotification(NotificationType type, String title, String message) {
+        NotificationFactory factory = NotificationFactory.getFactory(type);
+        INotification notification = factory.createNotification();
+        notification.sendNotification(getActivity(), context, title, message);
+    }
+
 
     @Override
     public void onClickCalendar(ImageButton calendar, Announcement item) {
@@ -277,8 +290,11 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
-                Log.e("APIController", "Error while creating announcement : " + message);
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce : " + message, Toast.LENGTH_SHORT).show());
+                Log.e("APIController", "Error while creating announcement: " + message);
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce: " + message, Toast.LENGTH_SHORT).show();
+                    sendNotification(NotificationType.CREATE, "Create Announcement", "Failed to create announcement");
+                });
             }
 
             @Override
@@ -288,13 +304,14 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                         swipeRefreshLayout.setRefreshing(true);
                         announcementList.updateList();
                         Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
+                        sendNotification(NotificationType.CREATE, "Create Announcement", "Announcement created successfully");
                     });
                 } else {
                     requireActivity().runOnUiThread(() -> {
                         try {
                             assert response.body() != null;
                             String body = response.body().string();
-                            Log.e("APIController", "Error while creating announcement : " + body);
+                            Log.e("APIController", "Error while creating announcement: " + body);
                             Toast.makeText(getContext(), R.string.add_announcement_result_error + " : " + body, Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -303,6 +320,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                 }
             }
         };
+
         if (eventDate == null) {
             APIController.createAnnouncementNews(title, description, onResponse);
         } else {
@@ -311,6 +329,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
             APIController.createAnnouncementEvent(title, description, formattedEventDate, onResponse);
         }
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
