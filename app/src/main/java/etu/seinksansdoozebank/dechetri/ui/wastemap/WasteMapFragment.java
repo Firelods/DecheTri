@@ -173,7 +173,6 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     }
 
     public void addWastePointsOnMap(List<Waste> wastes) {
-        Log.d(TAG, "addWastePointsOnMap: ");
         if (wastes == null) {
             return;
         }
@@ -190,7 +189,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
             GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
             if (items.stream().noneMatch(overlayItem -> overlayItem.getPoint().equals(point))) {
                 OverlayItem overlayItem = new OverlayItem(location.getAddress(), getString(R.string.dechet_ici), point);
-                overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), R.drawable.waste));
+                overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), location.getType().getIcon()));
                 items.add(overlayItem);
             }
         }
