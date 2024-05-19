@@ -119,7 +119,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                             Log.e(TAG, "Error while removing announcement: " + message);
                             requireActivity().runOnUiThread(() -> {
                                 Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce: " + message, Toast.LENGTH_SHORT).show();
-                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Failed to delete announcement", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
+                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Failed to delete announcement", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
                             });
                         }
 
@@ -130,7 +130,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                                 swipeRefreshLayout.setRefreshing(true);
                                 announcementList.updateList();
                                 Toast.makeText(getContext(), R.string.remove_announcement_result_success, Toast.LENGTH_SHORT).show();
-                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Announcement deleted successfully", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
+                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Announcement deleted successfully", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
                             });
                         }
                     });
@@ -288,7 +288,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                 Log.e("APIController", "Error while creating announcement: " + message);
                 requireActivity().runOnUiThread(() -> {
                     Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce: " + message, Toast.LENGTH_SHORT).show();
-                    sendNotification(NotificationType.CREATE, "Create Announcement", "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
+                    sendNotification(NotificationType.CREATE, "Create Announcement", "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                 });
             }
 
@@ -299,7 +299,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                         swipeRefreshLayout.setRefreshing(true);
                         announcementList.updateList();
                         Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
-                        sendNotification(NotificationType.CREATE, "Create Announcement", "Announcement created successfully", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
+                        sendNotification(NotificationType.CREATE, "Create Announcement", "Announcement created successfully", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                     });
                 } else {
                     requireActivity().runOnUiThread(() -> {
