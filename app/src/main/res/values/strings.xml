@@ -70,4 +70,6 @@
     <string name="la_localisation_est_necessaire">La localisation est nécessaire pour signaler le déchet</string>
     <string name="nouveau_dechet">Nouveau déchet</string>
     <string name="btn_refresh_waste_point">Refresh the points on the map</string>
+    <string name="waste_type">Type :</string>
+    <string name="waste_address">Adresse :</string>
 </resources>
