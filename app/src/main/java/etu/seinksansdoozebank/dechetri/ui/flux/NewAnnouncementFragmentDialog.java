@@ -1,6 +1,7 @@
 package etu.seinksansdoozebank.dechetri.ui.flux;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -17,7 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -43,11 +44,9 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
     private Context context;
     private Activity activity;
 
-    private TextView tv_date_label;
-    private EditText et_date;
     private EditText et_title;
     private EditText et_description;
-    private Button btn_add_date;
+    private EditText et_date;
     private Button publishButton;
 
     private Calendar pickedDate;
@@ -87,35 +86,29 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
 
         context = requireContext();
 
-
         et_title = view.findViewById(R.id.etxt_title);
         et_description = view.findViewById(R.id.etxt_description);
-        tv_date_label = view.findViewById(R.id.tv_date_label);
-        btn_add_date = view.findViewById(R.id.btn_add_date);
         et_date = view.findViewById(R.id.et_date);
+        ImageView iv_clear_date = view.findViewById(R.id.iv_clear_date);
+        ImageView iv_date_help = view.findViewById(R.id.iv_date_picker);
         publishButton = view.findViewById(R.id.btn_publish);
         Button cancel = view.findViewById(R.id.btn_cancel);
-
-        assert et_date != null;
+        iv_clear_date.setOnClickListener(v -> {
+            et_date.setText("");
+            pickedDate = null;
+        });
+        iv_date_help.setOnClickListener(v -> new AlertDialog.Builder(context)
+                .setMessage(R.string.add_announcement_help_date)
+                .setPositiveButton(R.string.add_announcement_help_button, (dialog, which) -> dialog.dismiss())
+                .show());
         et_date.setOnTouchListener((v, event) -> {
             if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                 showDateTimePicker();
             }
             return true;
         });
-        if (btn_add_date != null) {
-            btn_add_date.setOnClickListener(v1 -> {
-                if (tv_date_label != null && et_date != null) {
-                    if (tv_date_label.getVisibility() == View.GONE) {
-                        showDateTimePicker();
-                    } else {
-                        changeDateInfoVisibility(false);
-                    }
-                }
-            });
-        } else {
-            throw new RuntimeException("btn_add_date is null");
-        }
+
+
         publishButton.setEnabled(false);
         setupTextWatcher();
         Log.d(TAG, "showNewAnnouncementDialog: " + publishButton.isEnabled());
@@ -135,19 +128,6 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
         return view;
     }
 
-    private void changeDateInfoVisibility(boolean visible) {
-        if (visible) {
-            tv_date_label.setVisibility(View.VISIBLE);
-            et_date.setVisibility(View.VISIBLE);
-            btn_add_date.setText(R.string.remove_date_text);
-        } else {
-            btn_add_date.setText(R.string.add_date_text);
-            tv_date_label.setVisibility(View.GONE);
-            et_date.setVisibility(View.GONE);
-            pickedDate = null;
-        }
-    }
-
     public void showDateTimePicker() {
         final Calendar currentDate = Calendar.getInstance();
         pickedDate = Calendar.getInstance();
@@ -156,7 +136,6 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
             new TimePickerDialog(context, (view1, hourOfDay, minute) -> {
                 pickedDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 pickedDate.set(Calendar.MINUTE, minute);
-                changeDateInfoVisibility(true);
                 et_date.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US).format(pickedDate.getTime()));
             }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
