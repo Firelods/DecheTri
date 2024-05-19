@@ -70,7 +70,6 @@
     <string name="la_localisation_est_necessaire">La localisation est nécessaire pour signaler le déchet</string>
     <string name="nouveau_dechet">Nouveau déchet</string>
 
-    <string name="channel_name">Channel Name</string>
-    <string name="channel_description">Channel Description</string>
+    <!--    Notifications    -->
     <string name="send_notification_error">L\'envoie de la notification a rencontré une erreur</string>
 </resources>

@@ -14,16 +14,13 @@ public interface INotification {
 
     default void askNotificationPermission(Activity activity, Context context, NotificationPermissionCallback callback) {
         if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
-            Log.d("INotification", "Notifications are enabled");
             callback.onPermissionGranted();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Log.d("INotification", "Notifications are disabled");
             Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
                     .putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.startActivity(intent);
         } else {
-            Log.d("INotification", "Notifications are disabled");
             callback.onPermissionDenied();
         }
     }
