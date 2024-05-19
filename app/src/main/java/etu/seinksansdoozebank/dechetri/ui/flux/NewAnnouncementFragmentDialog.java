@@ -44,9 +44,9 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
     private Context context;
     private Activity activity;
 
-    private EditText et_title;
-    private EditText et_description;
-    private EditText et_date;
+    private EditText editTextTitle;
+    private EditText editTextDescription;
+    private EditText editTextDate;
     private Button publishButton;
 
     private Calendar pickedDate;
@@ -86,22 +86,22 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
 
         context = requireContext();
 
-        et_title = view.findViewById(R.id.etxt_title);
-        et_description = view.findViewById(R.id.etxt_description);
-        et_date = view.findViewById(R.id.et_date);
-        ImageView iv_clear_date = view.findViewById(R.id.iv_clear_date);
-        ImageView iv_date_help = view.findViewById(R.id.iv_date_picker);
+        editTextTitle = view.findViewById(R.id.etxt_title);
+        editTextDescription = view.findViewById(R.id.etxt_description);
+        editTextDate = view.findViewById(R.id.et_date);
+        ImageView imageViewClickDate = view.findViewById(R.id.iv_clear_date);
+        ImageView imageViewDateHelp = view.findViewById(R.id.iv_date_picker);
         publishButton = view.findViewById(R.id.btn_publish);
         Button cancel = view.findViewById(R.id.btn_cancel);
-        iv_clear_date.setOnClickListener(v -> {
-            et_date.setText("");
+        imageViewClickDate.setOnClickListener(v -> {
+            editTextDate.setText("");
             pickedDate = null;
         });
-        iv_date_help.setOnClickListener(v -> new AlertDialog.Builder(context)
+        imageViewDateHelp.setOnClickListener(v -> new AlertDialog.Builder(context)
                 .setMessage(R.string.add_announcement_help_date)
                 .setPositiveButton(R.string.add_announcement_help_button, (dialog, which) -> dialog.dismiss())
                 .show());
-        et_date.setOnTouchListener((v, event) -> {
+        editTextDate.setOnTouchListener((v, event) -> {
             if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                 showDateTimePicker();
             }
@@ -115,9 +115,9 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
         publishButton.setOnClickListener(v -> {
             String title;
             String description;
-            if (et_title != null && et_description != null && et_date != null) {
-                title = et_title.getText().toString();
-                description = et_description.getText().toString();
+            if (editTextTitle != null && editTextDescription != null && editTextDate != null) {
+                title = editTextTitle.getText().toString();
+                description = editTextDescription.getText().toString();
                 publishAnnouncement(title, description, pickedDate);
                 this.dismiss();
             }
@@ -136,7 +136,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
             new TimePickerDialog(context, (view1, hourOfDay, minute) -> {
                 pickedDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 pickedDate.set(Calendar.MINUTE, minute);
-                et_date.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US).format(pickedDate.getTime()));
+                editTextDate.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US).format(pickedDate.getTime()));
             }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
     }
@@ -155,16 +155,16 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.d(TAG, "afterTextChanged: " + et_title.getText().toString().trim() + " " + et_description.getText().toString().trim());
+                Log.d(TAG, "afterTextChanged: " + editTextTitle.getText().toString().trim() + " " + editTextDescription.getText().toString().trim());
                 publishButton.setEnabled(
-                        !et_title.getText().toString().trim().isEmpty() &&
-                                !et_description.getText().toString().trim().isEmpty()
+                        !editTextTitle.getText().toString().trim().isEmpty() &&
+                                !editTextDescription.getText().toString().trim().isEmpty()
                 );
             }
         };
 
-        et_title.addTextChangedListener(textWatcher);
-        et_description.addTextChangedListener(textWatcher);
+        editTextTitle.addTextChangedListener(textWatcher);
+        editTextDescription.addTextChangedListener(textWatcher);
     }
 
     private void publishAnnouncement(String title, String description, Calendar eventDate) {
@@ -179,9 +179,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 if (response.isSuccessful()) {
-                    activity.runOnUiThread(() -> {
-                        Toast.makeText(activity.getApplicationContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
-                    });
+                    activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show());
                 } else {
                     activity.runOnUiThread(() -> {
                         try {
