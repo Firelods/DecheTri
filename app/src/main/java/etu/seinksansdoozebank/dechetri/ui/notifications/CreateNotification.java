@@ -22,7 +22,7 @@ public class CreateNotification implements INotification {
             public void onPermissionGranted() {
                 try {
                     // Create an intent that opens the MainActivity
-                    Intent intent = new Intent(context, MainActivity.class); // Replace with the actual Activity
+                    Intent intent = new Intent(context, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
@@ -32,8 +32,8 @@ public class CreateNotification implements INotification {
                             .setContentTitle(title)
                             .setContentText(message)
                             .setPriority(priority)
-                            .setContentIntent(pendingIntent) // Set the intent that will fire when the user taps the notification
-                            .setAutoCancel(true); // Automatically remove the notification when the user taps it
+                            .setContentIntent(pendingIntent)
+                            .setAutoCancel(true);
 
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                     notificationManager.notify(++notificationId, builder.build());

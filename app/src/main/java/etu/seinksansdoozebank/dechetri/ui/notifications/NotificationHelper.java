@@ -15,10 +15,6 @@ public class NotificationHelper extends Application {
     public static final String CHANNEL_ID_COMPLETE_TASK = "channel_complete_task";
     private static NotificationManager notificationManager;
 
-    public static NotificationManager getNotificationManager() {
-        return notificationManager;
-    }
-
     private void createNotificationChannel(String channelId, String name, String description, int importance) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(channelId, name, importance);

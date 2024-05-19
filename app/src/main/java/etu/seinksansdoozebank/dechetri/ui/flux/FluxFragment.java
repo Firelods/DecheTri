@@ -288,7 +288,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                 Log.e("APIController", "Error while creating announcement: " + message);
                 requireActivity().runOnUiThread(() -> {
                     Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce: " + message, Toast.LENGTH_SHORT).show();
-                    sendNotification(NotificationType.CREATE, "Create Announcement", "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
+                    sendNotification(NotificationType.CREATE, "Create Announcement", "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
                 });
             }
 
@@ -299,7 +299,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                         swipeRefreshLayout.setRefreshing(true);
                         announcementList.updateList();
                         Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
-                        sendNotification(NotificationType.CREATE, "Create Announcement", "Announcement created successfully", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
+                        sendNotification(NotificationType.CREATE, "Create Announcement", "Announcement created successfully", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
                     });
                 } else {
                     requireActivity().runOnUiThread(() -> {
