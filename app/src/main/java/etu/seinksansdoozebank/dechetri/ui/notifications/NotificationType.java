@@ -2,5 +2,6 @@ package etu.seinksansdoozebank.dechetri.ui.notifications;
 
 public enum NotificationType {
     DELETE,
-    CREATE
+    CREATE,
+    TASK_COMPLETED,
 }

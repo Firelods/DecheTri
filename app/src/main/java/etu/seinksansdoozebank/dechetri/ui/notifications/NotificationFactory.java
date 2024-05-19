@@ -9,6 +9,8 @@ public abstract class NotificationFactory {
                 return new DeleteNotificationFactory();
             case CREATE:
                 return new CreateNotificationFactory();
+            case TASK_COMPLETED:
+                return new TaskCompletedNotificationFactory();
             default:
                 throw new IllegalArgumentException("Unknown Notification Type");
         }
