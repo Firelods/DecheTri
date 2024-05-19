@@ -48,6 +48,7 @@ import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementList;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementListObserver;
 import etu.seinksansdoozebank.dechetri.ui.notifications.INotification;
 import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationFactory;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationHelper;
 import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationType;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -63,7 +64,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     private AnnouncementList announcementList;
     private Context context;
     private Calendar pickedDate;
-    TextView et_date;
+    TextView etDate;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public FluxFragment() {
@@ -88,12 +89,12 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences(requireContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String role = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_role), requireContext().getResources().getString(R.string.role_user_title));
 
-        FloatingActionButton btn_add_announcement = root.findViewById(R.id.btn_add_announcement);
+        FloatingActionButton btnAddAnnouncement = root.findViewById(R.id.btn_add_announcement);
         if (role.equals(requireContext().getString(R.string.role_admin_title))) {
-            btn_add_announcement.setVisibility(View.VISIBLE);
-            btn_add_announcement.setOnClickListener(v -> showNewAnnouncementDialog());
+            btnAddAnnouncement.setVisibility(View.VISIBLE);
+            btnAddAnnouncement.setOnClickListener(v -> showNewAnnouncementDialog());
         } else {
-            btn_add_announcement.setVisibility(View.GONE);
+            btnAddAnnouncement.setVisibility(View.GONE);
         }
         return root;
     }
@@ -118,7 +119,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                             Log.e(TAG, "Error while removing announcement: " + message);
                             requireActivity().runOnUiThread(() -> {
                                 Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce: " + message, Toast.LENGTH_SHORT).show();
-                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Failed to delete announcement");
+                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Failed to delete announcement", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
                             });
                         }
 
@@ -129,7 +130,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                                 swipeRefreshLayout.setRefreshing(true);
                                 announcementList.updateList();
                                 Toast.makeText(getContext(), R.string.remove_announcement_result_success, Toast.LENGTH_SHORT).show();
-                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Announcement deleted successfully");
+                                sendNotification(NotificationType.DELETE, "Delete Announcement", "Announcement deleted successfully", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
                             });
                         }
                     });
@@ -144,12 +145,6 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         Button buttonNegative = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         buttonNegative.setBackgroundColor(getResources().getColor(R.color.green_700, null));
         buttonNegative.setTextColor(getResources().getColor(R.color.white_100, null));
-    }
-
-    private void sendNotification(NotificationType type, String title, String message) {
-        NotificationFactory factory = NotificationFactory.getFactory(type);
-        INotification notification = factory.createNotification();
-        notification.sendNotification(getActivity(), context, title, message);
     }
 
 
@@ -226,44 +221,44 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                 .setNegativeButton(R.string.add_announcement_cancel, null).create();
         alertDialog.create();
         alertDialog.show();
-        Button btn_add_date = alertDialog.findViewById(R.id.btn_add_date);
-        et_date = alertDialog.findViewById(R.id.tv_date);
-        assert et_date != null;
-        et_date.setOnTouchListener((v, event) -> {
+        Button btnAddDate = alertDialog.findViewById(R.id.btn_add_date);
+        etDate = alertDialog.findViewById(R.id.tv_date);
+        assert etDate != null;
+        etDate.setOnTouchListener((v, event) -> {
             if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                 showDateTimePicker();
             }
             return true;
         });
-        TextView tv_date_label = alertDialog.findViewById(R.id.tv_date_label);
-        if (btn_add_date != null) {
-            btn_add_date.setOnClickListener(v1 -> {
-                if (tv_date_label != null && et_date != null) {
-                    if (tv_date_label.getVisibility() == View.GONE) {
+        TextView tvDateLabel = alertDialog.findViewById(R.id.tv_date_label);
+        if (btnAddDate != null) {
+            btnAddDate.setOnClickListener(v1 -> {
+                if (tvDateLabel != null && etDate != null) {
+                    if (tvDateLabel.getVisibility() == View.GONE) {
                         showDateTimePicker();
-                        tv_date_label.setVisibility(View.VISIBLE);
-                        et_date.setVisibility(View.VISIBLE);
-                        btn_add_date.setText(R.string.remove_date_text);
+                        tvDateLabel.setVisibility(View.VISIBLE);
+                        etDate.setVisibility(View.VISIBLE);
+                        btnAddDate.setText(R.string.remove_date_text);
                     } else {
-                        tv_date_label.setVisibility(View.GONE);
-                        et_date.setVisibility(View.GONE);
-                        btn_add_date.setText(R.string.add_date_text);
+                        tvDateLabel.setVisibility(View.GONE);
+                        etDate.setVisibility(View.GONE);
+                        btnAddDate.setText(R.string.add_date_text);
                         pickedDate = null;
                     }
                 }
             });
         } else {
-            throw new RuntimeException("btn_add_date is null");
+            throw new RuntimeException("btnAddDate is null");
         }
         Button buttonPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
         buttonPositive.setOnClickListener(v -> {
-            EditText et_title = alertDialog.findViewById(R.id.etxt_title);
-            EditText et_description = alertDialog.findViewById(R.id.etxt_description);
+            EditText etTitle = alertDialog.findViewById(R.id.etxt_title);
+            EditText etDescription = alertDialog.findViewById(R.id.etxt_description);
             String title;
             String description;
-            if (et_title != null && et_description != null && et_date != null) {
-                title = et_title.getText().toString();
-                description = et_description.getText().toString();
+            if (etTitle != null && etDescription != null && etDate != null) {
+                title = etTitle.getText().toString();
+                description = etDescription.getText().toString();
                 publishAnnouncement(title, description, pickedDate);
                 alertDialog.dismiss();
             }
@@ -280,7 +275,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
             new TimePickerDialog(context, (view1, hourOfDay, minute) -> {
                 pickedDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 pickedDate.set(Calendar.MINUTE, minute);
-                et_date.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US).format(pickedDate.getTime()));
+                etDate.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US).format(pickedDate.getTime()));
             }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
     }
@@ -293,7 +288,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                 Log.e("APIController", "Error while creating announcement: " + message);
                 requireActivity().runOnUiThread(() -> {
                     Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce: " + message, Toast.LENGTH_SHORT).show();
-                    sendNotification(NotificationType.CREATE, "Create Announcement", "Failed to create announcement");
+                    sendNotification(NotificationType.CREATE, "Create Announcement", "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
                 });
             }
 
@@ -304,12 +299,11 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                         swipeRefreshLayout.setRefreshing(true);
                         announcementList.updateList();
                         Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
-                        sendNotification(NotificationType.CREATE, "Create Announcement", "Announcement created successfully");
+                        sendNotification(NotificationType.CREATE, "Create Announcement", "Announcement created successfully", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
                     });
                 } else {
                     requireActivity().runOnUiThread(() -> {
                         try {
-                            assert response.body() != null;
                             String body = response.body().string();
                             Log.e("APIController", "Error while creating announcement: " + body);
                             Toast.makeText(getContext(), R.string.add_announcement_result_error + " : " + body, Toast.LENGTH_SHORT).show();
@@ -350,5 +344,11 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
             fluxAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         });
+    }
+
+    private void sendNotification(NotificationType type, String title, String message, String channelId, int priority) {
+        NotificationFactory factory = NotificationFactory.getFactory(type);
+        INotification notification = factory.createNotification();
+        notification.sendNotification(getActivity(), context, title, message, channelId, priority);
     }
 }
