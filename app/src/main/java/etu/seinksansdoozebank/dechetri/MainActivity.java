@@ -49,11 +49,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (addAnnouncementMenuItem != null) {
-                if (destination.getId() == R.id.navigation_flux) {
-                    addAnnouncementMenuItem.setVisible(true);
-                } else {
-                    addAnnouncementMenuItem.setVisible(false);
-                }
+                addAnnouncementMenuItem.setVisible(destination.getId() == R.id.navigation_flux);
             }
         });
 
