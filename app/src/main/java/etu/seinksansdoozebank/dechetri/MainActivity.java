@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
+import etu.seinksansdoozebank.dechetri.ui.flux.NewAnnouncementFragmentDialog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -94,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.navigation_disconnect) {
             disconnect();
+        } else if (item.getItemId() == R.id.add_announcement) {
+            NewAnnouncementFragmentDialog.newInstance().show(getSupportFragmentManager(), "NewAnnouncementFragmentDialog");
         }
         return super.onOptionsItemSelected(item);
     }

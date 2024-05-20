@@ -184,12 +184,6 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         }
     }
 
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void showNewAnnouncementDialog() {
-        NewAnnouncementFragmentDialog.newInstance().show(requireActivity().getSupportFragmentManager(), "NewAnnouncementFragmentDialog");
-    }
-
     @Override
     public void onResume() {
         super.onResume();
