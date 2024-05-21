@@ -157,6 +157,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     }
 
     private void addMarker(GeoPoint startPoint) {
+        if (map == null) return;
         Marker marker = new Marker(map);
         marker.setPosition(startPoint);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);

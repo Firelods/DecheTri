@@ -8,6 +8,7 @@ import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -152,8 +153,6 @@ public class APIController {
      * @route /waste/report
      */
     public static Call reportWaste(Waste waste, Callback callback) {
-        String imageBase64 = android.util.Base64.encodeToString(waste.getImageData(), android.util.Base64.DEFAULT);
-        Log.d(TAG + "APIController", "reportWaste: " + imageBase64);
         String json = "{\n" +
                 "  \"name\": \"" + waste.getName() + "\",\n" +
                 "  \"type\": \"" + waste.getType() + "\",\n" +
@@ -161,12 +160,25 @@ public class APIController {
                 "  \"userReporterId\": \"" + waste.getUserReporterId() + "\",\n" +
                 "  \"address\": \"" + waste.getAddress() + "\",\n" +
                 "  \"latitude\": " + waste.getLatitude() + ",\n" +
-                "  \"longitude\": " + waste.getLongitude() + ",\n" +
-                "  \"image\": \"" + imageBase64 + "\"\n" +
+                "  \"longitude\": " + waste.getLongitude() + "\n" +
                 "}";
-        return post("waste/report", json, callback);
-    }
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", waste.getName(),
+                        RequestBody.create(MediaType.parse("image/*"), waste.getImageData()))
+                .addFormDataPart("waste", "json",
+                        RequestBody.create(MediaType.parse("application/json"), json))
+                .build();
 
+        Request request = new Request.Builder()
+                .url(BASE_URL + "waste/report")
+                .post(requestBody)
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        return call;
+    }
     /**
      * Get a waste by its id (GET method)
      *

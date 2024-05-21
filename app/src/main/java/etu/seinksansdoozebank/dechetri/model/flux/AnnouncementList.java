@@ -46,6 +46,7 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
+                    //TODO : handle error correctly
                     activity.runOnUiThread(() -> Toast.makeText(context, "Erreur lors de la récupération des annonces", Toast.LENGTH_SHORT).show());
                     return;
                 }
