@@ -17,9 +17,13 @@ import android.view.ViewGroup;
 
 import org.eazegraph.lib.charts.BarChart;
 import org.eazegraph.lib.charts.PieChart;
+import org.eazegraph.lib.charts.ValueLineChart;
 import org.eazegraph.lib.models.BarModel;
 import org.eazegraph.lib.models.PieModel;
+import org.eazegraph.lib.models.ValueLinePoint;
+import org.eazegraph.lib.models.ValueLineSeries;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 
 import java.util.Calendar;
@@ -46,7 +50,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
     private FragmentStatisticsBinding binding;
     private String TAG = "emma";
     private AnnouncementList announcementList;
-    private WasteList wasteList ;
+    private WasteList wasteList;
     private SwipeRefreshLayout swipeRefreshLayout;
     String[] colorString = {"#FE6DA8", "#56B7F1", "#CDA67F", "#FED70E", "#FE6DA8", "#56B7F1", "#CDA67F", "#FED70E"};
     private View view;
@@ -82,6 +86,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
 
         Log.d(TAG, "buildPieChart: " + announcementList);
         for (Announcement announcement : announcementList) {
+            Log.d(TAG, "buildPieChart: " + announcement);
             if (announcement.getType().equals(AnnouncementType.NEWS)) {
                 newsAnnoucement++;
             } else {
@@ -105,12 +110,64 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
      * @param colorString tab of colors
      */
     public void buildBarChart(@NonNull View view, @NonNull String[] colorString) {
-        BarChart mBarChart = (BarChart) view.findViewById(R.id.barchart);
+        BarChart mBarChart = view.findViewById(R.id.barchart);
+        mBarChart.clearChart();
 
         int numberOfWasteThisDay = 1;
         int colorChosen = 0;
 
-        Log.d(TAG, "buildBarChart: " + wasteList);
+        //On trie la liste des déchets dans l'ordre croissant
+        List<Waste> sortedList = wasteList.stream()
+                .sorted(Comparator.comparing(Waste::getReportDate))
+                .collect(Collectors.toList());
+        Log.d(TAG, "buildBarChart: " + sortedList);
+        Waste previous = sortedList.get(0);
+        int listSize = sortedList.size();
+
+        for (int i = 1; i < listSize; i++) {
+
+            //Initialisation des dates pour les comparer
+            Calendar previousDate = Calendar.getInstance();
+            previousDate.setTime(previous.getReportDate());
+            int previousDay = previousDate.get(Calendar.DAY_OF_MONTH);
+            int previousMonth = previousDate.get(Calendar.MONTH);
+            int previousYear = previousDate.get(Calendar.YEAR);
+            Calendar currentDate = Calendar.getInstance();
+            currentDate.setTime(sortedList.get(i).getReportDate());
+            int currentDay = currentDate.get(Calendar.DAY_OF_MONTH);
+            int currentMonth = currentDate.get(Calendar.MONTH);
+            int currentYear = currentDate.get(Calendar.YEAR);
+
+            //Formattage de la date en JJ/MM/AAAA pour affichage
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            String dateFormatted = sdf.format(previous.getReportDate());
+            Log.d(TAG, "buildBarChart: "+dateFormatted);
+
+            if (previousDay != currentDay || previousMonth != currentMonth || previousYear != currentYear) {
+                previous = sortedList.get(i);
+                mBarChart.addBar(new BarModel(dateFormatted, numberOfWasteThisDay, Color.parseColor(colorString[colorChosen++])));
+                numberOfWasteThisDay = 1;
+            } else {
+                numberOfWasteThisDay++;
+            }
+            if (i == listSize - 1) {
+                mBarChart.addBar(new BarModel(dateFormatted, numberOfWasteThisDay, Color.parseColor(colorString[colorChosen++])));
+            }
+        }
+        mBarChart.startAnimation();
+
+    }
+
+    public void buildLineChart(@NonNull View view, @NonNull String[] colorString){
+
+        ValueLineChart mCubicValueLineChart = view.findViewById(R.id.cubiclinechart);ValueLineSeries series = new ValueLineSeries();
+        mCubicValueLineChart.clearChart();
+        series.setColor(0xFF56B7F1);
+
+
+        int numberOfWasteThisDay = 1;
+        int colorChosen = 0;
+
         //On trie la liste des déchets dans l'ordre croissant
         List<Waste> sortedList = wasteList.stream()
                 .sorted(Comparator.comparing(Waste::getReportDate))
@@ -136,20 +193,22 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
             //Formattage de la date en JJ/MM/AAAA pour affichage
             @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String dateFormatted = sdf.format(previous.getReportDate());
+            Log.d(TAG, "buildBarChart: " + dateFormatted);
 
             if (previousDay != currentDay || previousMonth != currentMonth || previousYear != currentYear) {
                 previous = sortedList.get(i);
-                mBarChart.addBar(new BarModel(dateFormatted, numberOfWasteThisDay, Color.parseColor(colorString[colorChosen++])));
+                series.addPoint(new ValueLinePoint(dateFormatted, numberOfWasteThisDay));
                 numberOfWasteThisDay = 1;
             } else {
                 numberOfWasteThisDay++;
             }
             if (i == listSize - 1) {
-                mBarChart.addBar(new BarModel(dateFormatted, numberOfWasteThisDay, Color.parseColor(colorString[colorChosen++])));
+                series.addPoint(new ValueLinePoint(dateFormatted, numberOfWasteThisDay));
             }
-        }
-        mBarChart.startAnimation();
 
+        }
+        mCubicValueLineChart.addSeries(series);
+        mCubicValueLineChart.startAnimation();
     }
 
     @Override
@@ -163,12 +222,15 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
         super.onCreate(savedInstanceState);
         announcementList = new AnnouncementList(requireActivity(), getContext());
         announcementList.addObserver(this);
+        wasteList=new WasteList();
+        wasteList.addObserver(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         announcementList.removeObserver(this);
+        wasteList.removeObserver(this);
     }
 
     @Override
@@ -195,6 +257,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
                 return;
             } else {
                 buildBarChart(view, colorString);
+                buildLineChart(view, colorString);
             }
 
         });

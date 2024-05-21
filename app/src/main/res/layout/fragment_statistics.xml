@@ -58,7 +58,7 @@
         android:layout_marginTop="20dp"
         android:layout_height="300dp"
         android:padding="8dp"
-        app:egLegendTextSize="18sp"
+        app:egLegendTextSize="11sp"
         app:egUsePieRotation="true"
         app:egValueTextSize="36sp"
         tools:ignore="MissingConstraints" />
@@ -95,6 +95,23 @@
             app:egFixedBarWidth="true"
             app:egBarWidth="20dp"
             app:egLegendHeight="40dp"/>
+
+        <org.eazegraph.lib.charts.ValueLineChart
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cubiclinechart"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_height="200dp"
+            app:egUseCubic="true"
+            app:egUseOverlapFill="true"
+            app:egCurveSmoothness="0.4"
+            app:egIndicatorLineColor="#EA7E19"
+            app:egLegendHeight="40dp"
+            app:egShowStandardValue="true"
+
+
+
+            />
 
 
 
