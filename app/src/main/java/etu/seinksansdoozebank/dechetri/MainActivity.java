@@ -18,8 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.databinding.ActivityMainBinding;
+import etu.seinksansdoozebank.dechetri.ui.flux.NewAnnouncementFragmentDialog;
 
 public class MainActivity extends AppCompatActivity {
+
+    private MenuItem addAnnouncementMenuItem;
+    private NavController navController;
+    private String role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +41,14 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String defaultRole = getResources().getString(R.string.role_user_title); //user by default
-        String role = sharedPreferences.getString(getString(R.string.shared_preferences_key_role), defaultRole);
+        role = sharedPreferences.getString(getString(R.string.shared_preferences_key_role), defaultRole);
 //
         bottomNavView.getMenu().clear(); //user menu by default
         bottomNavView.inflateMenu(R.menu.menu_item_flux);
         bottomNavView.inflateMenu(R.menu.menu_item_map);
         bottomNavView.inflateMenu(R.menu.menu_item_report);
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
 
         if (role.equals(getString(R.string.role_admin_title))) {
             bottomNavView.inflateMenu(R.menu.menu_item_statistics);
@@ -71,6 +76,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        addAnnouncementMenuItem = menu.findItem(R.id.add_announcement);
+        addAnnouncementMenuItem.setVisible(role.equals(getString(R.string.role_admin_title)));
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (addAnnouncementMenuItem != null) {
+                addAnnouncementMenuItem.setVisible(destination.getId() == R.id.navigation_flux && role.equals(getString(R.string.role_admin_title)));
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -82,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.navigation_disconnect) {
             disconnect();
+        } else if (item.getItemId() == R.id.add_announcement) {
+            NewAnnouncementFragmentDialog.newInstance().show(getSupportFragmentManager(), "NewAnnouncementFragmentDialog");
         }
         return super.onOptionsItemSelected(item);
     }
