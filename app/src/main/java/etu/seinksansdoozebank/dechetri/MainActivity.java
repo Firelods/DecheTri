@@ -1,9 +1,11 @@
 package etu.seinksansdoozebank.dechetri;
 
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,8 +29,26 @@ public class MainActivity extends AppCompatActivity {
 
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         configNavigation();
+        setupKeyboardResize();
+    }
+
+    private void setupKeyboardResize() {
+        BottomNavigationView bottomNavView = findViewById(R.id.nav_view);
+        final View rootView = findViewById(R.id.container);
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            Rect r = new Rect();
+            rootView.getWindowVisibleDisplayFrame(r);
+            int screenHeight = rootView.getRootView().getHeight();
+            int keypadHeight = screenHeight - r.bottom;
+            if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is enough to determine keypad height.
+                // Keyboard is opened
+                bottomNavView.setVisibility(View.GONE);
+            } else {
+                // Keyboard is closed
+                bottomNavView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public void configNavigation() {
