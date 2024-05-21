@@ -80,4 +80,13 @@
     <string name="btn_refresh_waste_point">Refresh the points on the map</string>
     <string name="waste_type">Type :</string>
     <string name="waste_address">Adresse :</string>
+    <string name="envoyer_le_signalement">Envoyer le signalement</string>
+    <string name="image_du_d_chet">Image du déchet</string>
+    <string name="lat_long">Lat : , Long :</string>
+    <string name="saisir_la_localisation">Saisir la localisation…</string>
+    <string name="localisation">Localisation</string>
+    <string name="saisir_une_description">Saisir une description…</string>
+    <string name="description">Description</string>
+    <string name="saisir_le_nom">Saisir le nom …</string>
+    <string name="identification_du_d_chet">Identification du déchet</string>
 </resources>
