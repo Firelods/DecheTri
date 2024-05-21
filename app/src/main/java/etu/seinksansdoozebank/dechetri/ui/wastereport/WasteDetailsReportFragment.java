@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
@@ -47,7 +48,7 @@ public class WasteDetailsReportFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_waste_details_report, container, false);
         localisationInput = view.findViewById(R.id.LocalisationInput);
-        EditText locationTextView = view.findViewById(R.id.locationText);
+        TextView locationTextView = view.findViewById(R.id.locationText);
         Button validateButton = view.findViewById(R.id.ValidateButton);
         EditText nameInput = view.findViewById(R.id.NameInput);
         EditText descriptionInput = view.findViewById(R.id.DescriptionInput);
