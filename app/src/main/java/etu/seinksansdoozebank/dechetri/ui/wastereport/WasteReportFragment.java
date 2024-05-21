@@ -1,9 +1,18 @@
 package etu.seinksansdoozebank.dechetri.ui.wastereport;
+
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -11,31 +20,13 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
-
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Button;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
-import etu.seinksansdoozebank.dechetri.R;
-import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteReportBinding;
-
-import android.Manifest;
 import etu.seinksansdoozebank.dechetri.R;
 
 
@@ -46,6 +37,8 @@ public class WasteReportFragment extends Fragment {
     private static final int LIBRARY_PERMISSION_CODE =200 ;
     private ActivityResultLauncher<Intent> pickImageLauncher;
     private ActivityResultLauncher<Intent> takePictureLauncher;
+
+    private ImageView imageView;
 
     Button validateButton;
     private byte[] chosenImage;
@@ -58,6 +51,8 @@ public class WasteReportFragment extends Fragment {
 
         //Si on appuie sur le bouton annuler alors on revient en arrière.
         view.findViewById(R.id.cancelButton).setOnClickListener(view1 -> requireActivity().onBackPressed());
+        imageView = view.findViewById(R.id.imageView);
+        imageView.setImageResource(0);
 
 
          pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -65,8 +60,10 @@ public class WasteReportFragment extends Fragment {
                     if (result.getResultCode() == getActivity().RESULT_OK) {
                         // Le code ici sera exécuté lorsque l'utilisateur aura sélectionné une image
                         Intent data = result.getData();
+
                         // Récupérer l'URI de l'image sélectionnée
                         if (data != null) {
+                            imageView.setImageURI(data.getData());
                             validateButton.setEnabled(true);
                             try {
                                 chosenImage = convertUriToByte(data.getData());
@@ -86,6 +83,7 @@ public class WasteReportFragment extends Fragment {
                         Intent data = result.getData();
                         Bitmap photoBitmap = (Bitmap) data.getExtras().get("data");
                         if (photoBitmap != null) {
+                            imageView.setImageBitmap(photoBitmap);
                             try {
                                 chosenImage = convertBitmapToByte(photoBitmap);
                             } catch (IOException e) {
