@@ -16,11 +16,12 @@ import java.util.Collection;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
+import etu.seinksansdoozebank.dechetri.model.observable.Observable;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class AnnouncementList extends ArrayList<Announcement> {
+public class AnnouncementList extends ArrayList<Announcement> implements Observable<AnnouncementListObserver> {
     private static final String TAG = "512Bank";
     private final List<AnnouncementListObserver> observers = new ArrayList<>();
     private final FragmentActivity activity;
@@ -72,7 +73,7 @@ public class AnnouncementList extends ArrayList<Announcement> {
         observers.remove(observer);
     }
 
-    private void notifyObservers() {
+    public void notifyObservers() {
         for (AnnouncementListObserver observer : observers) {
             observer.onAnnouncementListChanged();
         }
