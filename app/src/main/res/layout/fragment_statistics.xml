@@ -5,7 +5,7 @@
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="20dp"
+    android:paddingTop="15dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
     tools:context=".ui.statistics.StatisticsFragment">
@@ -52,13 +52,12 @@
                 android:textSize="18sp" />
         </LinearLayout>
     <org.eazegraph.lib.charts.PieChart
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/piechart"
         android:layout_width="match_parent"
         android:layout_marginTop="20dp"
         android:layout_height="300dp"
         android:padding="8dp"
-        app:egLegendTextSize="11sp"
+        app:egLegendTextSize="20sp"
         app:egUsePieRotation="true"
         app:egValueTextSize="36sp"
         tools:ignore="MissingConstraints" />
@@ -85,32 +84,19 @@
 
        </LinearLayout>
 
-        <org.eazegraph.lib.charts.BarChart
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/barchart"
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="256dp"
-            android:padding="10dp"
-            app:egFixedBarWidth="true"
-            app:egBarWidth="20dp"
-            app:egLegendHeight="40dp"/>
 
         <org.eazegraph.lib.charts.ValueLineChart
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/cubiclinechart"
             android:layout_width="match_parent"
             android:layout_marginTop="20dp"
-            android:layout_height="200dp"
+            android:layout_height="300dp"
             app:egUseCubic="true"
             app:egUseOverlapFill="true"
             app:egCurveSmoothness="0.4"
             app:egIndicatorLineColor="#EA7E19"
             app:egLegendHeight="40dp"
             app:egShowStandardValue="true"
-
-
-
+            android:layout_marginBottom="10dp"
             />
 
 

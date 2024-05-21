@@ -55,10 +55,6 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     }
 
 
-    public void updateList() {
-        this.clear();
-        this.init();
-    }
 
     public void addObserver(WasteListObservers observer) {
         observers.add(observer);

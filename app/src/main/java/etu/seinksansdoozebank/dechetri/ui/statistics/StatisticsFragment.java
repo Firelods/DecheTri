@@ -15,15 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.eazegraph.lib.charts.BarChart;
 import org.eazegraph.lib.charts.PieChart;
 import org.eazegraph.lib.charts.ValueLineChart;
-import org.eazegraph.lib.models.BarModel;
+
 import org.eazegraph.lib.models.PieModel;
 import org.eazegraph.lib.models.ValueLinePoint;
 import org.eazegraph.lib.models.ValueLineSeries;
 
-import java.sql.Date;
+
 import java.text.SimpleDateFormat;
 
 import java.util.Calendar;
@@ -52,7 +51,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
     private AnnouncementList announcementList;
     private WasteList wasteList;
     private SwipeRefreshLayout swipeRefreshLayout;
-    String[] colorString = {"#FE6DA8", "#56B7F1", "#CDA67F", "#FED70E", "#FE6DA8", "#56B7F1", "#CDA67F", "#FED70E"};
+    String[] colorString = {"#EA7E19", "#027125" };
     private View view;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -64,7 +63,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
         swipeRefreshLayout.setRefreshing(true);
         announcementList = new AnnouncementList(requireActivity(), getContext());
         announcementList.addObserver(this);
-        wasteList=new WasteList();
+        wasteList = new WasteList();
         wasteList.addObserver(this);
         swipeRefreshLayout.setOnRefreshListener(announcementList::updateList);
         return view;
@@ -78,7 +77,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
      * @param colorString tab of colors
      */
     public void buildPieChart(@NonNull View view, @NonNull String[] colorString) {
-        PieChart mPieChart =  view.findViewById(R.id.piechart);
+        PieChart mPieChart = view.findViewById(R.id.piechart);
         mPieChart.clearChart();
         int newsAnnoucement = 0;
         int eventAnnoucement = 0;
@@ -96,73 +95,20 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
 
         int[] stats = {newsAnnoucement, eventAnnoucement};
         for (AnnouncementType announcementType : AnnouncementType.values()) {
-            Log.d(TAG, "buildPieChart: "+ announcementType.getName() + " " + stats[announcementType.ordinal()]+ " " + colorString[announcementType.ordinal()] );
+            Log.d(TAG, "buildPieChart: " + announcementType.getName() + " " + stats[announcementType.ordinal()] + " " + colorString[announcementType.ordinal()]);
             mPieChart.addPieSlice(new PieModel(announcementType.getName(), stats[announcementType.ordinal()], Color.parseColor(colorString[announcementType.ordinal()])));
         }
 
         mPieChart.startAnimation();
     }
 
-    /**
-     * Build a bar chart with all the wastes created sorted by their date
-     *
-     * @param view        view
-     * @param colorString tab of colors
-     */
-    public void buildBarChart(@NonNull View view, @NonNull String[] colorString) {
-        BarChart mBarChart = view.findViewById(R.id.barchart);
-        mBarChart.clearChart();
 
-        int numberOfWasteThisDay = 1;
-        int colorChosen = 0;
+    public void buildLineChart(@NonNull View view, @NonNull String[] colorString) {
 
-        //On trie la liste des déchets dans l'ordre croissant
-        List<Waste> sortedList = wasteList.stream()
-                .sorted(Comparator.comparing(Waste::getReportDate))
-                .collect(Collectors.toList());
-        Log.d(TAG, "buildBarChart: " + sortedList);
-        Waste previous = sortedList.get(0);
-        int listSize = sortedList.size();
-
-        for (int i = 1; i < listSize; i++) {
-
-            //Initialisation des dates pour les comparer
-            Calendar previousDate = Calendar.getInstance();
-            previousDate.setTime(previous.getReportDate());
-            int previousDay = previousDate.get(Calendar.DAY_OF_MONTH);
-            int previousMonth = previousDate.get(Calendar.MONTH);
-            int previousYear = previousDate.get(Calendar.YEAR);
-            Calendar currentDate = Calendar.getInstance();
-            currentDate.setTime(sortedList.get(i).getReportDate());
-            int currentDay = currentDate.get(Calendar.DAY_OF_MONTH);
-            int currentMonth = currentDate.get(Calendar.MONTH);
-            int currentYear = currentDate.get(Calendar.YEAR);
-
-            //Formattage de la date en JJ/MM/AAAA pour affichage
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            String dateFormatted = sdf.format(previous.getReportDate());
-            Log.d(TAG, "buildBarChart: "+dateFormatted);
-
-            if (previousDay != currentDay || previousMonth != currentMonth || previousYear != currentYear) {
-                previous = sortedList.get(i);
-                mBarChart.addBar(new BarModel(dateFormatted, numberOfWasteThisDay, Color.parseColor(colorString[colorChosen++])));
-                numberOfWasteThisDay = 1;
-            } else {
-                numberOfWasteThisDay++;
-            }
-            if (i == listSize - 1) {
-                mBarChart.addBar(new BarModel(dateFormatted, numberOfWasteThisDay, Color.parseColor(colorString[colorChosen++])));
-            }
-        }
-        mBarChart.startAnimation();
-
-    }
-
-    public void buildLineChart(@NonNull View view, @NonNull String[] colorString){
-
-        ValueLineChart mCubicValueLineChart = view.findViewById(R.id.cubiclinechart);ValueLineSeries series = new ValueLineSeries();
+        ValueLineChart mCubicValueLineChart = view.findViewById(R.id.cubiclinechart);
+        ValueLineSeries series = new ValueLineSeries();
         mCubicValueLineChart.clearChart();
-        series.setColor(0xFF56B7F1);
+        series.setColor(0xFF027125);
 
 
         int numberOfWasteThisDay = 1;
@@ -205,7 +151,6 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
             if (i == listSize - 1) {
                 series.addPoint(new ValueLinePoint(dateFormatted, numberOfWasteThisDay));
             }
-
         }
         mCubicValueLineChart.addSeries(series);
         mCubicValueLineChart.startAnimation();
@@ -222,7 +167,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
         super.onCreate(savedInstanceState);
         announcementList = new AnnouncementList(requireActivity(), getContext());
         announcementList.addObserver(this);
-        wasteList=new WasteList();
+        wasteList = new WasteList();
         wasteList.addObserver(this);
     }
 
@@ -236,14 +181,10 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
     @Override
     public void onAnnouncementListChanged() {
         requireActivity().runOnUiThread(() -> {
-            Log.d(TAG, "onAnnouncementListChanged: " + announcementList);
             swipeRefreshLayout.setRefreshing(false);
-            if(announcementList.isEmpty() ){
-                return;
-            } else {
+            if (!announcementList.isEmpty()) {
                 buildPieChart(view, colorString);
             }
-
         });
     }
 
@@ -253,14 +194,9 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
         requireActivity().runOnUiThread(() -> {
             Log.d(TAG, "onWasteListChanged: " + wasteList);
             swipeRefreshLayout.setRefreshing(false);
-            if(wasteList.isEmpty() ){
-                return;
-            } else {
-                buildBarChart(view, colorString);
+            if (!wasteList.isEmpty()) {
                 buildLineChart(view, colorString);
             }
-
         });
-
     }
 }

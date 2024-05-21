@@ -72,6 +72,6 @@
     <string name="welcomeMessageStatistic">Bienvenue sur la page des statistiques de DecheTri!</string>
     <string name="logo_activites">logo activités</string>
     <string name="statisticsPieChart">Statistiques de la proportion d\'évènements en fonction de leur type.</string>
-    <string name="statisticsBarChart">Histogramme de la proportion des déchets signalés par date.</string>
+    <string name="statisticsBarChart">Graphique de la proportion des déchets signalés au cours du temps.</string>
     <string name="logo_signalement">logo signalement</string>
 </resources>
