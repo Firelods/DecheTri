@@ -16,20 +16,21 @@ import java.util.Collection;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
+import etu.seinksansdoozebank.dechetri.model.observable.Observable;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class AnnouncementList extends ArrayList<Announcement> {
+public class AnnouncementList extends ArrayList<Announcement> implements Observable<AnnouncementListObserver> {
     private static final String TAG = "512Bank";
     private final List<AnnouncementListObserver> observers = new ArrayList<>();
     private final FragmentActivity activity;
     private final Context context;
 
-    public AnnouncementList(FragmentActivity activity, Context context) {
+    public AnnouncementList(FragmentActivity activity) {
         super();
-        this.context = context;
         this.activity = activity;
+        this.context = activity.getApplicationContext();
         this.init();
     }
 
@@ -39,13 +40,19 @@ public class AnnouncementList extends ArrayList<Announcement> {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
                 Log.e("APIController", "Error while getting announcement : " + message);
-                activity.runOnUiThread(() -> Toast.makeText(context, "Erreur lors de la récupération des annonces : " + message, Toast.LENGTH_SHORT).show());
+                activity.runOnUiThread(() -> {
+                    Toast.makeText(context, "Erreur lors de la récupération des annonces : " + message, Toast.LENGTH_SHORT).show();
+                    notifyObservers();
+                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    activity.runOnUiThread(() -> Toast.makeText(context, "Erreur lors de la récupération des annonces", Toast.LENGTH_SHORT).show());
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(context, "Erreur lors de la récupération des annonces", Toast.LENGTH_SHORT).show();
+                        notifyObservers();
+                    });
                     return;
                 }
                 String json = response.body().string();
@@ -72,7 +79,7 @@ public class AnnouncementList extends ArrayList<Announcement> {
         observers.remove(observer);
     }
 
-    private void notifyObservers() {
+    public void notifyObservers() {
         for (AnnouncementListObserver observer : observers) {
             observer.onAnnouncementListChanged();
         }

@@ -60,12 +60,14 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         Button buttonDelete = view.findViewById(R.id.btnDelete);
         Button buttonConfirm = view.findViewById(R.id.btnConfirm);
         ImageView wasteImage = view.findViewById(R.id.wasteImage);
+        TextView wasteType = view.findViewById(R.id.wasteType);
 
         if (getArguments() != null) {
             waste = getArguments().getParcelable("waste");
             if (waste != null) {
                 wasteName.setText(waste.getName());
                 wasteAddress.setText(waste.getAddress());
+                wasteType.setText(waste.getType().getName());
                 byte[] imageBytes = waste.getImageData();
                 if (imageBytes != null){
                     Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
