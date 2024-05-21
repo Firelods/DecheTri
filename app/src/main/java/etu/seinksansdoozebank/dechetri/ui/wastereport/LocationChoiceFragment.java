@@ -1,6 +1,5 @@
 package etu.seinksansdoozebank.dechetri.ui.wastereport;
 
-import static android.content.Intent.getIntent;
 
 import android.Manifest;
 import android.content.Context;
@@ -33,7 +32,6 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;
 
-import java.util.Arrays;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.R;
@@ -261,6 +259,8 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
         if (locationManager != null) {
             locationManager.removeUpdates(this);
         }
-        map.onDetach();
+        if (map != null) {
+            map.onDetach();
+        }
     }
 }

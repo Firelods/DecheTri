@@ -41,13 +41,13 @@ import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementListObserver;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementType;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
-import etu.seinksansdoozebank.dechetri.model.waste.WasteListObservers;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteListObserver;
 
 
-public class StatisticsFragment extends Fragment implements AnnouncementListObserver, WasteListObservers {
+public class StatisticsFragment extends Fragment implements AnnouncementListObserver, WasteListObserver {
 
     private FragmentStatisticsBinding binding;
-    private String TAG = "emma";
+    private String TAG = "StatisticsFragment";
     private AnnouncementList announcementList;
     private WasteList wasteList;
     private SwipeRefreshLayout swipeRefreshLayout;
