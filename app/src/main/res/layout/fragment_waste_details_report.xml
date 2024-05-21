@@ -134,7 +134,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:src="@drawable/baseline_add_circle_outline" />
+                    android:src="@drawable/baseline_add_24" />
             </LinearLayout>
             <Space
                 android:layout_width="match_parent"
