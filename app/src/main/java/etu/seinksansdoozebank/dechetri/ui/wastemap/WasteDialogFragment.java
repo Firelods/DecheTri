@@ -170,7 +170,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
     private void sendNotification(NotificationType type, String title, String message, String channelId, int priority) {
         NotificationFactory factory = NotificationFactory.getFactory(type);
-        INotification notification = factory.createNotification();
-        notification.sendNotification(getActivity(), getContext(), title, message, channelId, priority);
+        INotification notification = factory.createNotification(getActivity(), getContext(), title, message, channelId, priority);
+        notification.sendNotification();
     }
 }

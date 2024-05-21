@@ -1,8 +1,11 @@
 package etu.seinksansdoozebank.dechetri.model.waste;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.gson.Gson;
 
@@ -22,15 +25,27 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     private static final String TAG = "512Bank";
     private final ArrayList<WasteListObservable> observers = new ArrayList<>();
 
-    public WasteList() {
+    public WasteList(FragmentActivity activity, Context context) {
         APIController.getWasteList(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(TAG + "TasksListFragment", "onFailure: " + e.getMessage());
+                String message = e.getMessage();
+                Log.e("APIController", "Error while getting waste : " + message);
+                activity.runOnUiThread(() -> {
+                    Toast.makeText(context, "Erreur lors de la récupération des déchêts : " + message, Toast.LENGTH_SHORT).show();
+                    notifyObservers();
+                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(context, "Erreur lors de la récupération des déchêts", Toast.LENGTH_SHORT).show();
+                        notifyObservers();
+                    });
+                    return;
+                }
                 String json = response.body().string();
                 Gson gson = new Gson();
                 Waste[] wastes = gson.fromJson(json, Waste[].class);

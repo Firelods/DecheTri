@@ -173,9 +173,8 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
-                Log.e("APIController", "Error while creating announcement : " + message);
                 activity.runOnUiThread(() -> {
-                    Toast.makeText(activity.getApplicationContext(), "Erreur lors de la publication de l'annonce : " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce : " + message, Toast.LENGTH_SHORT).show();
                     sendNotification(NotificationType.CREATE, getString(R.string.create_announcement), "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                 });
             }
@@ -184,17 +183,16 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 if (response.isSuccessful()) {
                     activity.runOnUiThread(() -> {
-                        fluxUpdateable.updateFlux();
-                        Toast.makeText(activity.getApplicationContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
                         sendNotification(NotificationType.CREATE, getString(R.string.create_announcement), "Announcement created successfully", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
+                        fluxUpdateable.updateFlux();
                     });
                 } else {
                     activity.runOnUiThread(() -> {
                         try {
                             assert response.body() != null;
                             String body = response.body().string();
-                            Log.e("APIController", "Error while creating announcement : " + body);
-                            Toast.makeText(activity.getApplicationContext(), R.string.add_announcement_result_error + " : " + body, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.add_announcement_result_error + " : " + body, Toast.LENGTH_SHORT).show();
                             sendNotification(NotificationType.CREATE, getString(R.string.create_announcement), "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -214,7 +212,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
 
     private void sendNotification(NotificationType type, String title, String message, String channelId, int priority) {
         NotificationFactory factory = NotificationFactory.getFactory(type);
-        INotification notification = factory.createNotification();
-        notification.sendNotification(getActivity(), context, title, message, channelId, priority);
+        INotification notification = factory.createNotification(getActivity(), context, title, message, channelId, priority);
+        notification.sendNotification();
     }
 }

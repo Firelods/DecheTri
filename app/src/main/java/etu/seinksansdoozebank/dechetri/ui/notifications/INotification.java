@@ -10,7 +10,7 @@ import android.util.Log;
 import androidx.core.app.NotificationManagerCompat;
 
 public interface INotification {
-    void sendNotification(Activity activity, Context context, String title, String message, String channelId, int priority);
+    void sendNotification();
 
     default void askNotificationPermission(Activity activity, Context context, NotificationPermissionCallback callback) {
         if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {

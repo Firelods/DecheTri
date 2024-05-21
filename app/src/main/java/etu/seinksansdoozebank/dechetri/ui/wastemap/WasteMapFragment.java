@@ -72,7 +72,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
                 Log.v(TAG, "Location permission granted");
                 setupMapView();
                 updateMapToCurrentLocation();
-                wasteList = new WasteList();
+                wasteList = new WasteList(getActivity(), getContext());
                 addWastePointsOnMap(wasteList);
             } else {
                 Log.v(TAG, "Location permission denied");
@@ -81,7 +81,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         setupMapView();
         if (checkLocationPermission()) {
             updateMapToCurrentLocation();
-            wasteList = new WasteList();
+            wasteList = new WasteList(getActivity(), getContext());
             addWastePointsOnMap(wasteList);
         } else {
             requestLocationPermission();
@@ -91,7 +91,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
             // Set to the swipeRefreshLayout view the elevetion of 5
             swipeRefreshLayout.setElevation(5);
             swipeRefreshLayout.setRefreshing(true);
-            wasteList = new WasteList();
+            wasteList = new WasteList(getActivity(), getContext());
         });
 
         return view;
@@ -179,6 +179,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         if (wastes == null) {
             return;
         }
+
         // Create a set to store the points of the new wastes
         Set<GeoPoint> newWastePoints = wastes.stream()
                 .map(location -> new GeoPoint(location.getLatitude(), location.getLongitude()))
@@ -212,6 +213,9 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
                 return true;
             }
         }, requireContext()));
+
+        updateMapToCurrentLocation();
+
         map.invalidate(); // Rafraîchit la carte pour afficher les nouveaux éléments
     }
 
@@ -268,7 +272,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         } else {
             Toast.makeText(getContext(), getString(R.string.la_localisation_est_necessaire), Toast.LENGTH_SHORT).show();
         }
-        wasteList = new WasteList();
+        wasteList = new WasteList(getActivity(), getContext());
         wasteList.addObserver(this);
     }
 
@@ -285,7 +289,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     @Override
     public void onWasteListChanged() {
         requireActivity().runOnUiThread(() -> {
-            Log.d(TAG, "onWasteListChanged: ");
+            Log.d(TAG, "onWasteListChanged: " + wasteList);
             swipeRefreshLayout.setRefreshing(false);
             addWastePointsOnMap(wasteList);
         });

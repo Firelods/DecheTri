@@ -238,8 +238,8 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
 
     private void sendNotification(NotificationType type, String title, String message, String channelId, int priority) {
         NotificationFactory factory = NotificationFactory.getFactory(type);
-        INotification notification = factory.createNotification();
-        notification.sendNotification(getActivity(), context, title, message, channelId, priority);
+        INotification notification = factory.createNotification(getActivity(), context, title, message, channelId, priority);
+        notification.sendNotification();
     }
 
     @Override
