@@ -40,9 +40,9 @@ import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
-import etu.seinksansdoozebank.dechetri.model.waste.WasteListObservable;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteListObserver;
 
-public class WasteMapFragment extends Fragment implements LocationListener, WasteListObservable {
+public class WasteMapFragment extends Fragment implements LocationListener, WasteListObserver {
     private FragmentWasteMapBinding binding;
     private WasteList wasteList;
     private MapView map;

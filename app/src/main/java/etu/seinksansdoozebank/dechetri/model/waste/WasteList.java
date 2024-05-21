@@ -21,9 +21,9 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 
-public class WasteList extends ArrayList<Waste> implements Observable<WasteListObservable> {
+public class WasteList extends ArrayList<Waste> implements Observable<WasteListObserver> {
     private static final String TAG = "512Bank";
-    private final ArrayList<WasteListObservable> observers = new ArrayList<>();
+    private final ArrayList<WasteListObserver> observers = new ArrayList<>();
 
     public WasteList(FragmentActivity activity, Context context) {
         APIController.getWasteList(new Callback() {
@@ -56,16 +56,16 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
         });
     }
 
-    public void addObserver(WasteListObservable observer) {
+    public void addObserver(WasteListObserver observer) {
         observers.add(observer);
     }
 
-    public void removeObserver(WasteListObservable observer) {
+    public void removeObserver(WasteListObserver observer) {
         observers.remove(observer);
     }
 
     public void notifyObservers() {
-        for (WasteListObservable observer : observers) {
+        for (WasteListObserver observer : observers) {
             observer.onWasteListChanged();
         }
     }
