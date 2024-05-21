@@ -202,6 +202,13 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
+        announcementList.updateList();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         announcementList = new AnnouncementList(requireActivity(), context);

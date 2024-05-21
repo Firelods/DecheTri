@@ -130,5 +130,12 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
         super.onDestroyView();
         binding = null;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
+        getEmployeAssignee();
+    }
 }
 
