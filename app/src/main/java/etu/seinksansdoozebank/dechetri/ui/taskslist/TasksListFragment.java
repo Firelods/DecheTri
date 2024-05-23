@@ -79,7 +79,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                 if (tasks != null) {
                     taskList.clear();
                     taskList.addAll(tasks);
-                    getWasteList();
+                    requireActivity().runOnUiThread(() -> getWasteList());
                 } else {
                     // The employee has no tasks
                     requireActivity().runOnUiThread(() -> {

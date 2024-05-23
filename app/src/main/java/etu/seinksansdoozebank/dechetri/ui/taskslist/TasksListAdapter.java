@@ -67,7 +67,9 @@ public class TasksListAdapter extends BaseAdapter {
             TextView title = listItem.findViewById(R.id.taskList_title);
             ImageView image = listItem.findViewById(R.id.taskList_image);
             Waste waste = this.wasteList.stream().filter(w -> w.getId().equals(taskList.get(position).getIdWasteToCollect())).findAny().orElse(null);
-
+            if (waste == null) {
+                return listItem;
+            }
             // (3) : Renseignement des valeurs
             title.setText(waste.getName());
             byte[] imageData = waste.getImageData();
