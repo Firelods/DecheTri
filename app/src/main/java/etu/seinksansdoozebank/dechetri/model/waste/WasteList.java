@@ -1,6 +1,8 @@
 package etu.seinksansdoozebank.dechetri.model.waste;
 
+import android.app.Activity;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -22,15 +24,21 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     private static final String TAG = "512Bank";
     private final ArrayList<WasteListObservable> observers = new ArrayList<>();
 
-    public WasteList() {
+    public WasteList(Activity activity) {
         APIController.getWasteList(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.d(TAG + "TasksListFragment", "onFailure: " + e.getMessage());
+
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG + "TasksListFragment", "onResponse: " + response.body().string());
+                    activity.runOnUiThread(() -> Toast.makeText(activity, "Failed to get waste list", Toast.LENGTH_SHORT).show());
+                    return;
+                }
                 String json = response.body().string();
                 Gson gson = new Gson();
                 Waste[] wastes = gson.fromJson(json, Waste[].class);
