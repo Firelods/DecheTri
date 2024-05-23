@@ -26,9 +26,7 @@
             android:paddingBottom="4dp"
             android:textColor="@android:color/black" />
 
-        <!-- App Name -->
-
-
+        <!-- Calender ImageButton -->
         <ImageButton
             android:id="@+id/calendar"
             android:layout_width="wrap_content"
@@ -38,8 +36,19 @@
             android:gravity="end"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
-             />
+            />
     </LinearLayout>
+
+    <!-- New TextView under the date -->
+    <TextView
+        android:id="@+id/flux_event_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="2dp"
+        android:textColor="@android:color/black" />
 
     <!-- Title and Description Layout -->
     <LinearLayout
@@ -79,7 +88,6 @@
                 android:textColor="@android:color/black" />
         </LinearLayout>
 
-
         <ImageButton
             android:id="@+id/flux_image_bin"
             style="?android:attr/borderlessButtonStyle"
@@ -88,6 +96,5 @@
             android:contentDescription="TODO"
             android:src="@drawable/baseline_delete_24" />
     </LinearLayout>
-
 
 </LinearLayout>

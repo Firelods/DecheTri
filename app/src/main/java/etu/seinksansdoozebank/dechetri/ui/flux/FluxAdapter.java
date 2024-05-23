@@ -3,6 +3,7 @@ package etu.seinksansdoozebank.dechetri.ui.flux;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
@@ -67,17 +72,19 @@ public class FluxAdapter extends BaseAdapter {
             Announcement announcement = announcementList.get(i);
 
             if (announcement.getType() == AnnouncementType.EVENT) {
+                TextView event = listItem.findViewById(R.id.flux_event_date);
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+                event.setText("Le " + outputFormat.format(announcement.getEventDate()));
                 imageButtonCalendar.setVisibility(View.VISIBLE);
-                imageButtonCalendar.setOnClickListener(v -> {
-                    ((FluxAdapterListener) activity).onClickCalendar(imageButtonCalendar, announcement);
-                });
+                imageButtonCalendar.setOnClickListener(v -> ((FluxAdapterListener) activity).onClickCalendar(imageButtonCalendar, announcement));
             } else {
                 imageButtonCalendar.setVisibility(View.GONE);
             }
 
             // (4) : Renseignement des valeurs
             title.setText(announcement.getTitle());
-            date.setText(announcement.getPublicationDate().toString());
+
+            date.setText(getFormattedDate(announcement.getPublicationDate()));
             description.setText(announcement.getDescription());
 
             SharedPreferences sharedPreferences = activity.getContext().getSharedPreferences(activity.getContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
@@ -94,5 +101,45 @@ public class FluxAdapter extends BaseAdapter {
             }
         }
         return listItem;
+    }
+
+
+    /**
+     * Get the formatted date
+     * If the date is today, return "il y a x minutes/heures"
+     * If the date is yesterday, return "Hier"
+     * If the date is in the last 7 days, return "Il y a x jours"
+     * else return "Le dd/MM/yyyy"
+     * @param date the date to format
+     * @return the formatted date
+     */
+    private String getFormattedDate(Date date) {
+        Calendar now = Calendar.getInstance();
+        Calendar inputDate = Calendar.getInstance();
+        inputDate.setTime(date);
+
+        // if the date is today
+        if (inputDate.get(Calendar.YEAR) == now.get(Calendar.YEAR) && inputDate.get(Calendar.MONTH) == now.get(Calendar.MONTH) && inputDate.get(Calendar.DATE) == now.get(Calendar.DATE)) {
+            long diff = now.getTimeInMillis() - inputDate.getTimeInMillis();
+            long minutes = diff / 60000;
+            if (minutes < 60) {
+                return "Il y a " + minutes + " minute" + (minutes > 1 ? "s" : "");
+            } else {
+                return "Il y a " + minutes / 60 + " heure" + (minutes / 60 > 1 ? "s" : "");
+            }
+        }
+        // if the date is yesterday
+        now.add(Calendar.DATE, -1);
+        if (inputDate.get(Calendar.YEAR) == now.get(Calendar.YEAR) && inputDate.get(Calendar.MONTH) == now.get(Calendar.MONTH) && inputDate.get(Calendar.DATE) == now.get(Calendar.DATE)) {
+            return "Hier";
+        }
+        // if the date is in the last 7 days
+        now.add(Calendar.DATE, -6);
+        if (inputDate.after(now)) {
+            return "Il y a " + (now.get(Calendar.DATE) - inputDate.get(Calendar.DATE)) + " jour" + ((now.get(Calendar.DATE) - inputDate.get(Calendar.DATE)) > 1 ? "s" : "");
+        }
+        // else
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+        return "Le " + outputFormat.format(date);
     }
 }
