@@ -84,6 +84,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_announcement_dialog, container, false);
+
         context = requireContext();
 
         editTextTitle = view.findViewById(R.id.etxt_title);
@@ -118,8 +119,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
             if (editTextTitle != null && editTextDescription != null && editTextDate != null) {
                 title = editTextTitle.getText().toString();
                 description = editTextDescription.getText().toString();
-                publishAnnouncement(title, description, pickedDate);
-                this.dismiss();
+                publishAnnouncement(title, description, pickedDate, this::dismiss);
             }
         });
         cancel.setOnClickListener(v -> this.dismiss());
@@ -167,42 +167,40 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
         editTextDescription.addTextChangedListener(textWatcher);
     }
 
-    private void publishAnnouncement(String title, String description, Calendar eventDate) {
-        Log.d(TAG, "CONTEXT: " + context + " -> " + activity.getApplicationContext());
-        context = requireContext();
-        Log.d(TAG, "CONTEXT: " + context + " -> " + activity.getApplicationContext());
+    private void publishAnnouncement(String title, String description, Calendar eventDate, Runnable onComplete) {
         Callback onResponse = new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
                 activity.runOnUiThread(() -> {
-                    if (isAdded()) {
-                        Toast.makeText(activity.getApplicationContext(), "Erreur lors de la publication de l'annonce : " + message, Toast.LENGTH_SHORT).show();
-                        NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), context, getString(R.string.create_announcement), "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
-                    }
+                    Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce : " + message, Toast.LENGTH_SHORT).show();
+                    NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
+                    onComplete.run();
                 });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                activity.runOnUiThread(() -> {
-                    if (isAdded()) {
-                        if (response.isSuccessful()) {
-                            Toast.makeText(context, R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
-                            NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), context, getString(R.string.create_announcement), "Announcement created successfully", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
-                            fluxUpdateable.updateFlux();
-                        } else {
-                            try {
-                                assert response.body() != null;
-                                String body = response.body().string();
-                                Toast.makeText(context, R.string.add_announcement_result_error + " : " + body, Toast.LENGTH_SHORT).show();
-                                NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), context, getString(R.string.create_announcement), "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                if (response.isSuccessful()) {
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
+                        NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Announcement created successfully", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
+                        fluxUpdateable.updateFlux();
+                        onComplete.run();
+                    });
+                } else {
+                    activity.runOnUiThread(() -> {
+                        try {
+                            assert response.body() != null;
+                            String body = response.body().string();
+                            Toast.makeText(getContext(), R.string.add_announcement_result_error + " : " + body, Toast.LENGTH_SHORT).show();
+                            NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
-                    }
-                });
+                    });
+                }
+                onComplete.run();
             }
         };
         if (eventDate == null) {
