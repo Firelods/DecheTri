@@ -1,6 +1,7 @@
 package etu.seinksansdoozebank.dechetri.ui.wastemap;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -53,6 +54,13 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     private Marker currentLocationMarker;
     private final List<OverlayItem> items = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
+    private Activity activity;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activity = getActivity();
+    }
 
     @Nullable
     @Override
@@ -72,7 +80,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
                 Log.v(TAG, "Location permission granted");
                 setupMapView();
                 updateMapToCurrentLocation();
-                wasteList = new WasteList(getActivity(), getContext());
+                wasteList = new WasteList(activity);
                 addWastePointsOnMap(wasteList);
             } else {
                 Log.v(TAG, "Location permission denied");
@@ -81,7 +89,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         setupMapView();
         if (checkLocationPermission()) {
             updateMapToCurrentLocation();
-            wasteList = new WasteList(getActivity(), getContext());
+            wasteList = new WasteList(activity);
             addWastePointsOnMap(wasteList);
         } else {
             requestLocationPermission();
@@ -91,7 +99,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
             // Set to the swipeRefreshLayout view the elevetion of 5
             swipeRefreshLayout.setElevation(5);
             swipeRefreshLayout.setRefreshing(true);
-            wasteList = new WasteList(getActivity(), getContext());
+            wasteList = new WasteList(activity);
         });
 
         return view;
@@ -157,9 +165,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     }
 
     private void addMarker(GeoPoint startPoint) {
-        if (map == null) {
-            return;
-        }
+        if (map == null) return;
         Marker marker = new Marker(map);
         marker.setPosition(startPoint);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
@@ -176,10 +182,9 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     }
 
     public void addWastePointsOnMap(List<Waste> wastes) {
-        if (wastes == null) {
+        if (wastes == null || map == null) {
             return;
         }
-
         // Create a set to store the points of the new wastes
         Set<GeoPoint> newWastePoints = wastes.stream()
                 .map(location -> new GeoPoint(location.getLatitude(), location.getLongitude()))
@@ -272,7 +277,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         } else {
             Toast.makeText(getContext(), getString(R.string.la_localisation_est_necessaire), Toast.LENGTH_SHORT).show();
         }
-        wasteList = new WasteList(getActivity(), getContext());
+        wasteList = new WasteList(activity);
         wasteList.addObserver(this);
     }
 

@@ -18,7 +18,7 @@ public class ItineraryNotificationFactory extends NotificationFactory {
     }
 
     private NotificationPermissionCallback createCallback(Context context, String title, String message, String channelId, int priority) {
-        this.notificationId++;
+        int currentNotificationId = getNextNotificationId();
         return new NotificationPermissionCallback() {
             @Override
             public void onPermissionGranted() {
@@ -32,13 +32,12 @@ public class ItineraryNotificationFactory extends NotificationFactory {
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                             .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                             .setContentTitle(title)
-                            .setContentText(message)
                             .setPriority(priority)
                             .setContentIntent(pendingIntent)
+                            .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                             .setAutoCancel(true);
 
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                    int currentNotificationId = notificationId;
                     notificationManager.notify(currentNotificationId, builder.build());
                 } catch (SecurityException e) {
                     // Handle security exception

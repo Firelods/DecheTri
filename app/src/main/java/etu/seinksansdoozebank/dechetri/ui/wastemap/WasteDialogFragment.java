@@ -105,6 +105,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             buttonConfirm.setOnClickListener(v -> APIController.completeTask(waste.getId(), new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.d("WasteDialogFragment", "Error completing task for waste at " + waste.getName() + " : " + e.getMessage());
                     requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error completing task for waste at " + waste.getName(), Toast.LENGTH_SHORT).show());
                     NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), "Error completing task", "Error completing task for waste at " + waste.getName(), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
                 }
@@ -114,9 +115,10 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                     requireActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
                             Toast.makeText(getContext(), "Task completed", Toast.LENGTH_SHORT).show();
-                            NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), "Task completed", "Task completed for waste at " + waste.getName(), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_DEFAULT);
+                            NotificationFactory.removeNotification(getContext(), notificationId[0]);
                             dismiss();
                         } else {
+                            Log.d("WasteDialogFragment", "Else Error completing task for waste at " + waste.getName() + " : " + response.message());
                             Toast.makeText(getContext(), "Error completing task : " + response.message(), Toast.LENGTH_SHORT).show();
                             NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), "Error completing task", "Error completing task for waste at " + waste.getName(), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
                         }
@@ -128,14 +130,14 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             buttonConfirm.setVisibility(View.GONE);
         }
         if (role.equals(getString(R.string.role_admin_title))) {
-            this.configureDeleteButton(notificationId[0], buttonDelete);
+            this.configureDeleteButton(buttonDelete);
         } else {
             buttonDelete.setVisibility(View.GONE);
         }
         return binding.getRoot();
     }
 
-    private void configureDeleteButton(int notificationId, Button buttonDelete) {
+    private void configureDeleteButton(Button buttonDelete) {
         buttonDelete.setVisibility(View.VISIBLE);
         buttonDelete.setOnClickListener(v -> APIController.deleteWaste(waste.getId(), new Callback() {
             @Override
@@ -153,7 +155,6 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                         Toast.makeText(getContext(), "Waste successfully deleted", Toast.LENGTH_SHORT).show();
                         NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), "Waste successfully deleted", "Waste successfully deleted : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_DEFAULT);
                         dismiss();
-                        NotificationFactory.removeNotification(getContext(), notificationId);
                     });
                 } else {
                     requireActivity().runOnUiThread(() -> {

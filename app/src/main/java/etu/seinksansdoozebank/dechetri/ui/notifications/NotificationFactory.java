@@ -6,7 +6,12 @@ import android.content.Context;
 import androidx.core.app.NotificationManagerCompat;
 
 public abstract class NotificationFactory {
-    int notificationId = 0;
+    private static int notificationIdCounter = 0;
+
+    protected static synchronized int getNextNotificationId() {
+        return notificationIdCounter++;
+    }
+
 
     public abstract INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority);
 
@@ -29,7 +34,7 @@ public abstract class NotificationFactory {
         NotificationFactory factory = getFactory(type);
         INotification notification = factory.createNotification(activity, context, title, message, channelId, priority);
         notification.sendNotification();
-        return factory.notificationId;
+        return notificationIdCounter;
     }
 
     public static void removeNotification(Context context, int notificationId) {

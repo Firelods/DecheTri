@@ -22,7 +22,7 @@ public class CreateNotificationFactory extends NotificationFactory {
     }
 
     private NotificationPermissionCallback createCallback(Context context, String title, String message, String channelId, int priority) {
-        this.notificationId++;
+        int currentNotificationId = getNextNotificationId();
         return new NotificationPermissionCallback() {
             @Override
             public void onPermissionGranted() {
@@ -42,7 +42,6 @@ public class CreateNotificationFactory extends NotificationFactory {
                             .setAutoCancel(true);
 
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                    int currentNotificationId = notificationId;
                     notificationManager.notify(currentNotificationId, builder.build());
 
                     // Remove the notification after a certain duration

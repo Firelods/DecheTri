@@ -1,5 +1,6 @@
 package etu.seinksansdoozebank.dechetri.model.waste;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -25,7 +26,8 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     private static final String TAG = "512Bank";
     private final ArrayList<WasteListObserver> observers = new ArrayList<>();
 
-    public WasteList(FragmentActivity activity, Context context) {
+    public WasteList(Activity activity) {
+        Context context = activity.getApplicationContext();
         APIController.getWasteList(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
