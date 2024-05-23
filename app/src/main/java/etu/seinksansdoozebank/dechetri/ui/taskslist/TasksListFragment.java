@@ -52,7 +52,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
 
         swipeRefreshLayout.setOnRefreshListener(this::getEmployeAssignee);
 
-        getEmployeAssignee();
+//        getEmployeAssignee();
 
         // Create an adapter
         taskListAdapter = new TasksListAdapter(requireActivity(), taskList, wasteList);
