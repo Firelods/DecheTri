@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -13,12 +11,10 @@ import androidx.core.app.NotificationManagerCompat;
 import etu.seinksansdoozebank.dechetri.MainActivity;
 import etu.seinksansdoozebank.dechetri.R;
 
-public class DeleteNotificationFactory extends NotificationFactory {
-    private static final long NOTIFICATION_DURATION = 5000;
-
+public class ItineraryNotificationFactory extends NotificationFactory {
     @Override
     public INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
-        return new DeleteNotification(this.createCallback(context, title, message, channelId, priority), activity, context);
+        return new ItineraryNotification(this.createCallback(context, title, message, channelId, priority), activity, context);
     }
 
     private NotificationPermissionCallback createCallback(Context context, String title, String message, String channelId, int priority) {
@@ -44,10 +40,6 @@ public class DeleteNotificationFactory extends NotificationFactory {
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                     int currentNotificationId = notificationId;
                     notificationManager.notify(currentNotificationId, builder.build());
-
-                    // Remove the notification after a certain duration
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.postDelayed(() -> notificationManager.cancel(currentNotificationId), NOTIFICATION_DURATION);
                 } catch (SecurityException e) {
                     // Handle security exception
                     e.printStackTrace();

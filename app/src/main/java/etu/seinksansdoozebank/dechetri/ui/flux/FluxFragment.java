@@ -111,7 +111,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                             Log.e(TAG, "Error while removing announcement: " + message);
                             requireActivity().runOnUiThread(() -> {
                                 Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce: " + message, Toast.LENGTH_SHORT).show();
-                                sendNotification(NotificationType.DELETE, getString(R.string.delete_announcement), "Failed to delete announcement", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.delete_announcement), "Failed to delete announcement", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
                             });
                         }
 
@@ -122,7 +122,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                                 swipeRefreshLayout.setRefreshing(true);
                                 announcementList.updateList();
                                 Toast.makeText(getContext(), R.string.remove_announcement_result_success, Toast.LENGTH_SHORT).show();
-                                sendNotification(NotificationType.DELETE, getString(R.string.delete_announcement), "Announcement deleted successfully", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.delete_announcement), "Announcement deleted successfully", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
                             });
                         }
                     });
@@ -234,12 +234,6 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
             fluxAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         });
-    }
-
-    private void sendNotification(NotificationType type, String title, String message, String channelId, int priority) {
-        NotificationFactory factory = NotificationFactory.getFactory(type);
-        INotification notification = factory.createNotification(getActivity(), context, title, message, channelId, priority);
-        notification.sendNotification();
     }
 
     @Override

@@ -14,7 +14,6 @@ import etu.seinksansdoozebank.dechetri.MainActivity;
 import etu.seinksansdoozebank.dechetri.R;
 
 public class CreateNotificationFactory extends NotificationFactory {
-    private int notificationId = 0;
     private static final long NOTIFICATION_DURATION = 5000;
 
     @Override
@@ -23,6 +22,7 @@ public class CreateNotificationFactory extends NotificationFactory {
     }
 
     private NotificationPermissionCallback createCallback(Context context, String title, String message, String channelId, int priority) {
+        this.notificationId++;
         return new NotificationPermissionCallback() {
             @Override
             public void onPermissionGranted() {
@@ -48,7 +48,6 @@ public class CreateNotificationFactory extends NotificationFactory {
                     // Remove the notification after a certain duration
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.postDelayed(() -> notificationManager.cancel(currentNotificationId), NOTIFICATION_DURATION);
-                    notificationId++;
                 } catch (SecurityException e) {
                     // Handle security exception
                     e.printStackTrace();

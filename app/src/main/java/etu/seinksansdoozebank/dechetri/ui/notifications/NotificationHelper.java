@@ -13,6 +13,7 @@ public class NotificationHelper extends Application {
     public static final String CHANNEL_ID_CREATES = "channel_creates";
     public static final String CHANNEL_ID_REPORT_WASTE = "channel_report_waste";
     public static final String CHANNEL_ID_COMPLETE_TASK = "channel_complete_task";
+    public static final String CHANNEL_ID_ITINERARY = "channel_itinerary";
     private static NotificationManager notificationManager;
 
     private void createNotificationChannel(String channelId, String name, String description, int importance) {
@@ -36,5 +37,6 @@ public class NotificationHelper extends Application {
         createNotificationChannel(CHANNEL_ID_CREATES, "Creates", "Channel for create notifications", NotificationManager.IMPORTANCE_DEFAULT);
         createNotificationChannel(CHANNEL_ID_REPORT_WASTE, "Report Waste", "Channel for waste report notifications", NotificationManager.IMPORTANCE_DEFAULT);
         createNotificationChannel(CHANNEL_ID_COMPLETE_TASK, "Complete Task", "Channel for task completion notifications", NotificationManager.IMPORTANCE_DEFAULT);
+        createNotificationChannel(CHANNEL_ID_ITINERARY, "Itinerary", "Channel for itinerary notifications", NotificationManager.IMPORTANCE_DEFAULT);
     }
 }
