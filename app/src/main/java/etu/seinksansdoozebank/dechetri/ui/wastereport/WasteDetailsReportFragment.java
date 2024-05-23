@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.faltenreich.skeletonlayout.Skeleton;
 
@@ -190,6 +191,8 @@ public class WasteDetailsReportFragment extends Fragment {
                     requireActivity().runOnUiThread(() -> {
 //                        requireActivity().getSupportFragmentManager().popBackStack();
                         //TODO : navigate to the map
+                        Navigation.findNavController(requireView()).navigate(R.id.navigation_map);
+
                         Toast.makeText(requireContext(), "Waste reported", Toast.LENGTH_SHORT).show();
                     });
                 } else {
