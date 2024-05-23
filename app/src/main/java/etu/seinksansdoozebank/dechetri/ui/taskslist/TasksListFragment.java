@@ -33,7 +33,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class TasksListFragment extends Fragment implements TasksListAdapterListener {
-    private static final String TAG = "512Bank";
+    private static final String TAG = "512Bank" + TasksListFragment.class.getSimpleName();
     private FragmentTasksListBinding binding;
     private ListView listViewTasks;
     private TasksListAdapter taskListAdapter;
@@ -55,7 +55,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
 //        getEmployeAssignee();
 
         // Create an adapter
-        taskListAdapter = new TasksListAdapter(requireActivity(), taskList, wasteList);
+        taskListAdapter = new TasksListAdapter(requireActivity(), wasteList);
         listViewTasks.setAdapter(taskListAdapter);
         return root;
     }
@@ -84,7 +84,15 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                 List<Task> tasks = gson.fromJson(json, taskListType);
                 if (tasks != null) {
                     taskList.clear();
+                    wasteList.clear();
                     taskList.addAll(tasks);
+                    if (taskList.isEmpty()) {
+                        requireActivity().runOnUiThread(() -> {
+                            taskListAdapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
+                        });
+                        return;
+                    }
                     getWasteList();
                 } else {
                     // The employee has no tasks
@@ -99,19 +107,26 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
     }
 
     private void getWasteList() {
-        for (Task task : taskList) {
+        List<Task> tempTaskList = new ArrayList<>(taskList);
+        for (Task task : tempTaskList) {
             APIController.getWaste(task.getIdWasteToCollect(), new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     String message = e.getMessage();
                     Log.e("APIController", "Error while getting waste : " + message);
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des déchets : " + message, Toast.LENGTH_SHORT).show());
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), "Erreur lors de la récupération des déchets", Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
+                    });
                 }
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
-                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des déchets", Toast.LENGTH_SHORT).show());
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), "Erreur lors de la récupération des déchets", Toast.LENGTH_SHORT).show();
+                            swipeRefreshLayout.setRefreshing(false);
+                        });
                         return;
                     }
                     String json = response.body().string();
