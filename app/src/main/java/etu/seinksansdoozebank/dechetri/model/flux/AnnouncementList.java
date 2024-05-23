@@ -31,7 +31,6 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
         super();
         this.context = context;
         this.activity = activity;
-        this.init();
     }
 
     private void init() {
