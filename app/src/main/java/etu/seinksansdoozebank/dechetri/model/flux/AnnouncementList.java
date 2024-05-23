@@ -31,7 +31,8 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
         super();
         this.context = context;
         this.activity = activity;
-        this.init();
+//        Log.d(TAG + "AnnouncementList", "init from constructor");
+//        this.init();
     }
 
     private void init() {
@@ -62,6 +63,8 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
 
     public void updateList() {
         this.clear();
+        Log.d(TAG + "AnnouncementList", "init from updateList");
+
         this.init();
     }
 
