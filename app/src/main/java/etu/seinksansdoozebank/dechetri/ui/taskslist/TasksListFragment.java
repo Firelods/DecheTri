@@ -1,5 +1,8 @@
 package etu.seinksansdoozebank.dechetri.ui.taskslist;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentTasksListBinding;
 import etu.seinksansdoozebank.dechetri.model.task.Task;
@@ -58,7 +62,9 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
 
     private void getEmployeAssignee() {
         swipeRefreshLayout.setRefreshing(true);
-        APIController.getEmployeAssignee("2", new Callback() {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(requireContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
+        String id = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_user_id), requireContext().getResources().getString(R.string.role_user_id));
+        APIController.getEmployeAssignee(id, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des tâches", Toast.LENGTH_SHORT).show());
