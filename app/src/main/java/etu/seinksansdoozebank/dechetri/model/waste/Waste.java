@@ -148,7 +148,7 @@ public class Waste implements Parcelable {
                 ", name='" + name + '\'' +
                 ", type=" + type +
                 ", description='" + description + '\'' +
-                ", imageData=" + this.imageData +
+                ", imageData=" + this.imageData.substring(0, 50) +
                 ", reportDate=" + reportDate +
                 ", address='" + address + '\'' +
                 ", latitude=" + latitude +
