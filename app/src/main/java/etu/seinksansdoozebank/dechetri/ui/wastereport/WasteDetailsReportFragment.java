@@ -1,6 +1,9 @@
 package etu.seinksansdoozebank.dechetri.ui.wastereport;
 
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -11,27 +14,43 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.faltenreich.skeletonlayout.Skeleton;
 
 import org.osmdroid.bonuspack.location.GeocoderNominatim;
 
 import java.io.IOException;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import etu.seinksansdoozebank.dechetri.R;
+import etu.seinksansdoozebank.dechetri.controller.api.APIController;
+import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteType;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 
 public class WasteDetailsReportFragment extends Fragment {
+
+    private WasteType selectedWasteType;
+
     interface GeocodeCallback {
         void onAddressFound(String address);
 
@@ -49,10 +68,11 @@ public class WasteDetailsReportFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_waste_details_report, container, false);
         localisationInput = view.findViewById(R.id.LocalisationInput);
         TextView locationTextView = view.findViewById(R.id.locationText);
-        Button validateButton = view.findViewById(R.id.ValidateButton);
+        Button validateButton = view.findViewById(R.id.validateButton);
         EditText nameInput = view.findViewById(R.id.NameInput);
         EditText descriptionInput = view.findViewById(R.id.DescriptionInput);
-        ImageView wasteImage=view.findViewById(R.id.imageChosen);
+        Spinner wasteTypeSpinner = view.findViewById(R.id.typeSpinner);
+        ImageView wasteImage = view.findViewById(R.id.imageChosen);
         skeleton = view.findViewById(R.id.skeletonLayout);
         skeleton.showSkeleton();
 
@@ -62,7 +82,7 @@ public class WasteDetailsReportFragment extends Fragment {
         }
         double latitude = getArguments().getDouble("latitude");
         double longitude = getArguments().getDouble("longitude");
-        byte[] chosenImage=getArguments().getByteArray("image");
+        byte[] chosenImage = getArguments().getByteArray("image");
         Bitmap imageChosenBitmap = BitmapFactory.decodeByteArray(chosenImage, 0, chosenImage.length);
         wasteImage.setImageBitmap(Bitmap.createScaledBitmap(imageChosenBitmap, 600, 600, false));
         locationTextView.setText("Lat : " + latitude + " Long : " + longitude);
@@ -108,6 +128,35 @@ public class WasteDetailsReportFragment extends Fragment {
         nameInput.addTextChangedListener(textWatcher);
         descriptionInput.addTextChangedListener(textWatcher);
         localisationInput.addTextChangedListener(textWatcher);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item_20sp, WasteType.getNames());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        wasteTypeSpinner.setAdapter(adapter);
+        wasteTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                selectedWasteType = WasteType.values()[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                selectedWasteType = WasteType.values()[0];
+            }
+        });
+
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
+        String userId = sharedPreferences.getString(getString(R.string.shared_preferences_key_user_id), getString(R.string.default_id));
+        validateButton.setOnClickListener(v -> this.reportWaste(
+                nameInput.getText().toString(),
+                selectedWasteType,
+                descriptionInput.getText().toString(),
+                userId,
+                localisationInput.getText().toString(),
+                latitude,
+                longitude,
+                chosenImage
+        ));
+
         return view;
     }
 
@@ -124,6 +173,31 @@ public class WasteDetailsReportFragment extends Fragment {
                 }
             } catch (IOException e) {
                 callback.onError(e);
+            }
+        });
+    }
+
+    private void reportWaste(String name, WasteType wasteType, String description, String userReporterID, String address, double latitude, double longitude, byte[] image) {
+        Waste newWaste = new Waste(name, description, wasteType, description, image, new GregorianCalendar().getTime(), address, latitude, longitude, userReporterID);
+        APIController.reportWaste(newWaste, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e("WasteDetailsReportFragment", "Failed to report waste", e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    requireActivity().runOnUiThread(() -> {
+//                        requireActivity().getSupportFragmentManager().popBackStack();
+                        //TODO : navigate to the map
+                        Navigation.findNavController(requireView()).navigate(R.id.navigation_map);
+
+                        Toast.makeText(requireContext(), "Waste reported", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    Log.e("WasteDetailsReportFragment", "Failed to report waste: " + response.body().string());
+                }
             }
         });
     }
