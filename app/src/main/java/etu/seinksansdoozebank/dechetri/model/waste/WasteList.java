@@ -1,10 +1,10 @@
 package etu.seinksansdoozebank.dechetri.model.waste;
 
-
+import android.app.Activity;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-
 
 import com.google.gson.Gson;
 
@@ -13,10 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.model.observable.Observable;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -26,12 +24,12 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     private static final String TAG = "512Bank";
     private final ArrayList<WasteListObserver> observers = new ArrayList<>();
 
-    public WasteList() {
+    public WasteList(Activity activity) {
         super();
 
-        this.init();
+        this.init(activity);
     }
-    public void init() {
+    public void init(Activity activity) {
         APIController.getWasteList(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -40,6 +38,11 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG + "TasksListFragment", "onResponse: " + response.body().string());
+                    activity.runOnUiThread(() -> Toast.makeText(activity, "Failed to get waste list", Toast.LENGTH_SHORT).show());
+                    return;
+                }
                 String json = response.body().string();
                 Gson gson = new Gson();
                 Waste[] wastes = gson.fromJson(json, Waste[].class);
@@ -84,5 +87,4 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
         }
         return result;
     }
-
 }

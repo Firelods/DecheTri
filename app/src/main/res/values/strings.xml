@@ -47,6 +47,7 @@
     <string name="default_role">user</string>
     <string name="shared_preferences_key_role">role</string>
     <string name="shared_preferences_key_user_id">userId</string>
+    <string name="default_id">0</string>
 
     <!--    Flux    -->
     <string name="bin_image">bin image</string>
@@ -87,6 +88,7 @@
     <string name="localisation">Localisation</string>
     <string name="saisir_une_description">Saisir une description…</string>
     <string name="description">Description</string>
+    <string name="type_spinner_title">Type de déchet</string>
     <string name="saisir_le_nom">Saisir le nom …</string>
     <string name="identification_du_d_chet">Identification du déchet</string>
     <string name="welcomeMessageStatistic">Bienvenue sur la page des statistiques de DecheTri!</string>

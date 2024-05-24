@@ -102,6 +102,10 @@ public class Waste implements Parcelable {
         return Base64.decode(imageData, Base64.DEFAULT);
     }
 
+    public String getImageDataBase64() {
+        return imageData;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -148,7 +152,7 @@ public class Waste implements Parcelable {
                 ", name='" + name + '\'' +
                 ", type=" + type +
                 ", description='" + description + '\'' +
-                ", imageData=" + this.imageData +
+                ", imageData=" + this.imageData.substring(0, 50) +
                 ", reportDate=" + reportDate +
                 ", address='" + address + '\'' +
                 ", latitude=" + latitude +

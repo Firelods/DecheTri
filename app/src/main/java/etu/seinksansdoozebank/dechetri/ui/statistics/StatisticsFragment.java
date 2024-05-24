@@ -2,6 +2,7 @@ package etu.seinksansdoozebank.dechetri.ui.statistics;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -63,7 +64,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
         swipeRefreshLayout.setRefreshing(true);
         announcementList = new AnnouncementList(requireActivity(), getContext());
         announcementList.addObserver(this);
-        wasteList = new WasteList();
+        wasteList = new WasteList(getActivity());
         wasteList.addObserver(this);
         swipeRefreshLayout.setOnRefreshListener(announcementList::updateList);
         return view;
@@ -167,7 +168,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
         super.onCreate(savedInstanceState);
         announcementList = new AnnouncementList(requireActivity(), getContext());
         announcementList.addObserver(this);
-        wasteList = new WasteList();
+        wasteList = new WasteList(getActivity());
         wasteList.addObserver(this);
     }
 
