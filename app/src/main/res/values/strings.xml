@@ -21,7 +21,7 @@
     <string name="delete_waste">Supprimer ce signalement</string>
     <string name="placeholder">placeholder</string>
     <string name="title_deletion_waste_popup">Confirmation de suppression</string>
-    <string name="message_deletion_waste_popup">Etes-vous sur de vouloir supprimer ce signalement ? Ne le supprimer que s\'il n\'est pas sérieux, offensant ou hors de porté.</string>
+    <string name="message_deletion_waste_popup">Etes-vous sur de vouloir supprimer ce signalement ? Ne le supprimer que s\'il n\'est pas sérieux, offensant ou hors de portée.</string>
     <string name="delete_waste_popup_button">Supprimer</string>
     <string name="keep_waste_popup_button">Conserver</string>
 
