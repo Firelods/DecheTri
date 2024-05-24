@@ -23,20 +23,28 @@
             app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingBottom="60dp"
+            />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_add_announcement"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
         android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/green_700"
-        android:contentDescription="@string/bn_add_annoucement"
-        android:src="@drawable/baseline_add_24"
-        app:layout_anchorGravity="bottom|end"
-        app:layout_anchor="@id/swipeRefreshLayout" />
+        >
+        <Button
+            android:id="@+id/btn_add_announcement"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Ajouter une annonce"
+            android:textSize="18sp"
+            android:textColor="@color/white_500"
+            android:textAlignment="center"
+            />
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
