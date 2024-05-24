@@ -134,9 +134,9 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
     public void onClickDeleteWaste() {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setTitle("Confirmation de suppression")
-                .setMessage("Etes-vous sur de vouloir supprimer ce signalement ? Ne le supprimer que s'il n'est pas sérieux, offensant ou hors de porté.")
-                .setPositiveButton("Supprimer", (dialog, which) -> {
+                .setTitle(R.string.title_deletion_waste_popup)
+                .setMessage(R.string.message_deletion_waste_popup)
+                .setPositiveButton(R.string.delete_waste_popup_button, (dialog, which) -> {
                     APIController.deleteWaste(waste.getId(), new Callback() {
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -158,7 +158,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                         }
                     });
                 })
-                .setNegativeButton("Conserver", (dialog, which) -> {
+                .setNegativeButton(R.string.keep_waste_popup_button, (dialog, which) -> {
                     // Do nothing
                 })
                 .show();
