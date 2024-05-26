@@ -3,9 +3,14 @@ package etu.seinksansdoozebank.dechetri.controller.api;
 import android.util.Log;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.model.user.Role;
+import etu.seinksansdoozebank.dechetri.model.user.User;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -108,7 +113,7 @@ public class APIController {
     /**
      * Mark a task as completed (PUT method)
      *
-     * @param idWaste   String
+     * @param idWaste  String
      * @param callback Callback
      * @return Call
      * {
@@ -182,6 +187,7 @@ public class APIController {
         call.enqueue(callback);
         return call;
     }
+
     /**
      * Get a waste by its id (GET method)
      *
@@ -340,5 +346,12 @@ public class APIController {
      */
     public static Call getAllRole(Callback callback) {
         return get("user/role/all", callback);
+    }
+
+    public static List<User> parseUsers(String body) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<User>>() {
+        }.getType();
+        return gson.fromJson(body, type);
     }
 }

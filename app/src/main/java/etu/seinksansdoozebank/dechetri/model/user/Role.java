@@ -8,6 +8,8 @@ public enum Role {
 
     public static Role fromString(String role) {
         switch (role) {
+            case "Employé":
+                return EMPLOYEE;
             case "Employee":
                 return EMPLOYEE;
             case "Manager":
@@ -18,6 +20,11 @@ public enum Role {
                 return USER;
         }
     }
+
+    public boolean assignable() {
+        return this == EMPLOYEE || this == MANAGER;
+    }
+
 
     public boolean canSeeStats() {
         return this == MANAGER || this == ADMIN;

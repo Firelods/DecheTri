@@ -15,8 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,10 +30,16 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteDialogBinding;
+import etu.seinksansdoozebank.dechetri.model.user.Role;
+import etu.seinksansdoozebank.dechetri.model.user.User;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -58,6 +68,9 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         Button buttonConfirm = view.findViewById(R.id.btnConfirm);
         ImageView wasteImage = view.findViewById(R.id.wasteImage);
         TextView wasteType = view.findViewById(R.id.wasteType);
+        LinearLayout wasteAssignLayout = view.findViewById(R.id.wasteAssignLayout);
+        TextView textViewWasteAssignedTo = view.findViewById(R.id.wasteAssignedTo);
+        Spinner spinnerAssign = view.findViewById(R.id.wasteAssignSpinner);
 
         if (getArguments() != null) {
             waste = getArguments().getParcelable("waste");
@@ -65,8 +78,9 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 wasteName.setText(waste.getName());
                 wasteAddress.setText(waste.getAddress());
                 wasteType.setText(waste.getType().getName());
+                textViewWasteAssignedTo.setText(waste.getAssignee() != null ? waste.getAssignee().getName() : getString(R.string.nobody));
                 byte[] imageBytes = waste.getImageData();
-                if (imageBytes != null){
+                if (imageBytes != null) {
                     Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                     wasteImage.setImageBitmap(bitmap);
                 } else {
@@ -79,8 +93,20 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String defaultRole = getResources().getString(R.string.role_user_title); //user by default
-        String role = sharedPreferences.getString(getString(R.string.shared_preferences_key_role), defaultRole);
-        if (role.equals(getResources().getString(R.string.role_manager_title)) || role.equals(getResources().getString(R.string.role_employee_title))) {
+        String roleString = sharedPreferences.getString(getString(R.string.shared_preferences_key_role), defaultRole);
+        Role role = Role.fromString(roleString);
+
+        if (!role.equals(Role.USER)) {
+            wasteAssignLayout.setVisibility(View.VISIBLE);
+            if (role.equals(Role.MANAGER)) {
+                textViewWasteAssignedTo.setVisibility(View.GONE);
+                configSpinnerAssign(waste, spinnerAssign);
+            }
+        } else {
+            wasteAssignLayout.setVisibility(View.GONE);
+        }
+
+        if (role.assignable()) {
             buttonItinary.setVisibility(View.VISIBLE);
             buttonConfirm.setVisibility(View.VISIBLE);
             buttonItinary.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +143,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             buttonItinary.setVisibility(View.GONE);
             buttonConfirm.setVisibility(View.GONE);
         }
-        if (role.equals(getString(R.string.role_admin_title))) {
+        if (role.equals(Role.ADMIN)) {
             this.configureDeleteButton(buttonDelete);
         } else {
             buttonDelete.setVisibility(View.GONE);
@@ -125,39 +151,108 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         return binding.getRoot();
     }
 
+    private void configSpinnerAssign(Waste waste, Spinner spinnerAssign) {
+        List<Role> roles = new ArrayList<>();
+        roles.add(Role.MANAGER);
+        roles.add(Role.EMPLOYEE);
+        APIController.getUserByRoles(roles, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error while getting users : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                requireActivity().runOnUiThread(() -> {
+                    if (response.isSuccessful()) {
+                        try {
+                            String body = response.body().string();
+                            List<User> users = APIController.parseUsers(body);
+                            List<String> names = users.stream().map(User::getName).collect(Collectors.toList());
+                            names.add(0, getString(R.string.nobody));
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_item, names);
+                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinnerAssign.setAdapter(adapter);
+                            spinnerAssign.setSelection(waste.getAssignee() != null ? names.indexOf(waste.getAssignee().getName()) : 0);
+                            spinnerAssign.setVisibility(View.VISIBLE);
+                            spinnerAssign.setOnItemSelectedListener(getSpinnerAssignListener(waste, users, spinnerAssign.getSelectedItemId()));
+                        } catch (IOException e) {
+                            Log.e("WasteDialogFragment", "Error while parsing users : " + e.getMessage());
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Error while getting users : " + response.message(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    private AdapterView.OnItemSelectedListener getSpinnerAssignListener(Waste waste, List<User> users, long currentSelectedId) {
+        return new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (currentSelectedId == i) {
+                    return;
+                }
+                String selectedName = (String) adapterView.getItemAtPosition(i);
+                Optional<User> optionalUser = users.stream().filter(user -> user.getName().equals(selectedName)).findFirst();
+                String assigneeId = optionalUser.map(User::getId).orElse(null);
+                APIController.assignTask(waste.getId(), assigneeId, new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error while assigning task : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) {
+                        requireActivity().runOnUiThread(() -> {
+                            if (response.isSuccessful()) {
+                                waste.setAssignee(optionalUser.orElse(null));
+                                Toast.makeText(getContext(), "La tâche a été assignée avec succès", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getContext(), "Error while assigning task : " + response.message(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        };
+    }
+
     private void configureDeleteButton(Button buttonDelete) {
         buttonDelete.setVisibility(View.VISIBLE);
-        buttonDelete.setOnClickListener(v->{
-            onClickDeleteWaste();
-        });
+        buttonDelete.setOnClickListener(v -> onClickDeleteWaste());
     }
 
     public void onClickDeleteWaste() {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_deletion_waste_popup)
                 .setMessage(R.string.message_deletion_waste_popup)
-                .setPositiveButton(R.string.delete_waste_popup_button, (dialog, which) -> {
-                    APIController.deleteWaste(waste.getId(), new Callback() {
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            String message = e.getMessage();
-                            Log.e("APIController", "Error while removing waste : " + message);
-                            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(),"Erreur lors de la suppression du déchet:"+e.getMessage(),Toast.LENGTH_SHORT).show());
-                        }
+                .setPositiveButton(R.string.delete_waste_popup_button, (dialog, which) -> APIController.deleteWaste(waste.getId(), new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        String message = e.getMessage();
+                        Log.e("APIController", "Error while removing waste : " + message);
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la suppression du déchet:" + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    }
 
-                        @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) {
-                            requireActivity().runOnUiThread(() -> {
-                                if (response.isSuccessful()) {
-                                    Toast.makeText(getContext(),"Déchet supprimé avec succès.",Toast.LENGTH_SHORT).show();
-                                    dismiss();
-                                } else {
-                                    Toast.makeText(getContext(),"Erreur lors de la suppression du déchet :"+response.message(),Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    });
-                })
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) {
+                        requireActivity().runOnUiThread(() -> {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(getContext(), "Déchet supprimé avec succès.", Toast.LENGTH_SHORT).show();
+                                dismiss();
+                            } else {
+                                Toast.makeText(getContext(), "Erreur lors de la suppression du déchet :" + response.message(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }))
                 .setNegativeButton(R.string.keep_waste_popup_button, (dialog, which) -> {
                     // Do nothing
                 })
@@ -169,6 +264,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         conservationButton.setBackgroundColor(getResources().getColor(R.color.green_700, null));
         conservationButton.setTextColor(getResources().getColor(R.color.white_100, null));
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 

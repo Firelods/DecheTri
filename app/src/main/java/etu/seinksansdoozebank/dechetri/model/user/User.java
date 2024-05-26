@@ -1,17 +1,38 @@
 package etu.seinksansdoozebank.dechetri.model.user;
 
-public class User {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class User implements Parcelable {
 
     private String id;
     private String name;
     private Role role;
     private static int idCounter = 1;
-
-    public User(String name, Role role) {
-        this.id = String.valueOf(idCounter++);
-        this.name = name;
-        this.role = role;
+    protected User(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        String roleString = in.readString();
+        if (roleString != null) {
+            role = Role.fromString(roleString);
+        } else {
+            role = null;
+        }
     }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -29,19 +50,15 @@ public class User {
         this.name = name;
     }
 
-    public Role getRole() {
-        return role;
+    @Override
+    public int describeContents() {
+        return id.hashCode();
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public static int getIdCounter() {
-        return idCounter;
-    }
-
-    public static void setIdCounter(int idCounter) {
-        User.idCounter = idCounter;
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(name);
+        parcel.writeString(role.name());
     }
 }
