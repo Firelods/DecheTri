@@ -77,6 +77,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
 
         Button btn_add_announcement = root.findViewById(R.id.btn_add_announcement);
         if (role.equals(requireContext().getString(R.string.role_admin_title))) {
+            swipeRefreshLayout.setPadding(0,0,0,160);
             btn_add_announcement.setVisibility(View.VISIBLE);
             btn_add_announcement.setOnClickListener(v -> showNewAnnouncementDialog());
         } else {
