@@ -3,7 +3,14 @@ package etu.seinksansdoozebank.dechetri.controller.api;
 import android.util.Log;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
 import etu.seinksansdoozebank.dechetri.model.user.Role;
+import etu.seinksansdoozebank.dechetri.model.user.User;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -15,7 +22,8 @@ import okhttp3.RequestBody;
 
 public class APIController {
     private static final String TAG = "512Bank";
-    private static final String BASE_URL = "http://138.197.176.101:8080/";
+    //    private static final String BASE_URL = "http://138.197.176.101:8080/";
+    private static final String BASE_URL = "http://10.0.2.2:8080/";
     private static final OkHttpClient client = new OkHttpClient();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -94,8 +102,11 @@ public class APIController {
      * @route /task/assign
      */
     public static Call assignTask(String wasteId, String employeeId, Callback callback) {
+        if (employeeId != null) {
+            employeeId = "\"" + employeeId + "\"";
+        }
         String json = "{\n" +
-                "  \"idAssignee\": \"" + employeeId + "\",\n" +
+                "  \"idAssignee\": " + employeeId + ",\n" +
                 "  \"idWasteToCollect\": \"" + wasteId + "\"\n" +
                 "}";
         Log.d(TAG + "APIController", "assignTask: " + json);
@@ -105,7 +116,7 @@ public class APIController {
     /**
      * Mark a task as completed (PUT method)
      *
-     * @param idWaste   String
+     * @param idWaste  String
      * @param callback Callback
      * @return Call
      * {
@@ -179,6 +190,7 @@ public class APIController {
         call.enqueue(callback);
         return call;
     }
+
     /**
      * Get a waste by its id (GET method)
      *
@@ -297,15 +309,23 @@ public class APIController {
     /* User */
 
     /**
-     * Get all user by role (GET method)
+     * Get all user by their role (GET method)
      *
-     * @param role     Role
+     * @param roles    The Role list users need
      * @param callback Callback
      * @return Call
      * @route /user/{role}/all
      */
-    public static Call getUserByRole(Role role, Callback callback) {
-        return get("user/" + role + "/all", callback);
+    public static Call getUserByRoles(List<Role> roles, Callback callback) {
+        StringBuilder sb = new StringBuilder("user/filterByRole?");
+        for (int index = 0; index < roles.size(); index++) {
+            sb.append("roles=");
+            sb.append(roles.get(index));
+            if (index < roles.size() - 1) {
+                sb.append("&");
+            }
+        }
+        return get(sb.toString(), callback);
     }
 
     /**
@@ -329,5 +349,12 @@ public class APIController {
      */
     public static Call getAllRole(Callback callback) {
         return get("user/role/all", callback);
+    }
+
+    public static List<User> parseUsers(String body) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<User>>() {
+        }.getType();
+        return gson.fromJson(body, type);
     }
 }
