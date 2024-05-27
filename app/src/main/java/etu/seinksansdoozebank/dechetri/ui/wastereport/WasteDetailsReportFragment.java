@@ -100,7 +100,10 @@ public class WasteDetailsReportFragment extends Fragment {
 
             @Override
             public void onError(Exception e) {
-                requireActivity().runOnUiThread(() -> Log.e("Geocoding", "Failed to fetch address", e));
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "Impossible de récupérer l'adresse", Toast.LENGTH_SHORT).show();
+                    skeleton.showOriginal();
+                });
             }
         });
 
