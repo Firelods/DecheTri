@@ -4,6 +4,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -139,31 +141,48 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
     private void configureDeleteButton(Button buttonDelete) {
         buttonDelete.setVisibility(View.VISIBLE);
-        buttonDelete.setOnClickListener(v -> APIController.deleteWaste(waste.getId(), new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(getContext(), "Error deleting waste : " + waste.getName(), Toast.LENGTH_SHORT).show();
-                    NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), "Error deleting waste", "Error deleting waste : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
-                });
-            }
+        buttonDelete.setOnClickListener(v-> onClickDeleteWaste());
+    }
 
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) {
-                if (response.isSuccessful()) {
-                    requireActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), "Waste successfully deleted", Toast.LENGTH_SHORT).show();
-                        NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), "Waste successfully deleted", "Waste successfully deleted : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_DEFAULT);
-                        dismiss();
-                    });
-                } else {
-                    requireActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), "Error deleting waste : " + response.message(), Toast.LENGTH_SHORT).show();
-                        NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), "Error deleting waste", "Error deleting waste : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
-                    });
-                }
-            }
-        }));
+    private void onClickDeleteWaste() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.title_deletion_waste_popup)
+                .setMessage(R.string.message_deletion_waste_popup)
+                .setPositiveButton(R.string.delete_waste_popup_button, (dialog, which) -> APIController.deleteWaste(waste.getId(), new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), "Error deleting waste : " + waste.getName(), Toast.LENGTH_SHORT).show();
+                            NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), "Error deleting waste", "Error deleting waste : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) {
+                        if (response.isSuccessful()) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), "Waste successfully deleted", Toast.LENGTH_SHORT).show();
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), "Waste successfully deleted", "Waste successfully deleted : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_DEFAULT);
+                                dismiss();
+                            });
+                        } else {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), "Error deleting waste : " + response.message(), Toast.LENGTH_SHORT).show();
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), "Error deleting waste", "Error deleting waste : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
+                            });
+                        }
+                    }
+                }))
+                .setNegativeButton(R.string.keep_waste_popup_button, (dialog, which) -> {
+                    // Do nothing
+                })
+                .show();
+
+        Button deletionButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        deletionButton.setTextColor(getResources().getColor(R.color.orange_600, null));
+        Button conservationButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        conservationButton.setBackgroundColor(getResources().getColor(R.color.green_700, null));
+        conservationButton.setTextColor(getResources().getColor(R.color.white_100, null));
     }
 
 
@@ -176,9 +195,5 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    private void removeNotification(NotificationFactory factory, int notificationId) {
-        factory.removeNotification(getContext(), notificationId);
     }
 }
