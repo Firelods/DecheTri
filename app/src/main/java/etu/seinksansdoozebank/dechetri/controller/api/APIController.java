@@ -102,8 +102,11 @@ public class APIController {
      * @route /task/assign
      */
     public static Call assignTask(String wasteId, String employeeId, Callback callback) {
+        if (employeeId != null) {
+            employeeId = "\"" + employeeId + "\"";
+        }
         String json = "{\n" +
-                "  \"idAssignee\": \"" + employeeId + "\",\n" +
+                "  \"idAssignee\": " + employeeId + ",\n" +
                 "  \"idWasteToCollect\": \"" + wasteId + "\"\n" +
                 "}";
         Log.d(TAG + "APIController", "assignTask: " + json);
