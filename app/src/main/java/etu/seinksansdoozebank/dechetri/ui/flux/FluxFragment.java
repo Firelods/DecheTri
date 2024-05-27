@@ -51,7 +51,6 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     private static final int PERMISSION_REQUEST_CALENDAR = 100;
     // Initialize as empty list
     private AnnouncementList announcementList;
-    private Context context;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public FluxFragment() {
@@ -61,7 +60,6 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        context = requireContext();
         binding = FragmentFluxBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         ListView listViewFlux = binding.listViewFlux;
@@ -76,13 +74,17 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences(requireContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String role = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_role), requireContext().getResources().getString(R.string.role_user_title));
 
-        FloatingActionButton btn_add_announcement = root.findViewById(R.id.btn_add_announcement);
+
+        Button btn_add_announcement = root.findViewById(R.id.btn_add_announcement);
         if (role.equals(requireContext().getString(R.string.role_admin_title))) {
+            swipeRefreshLayout.setPadding(0,0,0,160);
             btn_add_announcement.setVisibility(View.VISIBLE);
             btn_add_announcement.setOnClickListener(v -> showNewAnnouncementDialog());
         } else {
             btn_add_announcement.setVisibility(View.GONE);
         }
+
+
         return root;
     }
 
@@ -111,7 +113,6 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
 
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) {
-                            Log.d(TAG, "onResponse: " + response);
                             requireActivity().runOnUiThread(() -> {
                                 swipeRefreshLayout.setRefreshing(true);
                                 announcementList.updateList();
@@ -211,6 +212,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Context context = requireContext();
         announcementList = new AnnouncementList(requireActivity(), context);
         announcementList.addObserver(this);
     }

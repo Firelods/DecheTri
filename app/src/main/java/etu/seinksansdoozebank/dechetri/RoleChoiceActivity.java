@@ -3,7 +3,6 @@ package etu.seinksansdoozebank.dechetri;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,15 +35,6 @@ public class RoleChoiceActivity extends AppCompatActivity {
         editor.putString(getString(R.string.shared_preferences_key_role), role);
         editor.putString(getString(R.string.shared_preferences_key_user_id), userId);
         editor.apply();
-
-        // Verify that the role has been saved
-        String savedRole = sharedPreferences.getString(getString(R.string.shared_preferences_key_role), "");
-        if (role.equals(savedRole)) {
-            Log.d("RoleChoiceActivity", "Role saved: " + role);
-        } else {
-            Log.d("RoleChoiceActivity", "Failed to save role");
-            return;
-        }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
