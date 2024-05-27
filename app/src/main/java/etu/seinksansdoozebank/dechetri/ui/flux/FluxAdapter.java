@@ -122,10 +122,18 @@ public class FluxAdapter extends BaseAdapter {
         if (inputDate.get(Calendar.YEAR) == now.get(Calendar.YEAR) && inputDate.get(Calendar.MONTH) == now.get(Calendar.MONTH) && inputDate.get(Calendar.DATE) == now.get(Calendar.DATE)) {
             long diff = now.getTimeInMillis() - inputDate.getTimeInMillis();
             long minutes = diff / 60000;
+            // if under 1 minute
+            if (minutes < 1) {
+                return "Il y a quelques secondes";
+            }
+            // if under 1 hour
             if (minutes < 60) {
                 return "Il y a " + minutes + " minute" + (minutes > 1 ? "s" : "");
-            } else {
-                return "Il y a " + minutes / 60 + " heure" + (minutes / 60 > 1 ? "s" : "");
+            }
+            // if under 1 day
+            long hours = minutes / 60;
+            if (hours < 24) {
+                return "Il y a " + hours + " heure" + (hours > 1 ? "s" : "");
             }
         }
         // if the date is yesterday
