@@ -22,8 +22,7 @@ import okhttp3.RequestBody;
 
 public class APIController {
     private static final String TAG = "512Bank";
-    //    private static final String BASE_URL = "http://138.197.176.101:8080/";
-    private static final String BASE_URL = "http://10.0.2.2:8080/";
+    private static final String BASE_URL = "http://138.197.176.101:8080/";
     private static final OkHttpClient client = new OkHttpClient();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
