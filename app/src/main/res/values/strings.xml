@@ -13,6 +13,7 @@
     <string name="title_details">Signalement - Détails</string>
     <string name="title_stat">Statistiques</string>
     <string name="title_tasklist">Liste de tâches</string>
+    <string name="title_unassignedtasklist">Tâche libres</string>
     <string name="title_disconnect">Se déconnecter</string>
 
     <!--    WasteDialog Fragment-->

@@ -25,12 +25,12 @@ import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.ui.wastemap.WasteDialogFragment;
 
-public class TasksListAdapter extends BaseAdapter {
+public class TasksFromWasteListAdapter extends BaseAdapter {
     private final LayoutInflater mInflater;  //Un mécanisme pour gérer l'affichage graphique depuis un layout XML
     private final FragmentActivity activity;
     private final List<Waste> wasteList;
 
-    public TasksListAdapter(FragmentActivity activity, List<Waste> wasteList) {
+    public TasksFromWasteListAdapter(FragmentActivity activity, List<Waste> wasteList) {
         this.activity = activity;
         this.wasteList = wasteList;
         this.mInflater = LayoutInflater.from(activity.getBaseContext());
