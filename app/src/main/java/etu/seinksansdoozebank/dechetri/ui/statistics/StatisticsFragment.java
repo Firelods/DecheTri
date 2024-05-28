@@ -4,7 +4,6 @@ package etu.seinksansdoozebank.dechetri.ui.statistics;
 
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -116,7 +115,6 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
 
 
         int numberOfWasteThisDay = 1;
-        int colorChosen = 0;
 
         //On trie la liste des déchets dans l'ordre croissant
         List<Waste> sortedList = wasteList.stream()
