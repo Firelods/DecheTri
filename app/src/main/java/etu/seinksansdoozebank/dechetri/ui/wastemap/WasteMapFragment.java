@@ -100,6 +100,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
             swipeRefreshLayout.setElevation(5);
             swipeRefreshLayout.setRefreshing(true);
             wasteList = new WasteList(activity);
+            wasteList.updateList();
         });
 
         return view;
@@ -269,6 +270,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         }
         wasteList = new WasteList(activity);
         wasteList.addObserver(this);
+        wasteList.updateList();
     }
 
     @Override

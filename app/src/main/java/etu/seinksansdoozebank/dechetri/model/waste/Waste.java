@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 
 import java.util.Date;
 
+import etu.seinksansdoozebank.dechetri.model.user.User;
+
 public class Waste implements Parcelable {
     //Waste
     private String id;
@@ -22,6 +24,7 @@ public class Waste implements Parcelable {
     private double latitude;
     private double longitude;
     private String userReporterId;
+    private User assignee;
 
     public Waste(String id, String name, WasteType type, String description, String imageData, Date reportDate, String address, double latitude, double longitude, String userReporterId) {
         this.id = id;
@@ -60,6 +63,7 @@ public class Waste implements Parcelable {
         latitude = in.readDouble();
         longitude = in.readDouble();
         userReporterId = in.readString();
+        assignee = in.readParcelable(User.class.getClassLoader());
     }
 
     public static final Creator<Waste> CREATOR = new Creator<Waste>() {
@@ -131,6 +135,14 @@ public class Waste implements Parcelable {
         return Integer.parseInt(id);
     }
 
+    public User getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(User user) {
+        this.assignee = user;
+    }
+
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
         parcel.writeString(id);
@@ -143,6 +155,7 @@ public class Waste implements Parcelable {
         parcel.writeDouble(latitude);
         parcel.writeDouble(longitude);
         parcel.writeString(userReporterId);
+        parcel.writeParcelable(assignee, PARCELABLE_WRITE_RETURN_VALUE);
     }
 
     @Override
@@ -158,6 +171,7 @@ public class Waste implements Parcelable {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", userReporterId='" + userReporterId + '\'' +
+                ", assignee='" + assignee + '\'' +
                 '}';
     }
 }

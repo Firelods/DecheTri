@@ -24,12 +24,12 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     private static final String TAG = "512Bank";
     private final ArrayList<WasteListObserver> observers = new ArrayList<>();
 
-    public WasteList(Activity activity) {
-        super();
+    private Activity activity;
 
-        this.init(activity);
+    public WasteList(Activity activity) {
+        this.activity = activity;
     }
-    public void init(Activity activity) {
+    public void init() {
         APIController.getWasteList(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -51,6 +51,11 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
                 }
             }
         });
+    }
+
+    public void updateList() {
+        this.clear();
+        this.init();
     }
 
     @Override

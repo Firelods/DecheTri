@@ -69,11 +69,8 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
         view = binding.getRoot();
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setRefreshing(true);
-        announcementList = new AnnouncementList(getActivity(), getContext());
-        announcementList.addObserver(this);
-        wasteList = new WasteList(getActivity());
-        wasteList.addObserver(this);
         swipeRefreshLayout.setOnRefreshListener(announcementList::updateList);
+        swipeRefreshLayout.setOnRefreshListener(wasteList::updateList);
         return view;
     }
 
@@ -178,6 +175,14 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
+        announcementList.updateList();
+        wasteList.updateList();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         announcementList.removeObserver(this);
@@ -187,7 +192,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
     @Override
     public void onAnnouncementListChanged() {
         requireActivity().runOnUiThread(() -> {
-
+            Log.d(TAG + "onAnnouncementListChanged", "emma annoucement" + announcementList);
             swipeRefreshLayout.setRefreshing(false);
             if (!announcementList.isEmpty()) {
                 buildPieChart(view, colorString);
