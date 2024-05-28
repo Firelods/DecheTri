@@ -92,7 +92,6 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                     taskList.clear();
                     wasteList.clear();
                     taskList.addAll(tasks);
-                    Log.d(TAG, "emma: "+taskList);
                     if (taskList.isEmpty()) {
 
                         requireActivity().runOnUiThread(() -> {
