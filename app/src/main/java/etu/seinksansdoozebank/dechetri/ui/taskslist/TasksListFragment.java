@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentTasksListBinding;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
@@ -70,8 +71,8 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
         swipeRefreshLayout.setOnRefreshListener(this::getEmployeAssignee);
 
         noTasksAssignedTextView=root.findViewById(R.id.noTaskAssigned);
-        noTasksAssignedTextView.setVisibility(root.GONE);
-        taskListAdapter = new TasksListAdapter(requireActivity(), wasteList);
+        noTasksAssignedTextView.setVisibility(View.GONE);
+        taskListAdapter = new TasksFromWasteListAdapter(requireActivity(), wasteList);
         listViewTasks.setAdapter(taskListAdapter);
         return root;
     }
@@ -107,7 +108,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                 wasteList.clear();
                 wasteList.addAll(APIController.parseWastes(response.body().string()));
                 requireActivity().runOnUiThread(() -> {
-                    noTasksAssignedTextView.setVisibility(root.VISIBLE);
+                    noTasksAssignedTextView.setVisibility(wasteList.isEmpty() ? View.VISIBLE : View.GONE);
                     taskListAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 });

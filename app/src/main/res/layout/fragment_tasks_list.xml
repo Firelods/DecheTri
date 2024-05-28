@@ -23,7 +23,7 @@
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="60dp"
+        android:paddingBottom="10dp"
         tools:ignore="MissingConstraints">
 
         <ListView
