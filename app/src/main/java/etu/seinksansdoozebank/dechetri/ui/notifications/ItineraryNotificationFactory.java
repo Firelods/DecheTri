@@ -13,7 +13,7 @@ import etu.seinksansdoozebank.dechetri.R;
 
 public class ItineraryNotificationFactory extends NotificationFactory {
     @Override
-    public INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
+    protected INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
         return new ItineraryNotification(this.createCallback(context, title, message, channelId, priority), activity, context);
     }
 

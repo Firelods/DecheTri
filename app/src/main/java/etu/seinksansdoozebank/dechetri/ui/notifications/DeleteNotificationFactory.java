@@ -17,7 +17,7 @@ public class DeleteNotificationFactory extends NotificationFactory {
     private static final long NOTIFICATION_DURATION = 5000;
 
     @Override
-    public INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
+    protected INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
         return new DeleteNotification(this.createCallback(context, title, message, channelId, priority), activity, context);
     }
 

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -17,7 +18,7 @@ public class CreateNotificationFactory extends NotificationFactory {
     private static final long NOTIFICATION_DURATION = 5000;
 
     @Override
-    public INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
+    protected INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
         return new CreateNotification(this.createCallback(context, title, message, channelId, priority), activity, context);
     }
 
@@ -28,6 +29,7 @@ public class CreateNotificationFactory extends NotificationFactory {
             public void onPermissionGranted() {
                 try {
                     // Create an intent that opens the MainActivity
+                    Log.d("CreateNotificationFactory", "onPermissionGranted: " + title + " " + message);
                     Intent intent = new Intent(context, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
@@ -56,6 +58,7 @@ public class CreateNotificationFactory extends NotificationFactory {
             @Override
             public void onPermissionDenied() {
                 // Do nothing
+                Log.d("CreateNotificationFactory", "onPermissionDenied: " + title + " " + message);
             }
         };
     }
