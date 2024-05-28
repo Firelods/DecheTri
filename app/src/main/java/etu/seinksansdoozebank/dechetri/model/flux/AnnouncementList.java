@@ -56,6 +56,7 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
                 if (announcements != null) {
                     AnnouncementList.this.addAll(Arrays.asList(announcements));
                 }
+                notifyObservers();
             }
         });
     }
@@ -66,15 +67,17 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
     }
 
     public void addObserver(AnnouncementListObserver observer) {
+        Log.d(TAG + "addObserver", observer.toString());
         observers.add(observer);
     }
 
     public void removeObserver(AnnouncementListObserver observer) {
         observers.remove(observer);
     }
-
+    @Override
     public void notifyObservers() {
         for (AnnouncementListObserver observer : observers) {
+            Log.d(TAG + "notifyObservers", observer.toString());
             observer.onAnnouncementListChanged();
         }
     }
@@ -91,6 +94,7 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
     @Override
     public boolean addAll(Collection<? extends Announcement> c) {
         boolean result = super.addAll(c);
+        Log.d(TAG + "addAll", "change" + result);
         if (result) {
             notifyObservers();
         }

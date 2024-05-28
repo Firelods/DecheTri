@@ -126,6 +126,10 @@ public class Waste implements Parcelable {
         return userReporterId;
     }
 
+    public Date getReportDate() {
+        return reportDate;
+    }
+
     @Override
     public int describeContents() {
         return Integer.parseInt(id);

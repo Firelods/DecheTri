@@ -42,9 +42,9 @@ import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
-import etu.seinksansdoozebank.dechetri.model.waste.WasteListObservable;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteListObserver;
 
-public class WasteMapFragment extends Fragment implements LocationListener, WasteListObservable {
+public class WasteMapFragment extends Fragment implements LocationListener, WasteListObserver {
     private FragmentWasteMapBinding binding;
     private WasteList wasteList;
     private MapView map;
@@ -101,6 +101,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
             swipeRefreshLayout.setElevation(5);
             swipeRefreshLayout.setRefreshing(true);
             wasteList = new WasteList(activity);
+            wasteList.updateList();
         });
 
         return view;
@@ -286,6 +287,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         }
         wasteList = new WasteList(activity);
         wasteList.addObserver(this);
+        wasteList.updateList();
     }
 
     @Override

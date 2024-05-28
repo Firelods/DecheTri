@@ -20,16 +20,20 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 
-public class WasteList extends ArrayList<Waste> implements Observable<WasteListObservable> {
+public class WasteList extends ArrayList<Waste> implements Observable<WasteListObserver> {
     private static final String TAG = "512Bank";
-    private final ArrayList<WasteListObservable> observers = new ArrayList<>();
+    private final ArrayList<WasteListObserver> observers = new ArrayList<>();
+
+    private Activity activity;
 
     public WasteList(Activity activity) {
+        this.activity = activity;
+    }
+    public void init() {
         APIController.getWasteList(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.d(TAG + "TasksListFragment", "onFailure: " + e.getMessage());
-
             }
 
             @Override
@@ -49,23 +53,31 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
         });
     }
 
-    public void addObserver(WasteListObservable observer) {
+    public void updateList() {
+        this.clear();
+        this.init();
+    }
+
+    @Override
+    public void addObserver(WasteListObserver observer) {
         observers.add(observer);
     }
 
-    public void removeObserver(WasteListObservable observer) {
+    @Override
+    public void removeObserver(WasteListObserver observer) {
         observers.remove(observer);
     }
 
+    @Override
     public void notifyObservers() {
-        for (WasteListObservable observer : observers) {
+        for (WasteListObserver observer : observers) {
             observer.onWasteListChanged();
         }
     }
 
     @Override
-    public boolean add(Waste announcement) {
-        boolean result = super.add(announcement);
+    public boolean add(Waste waste) {
+        boolean result = super.add(waste);
         if (result) {
             notifyObservers();
         }
