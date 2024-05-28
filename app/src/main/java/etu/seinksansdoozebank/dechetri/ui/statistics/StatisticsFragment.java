@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,6 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
     private AnnouncementList announcementList;
     private WasteList wasteList;
 
-    private final static String TAG = "emma";
     private SwipeRefreshLayout swipeRefreshLayout;
     private View view;
     public ArrayList<Integer> colorString = new ArrayList<>();
@@ -63,7 +61,6 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
 
         colorString.add(getResources().getColor(R.color.orange_600, null));
         colorString.add(getResources().getColor(R.color.green_700, null));
-        Log.d(TAG, "onCreateView: "+colorString);
         binding = FragmentStatisticsBinding.inflate(inflater, container, false);
         view = binding.getRoot();
         swipeRefreshLayout = binding.swipeRefreshLayout;
@@ -97,7 +94,6 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
 
         int[] stats = {newsAnnoucement, eventAnnoucement};
         for (AnnouncementType announcementType : AnnouncementType.values()) {
-            Log.d(TAG, "buildPieChart: "+colorString.get(announcementType.ordinal()));
             mPieChart.addPieSlice(new PieModel(announcementType.getName(), stats[announcementType.ordinal()],colorString.get(announcementType.ordinal())));
         }
 
@@ -190,7 +186,6 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
     @Override
     public void onAnnouncementListChanged() {
         requireActivity().runOnUiThread(() -> {
-            Log.d(TAG + "onAnnouncementListChanged", "emma annoucement" + announcementList);
             swipeRefreshLayout.setRefreshing(false);
             if (!announcementList.isEmpty()) {
                 buildPieChart(view, colorString);
