@@ -11,6 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <!-- Time of message -->
@@ -39,17 +40,6 @@
             />
     </LinearLayout>
 
-    <!-- New TextView under the date -->
-    <TextView
-        android:id="@+id/flux_event_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="8dp"
-        android:paddingTop="2dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="2dp"
-        android:textColor="@android:color/black" />
-
     <!-- Title and Description Layout -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -75,6 +65,17 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@android:color/black"
                 android:textStyle="bold" />
+
+            <!-- New TextView under the date -->
+            <TextView
+                android:id="@+id/flux_event_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:textColor="@android:color/black" />
 
             <!-- Description -->
             <TextView

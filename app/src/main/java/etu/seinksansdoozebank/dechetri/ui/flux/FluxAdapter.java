@@ -67,17 +67,19 @@ public class FluxAdapter extends BaseAdapter {
             TextView description = listItem.findViewById(R.id.flux_description);
             ImageButton imageButton = listItem.findViewById(R.id.flux_image_bin);
             ImageButton imageButtonCalendar = listItem.findViewById(R.id.calendar);
+            TextView event = listItem.findViewById(R.id.flux_event_date);
 
             // (3) : Récupération de l'item courant
             Announcement announcement = announcementList.get(i);
 
             if (announcement.getType() == AnnouncementType.EVENT) {
-                TextView event = listItem.findViewById(R.id.flux_event_date);
                 SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
                 event.setText("Le " + outputFormat.format(announcement.getEventDate()));
+                event.setVisibility(View.VISIBLE);
                 imageButtonCalendar.setVisibility(View.VISIBLE);
                 imageButtonCalendar.setOnClickListener(v -> ((FluxAdapterListener) activity).onClickCalendar(imageButtonCalendar, announcement));
             } else {
+                event.setVisibility(View.GONE);
                 imageButtonCalendar.setVisibility(View.GONE);
             }
 
@@ -144,10 +146,10 @@ public class FluxAdapter extends BaseAdapter {
         // if the date is in the last 7 days
         now.add(Calendar.DATE, -6);
         if (inputDate.after(now)) {
-            return "Il y a " + (now.get(Calendar.DATE) - inputDate.get(Calendar.DATE)) + " jour" + ((now.get(Calendar.DATE) - inputDate.get(Calendar.DATE)) > 1 ? "s" : "");
+            return "Il y a " + (inputDate.get(Calendar.DATE) - now.get(Calendar.DATE)) + " jour" + ((now.get(Calendar.DATE) - inputDate.get(Calendar.DATE)) > 1 ? "s" : "");
         }
         // else
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
-        return "Le " + outputFormat.format(date);
+        return "Publié le " + outputFormat.format(date);
     }
 }
