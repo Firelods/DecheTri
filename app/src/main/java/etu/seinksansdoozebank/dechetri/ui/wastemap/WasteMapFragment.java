@@ -30,6 +30,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
@@ -204,7 +205,13 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         }
 
         // Clear and re-add the overlay to refresh the map
-        map.getOverlays().clear();
+        // filter not the location point (different marker)
+        // remove everything but the location point
+        List<Overlay> overlays = map.getOverlays();
+        overlays.clear();
+        if (currentLocationMarker != null) {
+            overlays.add(currentLocationMarker);
+        }
         map.getOverlays().add(new ItemizedIconOverlay<>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
             @Override
             public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
