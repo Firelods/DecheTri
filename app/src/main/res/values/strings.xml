@@ -58,7 +58,7 @@
     <string name="bin_image">bin image</string>
 
     <!--    NewAnnouncementFragmentDialog    -->
-    <string name="bn_add_annoucement">The button to publish an new announcement</string>
+    <string name="bn_add_annoucement">Le bouton pour publier une nouvelle annonce</string>
     <string name="add_announcement_title">Nouvelle annonce</string>
     <string name="remove_date_text">Enlever la date</string>
     <!--    <string name="add_date_text">Ajouter une date</string>-->
@@ -83,7 +83,7 @@
     <string name="veuillez_activer_la_localisation">Veuillez activer la localisation</string>
     <string name="la_localisation_est_necessaire">La localisation est nécessaire pour signaler le déchet</string>
     <string name="nouveau_dechet">Nouveau déchet</string>
-    <string name="btn_refresh_waste_point">Refresh the points on the map</string>
+    <string name="btn_refresh_waste_point">Met à jour les points sur la map</string>
     <string name="waste_type">Type :</string>
     <string name="waste_assigned_to">Tâche assignée à :</string>
     <string name="waste_address">Adresse :</string>

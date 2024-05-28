@@ -196,7 +196,7 @@ public class WasteDetailsReportFragment extends Fragment {
                         //TODO : navigate to the map
                         Navigation.findNavController(requireView()).navigate(R.id.navigation_map);
 
-                        Toast.makeText(requireContext(), "Waste reported", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Déchet signalé", Toast.LENGTH_SHORT).show();
                     });
                 } else {
                     Log.e("WasteDetailsReportFragment", "Failed to report waste: " + response.body().string());

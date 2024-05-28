@@ -27,8 +27,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -190,7 +188,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                 ContentResolver cr = requireContext().getContentResolver();
                 addEventToCalendar(cr, item);
             } else {
-                Toast toast = Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getContext(), "Permission refusée", Toast.LENGTH_LONG);
                 toast.show();
             }
         }

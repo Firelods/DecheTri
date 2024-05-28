@@ -40,7 +40,7 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     Log.d(TAG + "TasksListFragment", "onResponse: " + response.body().string());
-                    activity.runOnUiThread(() -> Toast.makeText(activity, "Failed to get waste list", Toast.LENGTH_SHORT).show());
+                    activity.runOnUiThread(() -> Toast.makeText(activity, "Imposible de récupérer la liste des déchets", Toast.LENGTH_SHORT).show());
                     return;
                 }
                 String json = response.body().string();

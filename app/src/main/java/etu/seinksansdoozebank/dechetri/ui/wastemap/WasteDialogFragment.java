@@ -131,10 +131,10 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 public void onResponse(@NonNull Call call, @NonNull Response response) {
                     requireActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Task completed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Tâche terminée", Toast.LENGTH_SHORT).show();
                             dismiss();
                         } else {
-                            Toast.makeText(getContext(), "Error completing task : " + response.message(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Erreur lors de la complétion de la tâche : " + response.message(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -158,7 +158,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         APIController.getUserByRoles(roles, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error while getting users : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des utilisateurs : " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -180,7 +180,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                             Log.e("WasteDialogFragment", "Error while parsing users : " + e.getMessage());
                         }
                     } else {
-                        Toast.makeText(getContext(), "Error while getting users : " + response.message(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Erreur lors de la récupération des utilisateurs : " + response.message(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -210,7 +210,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                                 waste.setAssignee(optionalUser.orElse(null));
                                 Toast.makeText(getContext(), "La tâche a été assignée avec succès", Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(getContext(), "Error while assigning task : " + response.message(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Erreur lors de l'assignation de la tâche : " + response.message(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
