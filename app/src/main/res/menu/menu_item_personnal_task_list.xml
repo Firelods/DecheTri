@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_personnalTaskList"
-        android:icon="@drawable/baseline_checklist_24"
+        android:icon="@drawable/baseline_view_list_24"
         android:title="@string/title_tasklist" />
 </menu>

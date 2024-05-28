@@ -22,10 +22,6 @@
         android:name="etu.seinksansdoozebank.dechetri.ui.taskslist.PersonnalTaskList"
         android:label="@string/title_tasklist"
         tools:layout="@layout/fragment_personnal_task_list">
-        <argument
-            android:name="personnal"
-            android:defaultValue="true"
-            app:argType="boolean" />
     </fragment>
 
     <fragment
@@ -35,5 +31,10 @@
         tools:layout="@layout/fragment_waste_map" />
 
     <include app:graph="@navigation/nav_report" />
+    <fragment
+        android:id="@+id/navigation_unassignedTaskList"
+        android:name="etu.seinksansdoozebank.dechetri.ui.taskslist.UnassignedTaskList"
+        android:label="@string/title_unassignedtasklist"
+        tools:layout="@layout/fragment_unassigned_task_list" />
 
 </navigation>

@@ -30,7 +30,7 @@ public class PersonnalTaskList extends Fragment {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences(requireContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String id = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_user_id), requireContext().getResources().getString(R.string.role_user_id));
         TasksListFragment fragment = TasksListFragment.newInstance("/assigned/", id);
-        getChildFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
+        getChildFragmentManager().beginTransaction().replace(R.id.fragment_container_personnal_task_list, fragment).commit();
 
         return view;
     }

@@ -367,7 +367,6 @@ public class APIController {
         Type type = new TypeToken<List<Waste>>() {
         }.getType();
         List<Waste> wasteList = gson.fromJson(body, type);
-        Log.e("APIController", "parseWastes: " + wasteList.size());
         return wasteList;
     }
 }
