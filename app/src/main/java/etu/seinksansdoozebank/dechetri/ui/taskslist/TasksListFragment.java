@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,23 +41,28 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
     private final List<Task> taskList = new ArrayList<>();
     private final List<Waste> wasteList = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView noTasksAssignedTextView;
+    private View root;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTasksListBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
+        root = binding.getRoot();
         listViewTasks = binding.listViewTasks;
-        swipeRefreshLayout = binding.swipeRefreshLayout;
+        swipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout);
 
         swipeRefreshLayout.setOnRefreshListener(this::getEmployeAssignee);
 
 //        getEmployeAssignee();
-
+        noTasksAssignedTextView=root.findViewById(R.id.noTaskAssigned);
+        noTasksAssignedTextView.setVisibility(root.GONE);
         // Create an adapter
         taskListAdapter = new TasksListAdapter(requireActivity(), wasteList);
         listViewTasks.setAdapter(taskListAdapter);
+
+
         return root;
     }
 
@@ -87,7 +93,9 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                     wasteList.clear();
                     taskList.addAll(tasks);
                     if (taskList.isEmpty()) {
+
                         requireActivity().runOnUiThread(() -> {
+                            noTasksAssignedTextView.setVisibility(root.VISIBLE);
                             taskListAdapter.notifyDataSetChanged();
                             swipeRefreshLayout.setRefreshing(false);
                         });
@@ -95,6 +103,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                     }
                     getWasteList();
                 } else {
+
                     // The employee has no tasks
                     requireActivity().runOnUiThread(() -> {
                         taskList.clear();
