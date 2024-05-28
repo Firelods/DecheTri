@@ -137,6 +137,8 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
         Log.v(TAG, "Last known location: " + lastKnownLocation);
         if (lastKnownLocation != null) {
             setLocationOnPoint(lastKnownLocation);
+            mapController.setCenter(new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
+            mapController.setZoom(15.0);
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this::setLocationOnPoint);
         }
@@ -144,8 +146,7 @@ public class LocationChoiceFragment extends Fragment implements LocationListener
 
     private void setLocationOnPoint(Location lastKnownLocation) {
         GeoPoint startPoint = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-        mapController.setCenter(startPoint);
-        mapController.setZoom(15.0);
+
         addMarkerAtLocation(startPoint);
     }
 
