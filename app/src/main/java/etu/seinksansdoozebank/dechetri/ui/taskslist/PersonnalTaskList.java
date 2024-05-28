@@ -26,12 +26,12 @@ public class PersonnalTaskList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_personnal_task_list, container, false);
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences(requireContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String id = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_user_id), requireContext().getResources().getString(R.string.role_user_id));
         TasksListFragment fragment = TasksListFragment.newInstance("/assigned/", id);
         getChildFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
+
         return view;
     }
 }

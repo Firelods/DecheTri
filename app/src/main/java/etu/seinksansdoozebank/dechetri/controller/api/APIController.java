@@ -143,7 +143,8 @@ public class APIController {
     }
 
     public static Call getEmployeeTasks(String path, String idEmployee, Callback callback) {
-        return get("waste/list/" + path + idEmployee, callback);
+        Log.d(TAG + "APIController", "getEmployeeTasks: " + path + idEmployee);
+        return get("waste/list" + path + idEmployee, callback);
     }
 
     /* Waste */
@@ -365,6 +366,8 @@ public class APIController {
         Gson gson = new Gson();
         Type type = new TypeToken<List<Waste>>() {
         }.getType();
-        return gson.fromJson(body, type);
+        List<Waste> wasteList = gson.fromJson(body, type);
+        Log.e("APIController", "parseWastes: " + wasteList.size());
+        return wasteList;
     }
 }
