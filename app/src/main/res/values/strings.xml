@@ -16,7 +16,7 @@
     <string name="title_disconnect">Se déconnecter</string>
 
     <!--    WasteDialog Fragment-->
-    <string name="intinerary">Itinéraire</string>
+    <string name="itinerary">Itinéraire</string>
     <string name="confirm_ramassage">Confirmer le ramassage</string>
     <string name="delete_waste">Supprimer ce signalement</string>
     <string name="placeholder">placeholder</string>
@@ -102,4 +102,8 @@
     <string name="send_notification_error">L\'envoie de la notification a rencontré une erreur</string>
     <string name="create_announcement">Create Announcement</string>
     <string name="delete_announcement">Delete Announcement</string>
+    <string name="itinerary_confirmation">Itinerary Confirmation</string>
+    <string name="error_completing_task">Error completing task</string>
+    <string name="error_deleting_task">Error deleting task</string>
+    <string name="waste_successfully_deleted">Waste successfully deleted</string>
 </resources>
