@@ -142,6 +142,10 @@ public class APIController {
         return get("task/list/" + idEmploye, callback);
     }
 
+    public static Call getEmployeeTasks(String path, String idEmployee, Callback callback) {
+        return get("waste/list/" + path + idEmployee, callback);
+    }
+
     /* Waste */
 
     /**
@@ -353,6 +357,13 @@ public class APIController {
     public static List<User> parseUsers(String body) {
         Gson gson = new Gson();
         Type type = new TypeToken<List<User>>() {
+        }.getType();
+        return gson.fromJson(body, type);
+    }
+
+    public static List<Waste> parseWastes(String body) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<Waste>>() {
         }.getType();
         return gson.fromJson(body, type);
     }

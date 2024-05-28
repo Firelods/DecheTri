@@ -34,9 +34,11 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class TasksListFragment extends Fragment implements TasksListAdapterListener {
+    private static final String URL_KEY = "query_url";
+    private static final String ID_KEY = "id";
+
     private static final String TAG = "512Bank" + TasksListFragment.class.getSimpleName();
     private FragmentTasksListBinding binding;
-    private ListView listViewTasks;
     private TasksListAdapter taskListAdapter;
     private final List<Task> taskList = new ArrayList<>();
     private final List<Waste> wasteList = new ArrayList<>();
@@ -44,20 +46,44 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
     private TextView noTasksAssignedTextView;
     private View root;
 
+    private String requestURL;
+    private String connectedID;
+
+    public static TasksListFragment newInstance(String url, String id) {
+        TasksListFragment fragment = new TasksListFragment();
+        Bundle args = new Bundle();
+        args.putString(URL_KEY, url);
+        args.putString(ID_KEY, id);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public TasksListFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            requestURL = getArguments().getString(URL_KEY);
+            connectedID = getArguments().getString(ID_KEY);
+        }
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTasksListBinding.inflate(inflater, container, false);
         root = binding.getRoot();
-        listViewTasks = binding.listViewTasks;
+        ListView listViewTasks = binding.listViewTasks;
         swipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout);
 
         swipeRefreshLayout.setOnRefreshListener(this::getEmployeAssignee);
 
-//        getEmployeAssignee();
         noTasksAssignedTextView=root.findViewById(R.id.noTaskAssigned);
         noTasksAssignedTextView.setVisibility(root.GONE);
+
         // Create an adapter
         taskListAdapter = new TasksListAdapter(requireActivity(), wasteList);
         listViewTasks.setAdapter(taskListAdapter);
@@ -93,7 +119,6 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                     wasteList.clear();
                     taskList.addAll(tasks);
                     if (taskList.isEmpty()) {
-
                         requireActivity().runOnUiThread(() -> {
                             noTasksAssignedTextView.setVisibility(root.VISIBLE);
                             taskListAdapter.notifyDataSetChanged();
@@ -103,7 +128,6 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                     }
                     getWasteList();
                 } else {
-
                     // The employee has no tasks
                     requireActivity().runOnUiThread(() -> {
                         taskList.clear();
