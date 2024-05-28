@@ -6,7 +6,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
 
 import com.google.gson.Gson;
 
@@ -26,13 +25,20 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     private static final String TAG = "512Bank";
     private final ArrayList<WasteListObserver> observers = new ArrayList<>();
 
+    private Activity activity;
+    private Context context;
+
     public WasteList(Activity activity) {
-        Context context = activity.getApplicationContext();
+        this.activity = activity;
+        this.context = activity.getApplicationContext();
+    }
+
+    public void init() {
         APIController.getWasteList(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
-                Log.e("APIController", "Error while getting waste : " + message);
+                Log.e(TAG + "APIController", "Error while getting waste : " + message);
                 activity.runOnUiThread(() -> {
                     Toast.makeText(context, "Erreur lors de la récupération des déchêts : " + message, Toast.LENGTH_SHORT).show();
                     notifyObservers();
@@ -58,14 +64,22 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
         });
     }
 
+    public void updateList() {
+        this.clear();
+        this.init();
+    }
+
+    @Override
     public void addObserver(WasteListObserver observer) {
         observers.add(observer);
     }
 
+    @Override
     public void removeObserver(WasteListObserver observer) {
         observers.remove(observer);
     }
 
+    @Override
     public void notifyObservers() {
         for (WasteListObserver observer : observers) {
             observer.onWasteListChanged();
@@ -73,8 +87,8 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     }
 
     @Override
-    public boolean add(Waste announcement) {
-        boolean result = super.add(announcement);
+    public boolean add(Waste waste) {
+        boolean result = super.add(waste);
         if (result) {
             notifyObservers();
         }

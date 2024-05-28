@@ -97,6 +97,10 @@
     <string name="type_spinner_title">Type de déchet</string>
     <string name="saisir_le_nom">Saisir le nom …</string>
     <string name="identification_du_d_chet">Identification du déchet</string>
+    <string name="logo_activites">logo activités</string>
+    <string name="statisticsPieChart">Proportion d\'annonces en fonction de leur type.</string>
+    <string name="statisticsBarChart">Nombre de déchets signalés au cours du temps.</string>
+    <string name="logo_signalement">logo signalement</string>
 
     <!--    Notifications    -->
     <string name="send_notification_error">L\'envoie de la notification a rencontré une erreur</string>
