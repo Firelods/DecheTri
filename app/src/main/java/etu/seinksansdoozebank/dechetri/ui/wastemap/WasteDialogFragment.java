@@ -51,7 +51,7 @@ import okhttp3.Response;
 public class WasteDialogFragment extends BottomSheetDialogFragment {
 
     private FragmentWasteDialogBinding binding;
-
+    String id;
     private Waste waste;
 
     @Nullable
@@ -105,40 +105,43 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         } else {
             wasteAssignLayout.setVisibility(View.GONE);
         }
+        id = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_user_id), requireContext().getResources().getString(R.string.role_user_id));
+        User userAssigned=waste.getAssignee();
+        if (userAssigned!=null && role.assignable() && userAssigned.getId().equals(id) ){
 
-        if (role.assignable()) {
-            buttonItinary.setVisibility(View.VISIBLE);
-            buttonConfirm.setVisibility(View.VISIBLE);
-            buttonItinary.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("QueryPermissionsNeeded")
-                @Override
-                public void onClick(View v) {
-                    String address = waste.getAddress();
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Uri.encode(address));
+                buttonItinary.setVisibility(View.VISIBLE);
+                buttonConfirm.setVisibility(View.VISIBLE);
+                buttonItinary.setOnClickListener(new View.OnClickListener() {
+                    @SuppressLint("QueryPermissionsNeeded")
+                    @Override
+                    public void onClick(View v) {
+                        String address = waste.getAddress();
+                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Uri.encode(address));
 
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    startActivity(mapIntent);
-                }
-            });
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        startActivity(mapIntent);
+                    }
+                });
 
-            buttonConfirm.setOnClickListener(v -> APIController.completeTask(waste.getId(), new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error completing task : " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                }
+                buttonConfirm.setOnClickListener(v -> APIController.completeTask(waste.getId(), new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error completing task : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    }
 
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) {
-                    requireActivity().runOnUiThread(() -> {
-                        if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Task completed", Toast.LENGTH_SHORT).show();
-                            dismiss();
-                        } else {
-                            Toast.makeText(getContext(), "Error completing task : " + response.message(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }));
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) {
+                        requireActivity().runOnUiThread(() -> {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(getContext(), "Task completed", Toast.LENGTH_SHORT).show();
+                                dismiss();
+                            } else {
+                                Toast.makeText(getContext(), "Error completing task : " + response.message(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }));
+
         } else {
             buttonItinary.setVisibility(View.GONE);
             buttonConfirm.setVisibility(View.GONE);
