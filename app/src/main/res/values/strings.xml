@@ -5,7 +5,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="title_flux">Activités</string>
+    <string name="title_flux">Annonces</string>
     <string name="title_map">Carte</string>
     <string name="title_report">Signalement</string>
     <string name="title_photo">Signalement - Photo</string>
@@ -102,4 +102,6 @@
     <string name="statisticsPieChart">Proportion d\'annonces en fonction de leur type.</string>
     <string name="statisticsBarChart">Nombre de déchets signalés au cours du temps.</string>
     <string name="logo_signalement">logo signalement</string>
+    <string name="add_announcement_button">Publier une annonce</string>
+    <string name="clear_date">The button to clear the date input</string>
 </resources>

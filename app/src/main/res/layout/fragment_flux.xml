@@ -29,7 +29,7 @@
         android:id="@+id/btn_add_announcement"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:text="Ajouter une annonce"
+        android:text="@string/add_announcement_button"
         android:textAlignment="center"
         android:textColor="@color/white_500"
         android:textSize="18sp"
