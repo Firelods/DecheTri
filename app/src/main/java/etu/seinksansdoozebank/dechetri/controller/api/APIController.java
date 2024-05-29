@@ -12,6 +12,7 @@ import java.util.List;
 import etu.seinksansdoozebank.dechetri.model.user.Role;
 import etu.seinksansdoozebank.dechetri.model.user.User;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteDTO;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -167,7 +168,7 @@ public class APIController {
      * }
      * @route /waste/report
      */
-    public static Call reportWaste(Waste waste, Callback callback) {
+    public static Call reportWaste(WasteDTO waste, Callback callback) {
         String json = "{\n" +
                 "  \"name\": \"" + waste.getName() + "\",\n" +
                 "  \"type\": \"" + waste.getType() + "\",\n" +
