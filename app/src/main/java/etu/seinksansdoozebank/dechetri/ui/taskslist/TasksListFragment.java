@@ -95,14 +95,19 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
         APIController.getEmployeeTasks(requestURL, connectedID, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show());
-                swipeRefreshLayout.setRefreshing(false);
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful() || response.body() == null) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show());
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
+                    });
                     return;
                 }
                 wasteList.clear();
