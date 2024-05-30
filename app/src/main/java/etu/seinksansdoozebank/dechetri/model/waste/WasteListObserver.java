@@ -1,5 +1,5 @@
 package etu.seinksansdoozebank.dechetri.model.waste;
 
-public interface WasteListObservable {
+public interface WasteListObserver {
     void onWasteListChanged();
 }

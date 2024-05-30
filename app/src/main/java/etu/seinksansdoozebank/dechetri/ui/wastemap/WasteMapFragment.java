@@ -30,6 +30,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
@@ -41,9 +42,9 @@ import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
-import etu.seinksansdoozebank.dechetri.model.waste.WasteListObservable;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteListObserver;
 
-public class WasteMapFragment extends Fragment implements LocationListener, WasteListObservable {
+public class WasteMapFragment extends Fragment implements LocationListener, WasteListObserver {
     private FragmentWasteMapBinding binding;
     private WasteList wasteList;
     private MapView map;
@@ -100,6 +101,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
             swipeRefreshLayout.setElevation(5);
             swipeRefreshLayout.setRefreshing(true);
             wasteList = new WasteList(activity);
+            wasteList.updateList();
         });
 
         return view;
@@ -152,6 +154,8 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         Log.v(TAG, "Last known location: " + lastKnownLocation);
         if (lastKnownLocation != null) {
             setLocationOnPoint(lastKnownLocation);
+            mapController.setCenter(new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
+            mapController.setZoom(15.0);
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this::setLocationOnPoint);
         }
@@ -159,13 +163,11 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
 
     private void setLocationOnPoint(Location lastKnownLocation) {
         GeoPoint startPoint = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-        mapController.setCenter(startPoint);
-        mapController.setZoom(15.0);
         addMarker(startPoint);
     }
 
     private void addMarker(GeoPoint startPoint) {
-        if (map == null) return;
+        if (map == null || map.getRepository() == null) return;
         Marker marker = new Marker(map);
         marker.setPosition(startPoint);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
@@ -182,7 +184,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     }
 
     public void addWastePointsOnMap(List<Waste> wastes) {
-        if (wastes == null || map == null) {
+        if (wastes == null || map == null || map.getRepository() == null) {
             return;
         }
         // Create a set to store the points of the new wastes
@@ -204,7 +206,13 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         }
 
         // Clear and re-add the overlay to refresh the map
-        map.getOverlays().clear();
+        // filter not the location point (different marker)
+        // remove everything but the location point
+        List<Overlay> overlays = map.getOverlays();
+        overlays.clear();
+        if (currentLocationMarker != null) {
+            overlays.add(currentLocationMarker);
+        }
         map.getOverlays().add(new ItemizedIconOverlay<>(items, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
             @Override
             public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
@@ -258,6 +266,16 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     public void onProviderDisabled(@NonNull String provider) {
         Toast.makeText(getContext(), getString(R.string.veuillez_activer_la_localisation), Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (locationManager != null && checkLocationPermission()) {
+            locationManager.removeUpdates(this);
+        }
+        map.onPause();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -269,6 +287,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         }
         wasteList = new WasteList(activity);
         wasteList.addObserver(this);
+        wasteList.updateList();
     }
 
     @Override

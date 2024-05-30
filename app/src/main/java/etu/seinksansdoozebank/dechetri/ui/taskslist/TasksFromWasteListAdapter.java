@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +23,14 @@ import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.ui.wastemap.WasteDialogFragment;
 
-public class TasksListAdapter extends BaseAdapter {
+public class TasksFromWasteListAdapter extends BaseAdapter {
     private final LayoutInflater mInflater;  //Un mécanisme pour gérer l'affichage graphique depuis un layout XML
     private final FragmentActivity activity;
     private final List<Waste> wasteList;
 
-    public TasksListAdapter(FragmentActivity activity, List<Waste> wasteList) {
+    public TasksFromWasteListAdapter(FragmentActivity activity, List<Waste> wasteList) {
         this.activity = activity;
         this.wasteList = wasteList;
         this.mInflater = LayoutInflater.from(activity.getBaseContext());
@@ -69,9 +71,21 @@ public class TasksListAdapter extends BaseAdapter {
             Bitmap bitmap = imageData != null ? new BitmapDrawable(activity.getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(imageData, 0, imageData.length), 100, 100, true)).getBitmap() : null;
             Bitmap roundedBitMap = bitmap != null ? getRoundedBitmap(bitmap) : null;
             image.setImageBitmap(roundedBitMap);
+            listItem.setOnClickListener(v -> showWasteDetails(waste));
         }
 
         return listItem;
+    }
+
+    public void showWasteDetails(Waste waste) {
+        WasteDialogFragment wasteDialogFragment = new WasteDialogFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable("waste", waste);
+
+        wasteDialogFragment.setArguments(args);
+
+        wasteDialogFragment.show(activity.getSupportFragmentManager(), "WasteDialogFragment");
     }
 
     private Bitmap getRoundedBitmap(Bitmap bitmap) {

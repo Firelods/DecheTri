@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="20dp"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    tools:context=".ui.flux.FluxFragment">
+    android:orientation="vertical"
+    tools:context=".ui.flux.FluxFragment"
+    android:layout_gravity="center"
+    android:paddingHorizontal="20dp">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints">
+        android:layout_height="0dp"
+        android:layout_weight="9">
         <ListView
             android:id="@+id/listView_flux"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:divider="@android:color/transparent"
             android:dividerHeight="20dp"
-            app:layout_constraintBottom_toTopOf="@id/btn_add_announcement"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="6dp"
             />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -31,13 +28,13 @@
     <Button
         android:id="@+id/btn_add_announcement"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="Ajouter une annonce"
+        android:layout_height="0dp"
+        android:text="@string/add_announcement_button"
         android:textAlignment="center"
         android:textColor="@color/white_500"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_weight="1"
         />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
