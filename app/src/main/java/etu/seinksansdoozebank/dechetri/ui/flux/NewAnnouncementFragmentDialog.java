@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -173,7 +174,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
                 Log.e("APIController", "Error while creating announcement : " + message);
-                activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(), "Erreur lors de la publication de l'annonce : " + message, Toast.LENGTH_SHORT).show());
+                activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_publication_de_l_annonce), message), Toast.LENGTH_SHORT).show());
             }
 
             @Override

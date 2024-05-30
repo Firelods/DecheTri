@@ -36,7 +36,6 @@ import okhttp3.Response;
 public class TasksListFragment extends Fragment implements TasksListAdapterListener {
     private static final String TAG = "512Bank" + TasksListFragment.class.getSimpleName();
     private FragmentTasksListBinding binding;
-    private ListView listViewTasks;
     private TasksListAdapter taskListAdapter;
     private final List<Task> taskList = new ArrayList<>();
     private final List<Waste> wasteList = new ArrayList<>();
@@ -50,7 +49,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTasksListBinding.inflate(inflater, container, false);
         root = binding.getRoot();
-        listViewTasks = binding.listViewTasks;
+        ListView listViewTasks = binding.listViewTasks;
         swipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout);
 
         swipeRefreshLayout.setOnRefreshListener(this::getEmployeAssignee);
@@ -73,14 +72,14 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
         APIController.getEmployeAssignee(id, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des tâches", Toast.LENGTH_SHORT).show());
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show());
                 swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des tâches", Toast.LENGTH_SHORT).show());
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show());
                     return;
                 }
                 String json = response.body().string();
@@ -124,7 +123,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                     String message = e.getMessage();
                     Log.e("APIController", "Error while getting waste : " + message);
                     requireActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), "Erreur lors de la récupération des déchets", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_dechets, Toast.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                     });
                 }
@@ -133,7 +132,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
                         requireActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), "Erreur lors de la récupération des déchets", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_dechets, Toast.LENGTH_SHORT).show();
                             swipeRefreshLayout.setRefreshing(false);
                         });
                         return;

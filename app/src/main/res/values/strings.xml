@@ -80,7 +80,7 @@
     <string name="waste_image">Image du déchet</string>
     <string name="votre_position">Votre position</string>
     <string name="dechet_ici">Déchet ici</string>
-    <string name="veuillez_activer_la_localisation">Veuillez activer la localisation</string>
+    <string name="veuillez_activer_la_localisation">Veuillez activer la localisation puis réessayer</string>
     <string name="la_localisation_est_necessaire">La localisation est nécessaire pour signaler le déchet</string>
     <string name="nouveau_dechet">Nouveau déchet</string>
     <string name="btn_refresh_waste_point">Met à jour les points sur la map</string>
@@ -101,4 +101,28 @@
     <string name="statisticsPieChart">Proportion d\'annonces en fonction de leur type.</string>
     <string name="statisticsBarChart">Nombre de déchets signalés au cours du temps.</string>
     <string name="logo_signalement">logo signalement</string>
+<!--    Toast resources -->
+    <string name="erreur_lors_de_la_recuperation_des_annonces">Erreur lors de la récupération des annonces : {0}</string>
+    <string name="erreur_lors_de_la_recuperation_des_taches">Erreur lors de la récupération des tâches</string>
+    <string name="erreur_lors_de_la_suppression_de_l_annonce">Erreur lors de la suppression de l\'\'annonce : {0}</string>
+    <string name="imposible_de_recuperer_la_liste_des_dechets">Imposible de récupérer la liste des déchets</string>
+    <string name="impossible_de_recuperer_l_adresse">Impossible de récupérer l\'adresse</string>
+    <string name="permission_du_calendrier_refusee">Permission du calendrier refusée, Veuillez réessayer</string>
+    <string name="erreur_lors_de_la_publication_de_l_annonce">Erreur lors de la publication de l\'\'annonce : {0}</string>
+    <string name="tache_terminee">Tâche terminée</string>
+    <string name="erreur_lors_de_la_completion_de_la_tache">Erreur lors de la complétion de la tâche : {0}</string>
+    <string name="erreur_lors_de_la_recuperation_des_utilisateurs">Erreur lors de la récupération des utilisateurs : {0}</string>
+    <string name="erreur_lors_de_l_assignation_de_la_tache">Erreur lors de l\'\'assignation de la tâche : {0}</string>
+    <string name="la_tache_a_ete_assignee_avec_succes">La tâche a été assignée avec succès</string>
+    <string name="erreur_lors_de_la_suppression_du_dechet">Erreur lors de la suppression du déchet:{0}</string>
+    <string name="dechet_supprime_avec_succes">Déchet supprimé avec succès.</string>
+    <string name="aucune_image_selectionnee">Aucune image sélectionnée, Veuillez réessayer</string>
+    <string name="aucune_photo_capturee">Aucune photo capturée, Veuillez réessayer</string>
+    <string name="permission_de_la_camera_refusee">Permission de la caméra refusée, Veuillez réessayer</string>
+    <string name="permission_de_la_pellicule_refusee">Permission de la pellicule refusée, Veuillez réessayer</string>
+    <string name="permission_refusee">Permission refusée</string>
+    <string name="l_application_de_l_appareil_photo_n_est_pas_disponible">L\'application de l\'appareil photo n\'est pas disponible, Veuillez réessayer</string>
+    <string name="l_application_de_galerie_n_est_pas_disponible">L\'application de galerie n\'est pas disponible, Veuillez réessayer</string>
+    <string name="erreur_lors_de_la_recuperation_des_dechets">Erreur lors de la récupération des déchets</string>
+    <string name="dechet_signale">Déchet signalé</string>
 </resources>

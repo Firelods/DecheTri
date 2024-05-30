@@ -30,6 +30,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -124,17 +125,17 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             buttonConfirm.setOnClickListener(v -> APIController.completeTask(waste.getId(), new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error completing task : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_completion_de_la_tache), e.getMessage()), Toast.LENGTH_SHORT).show());
                 }
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) {
                     requireActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Tâche terminée", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.tache_terminee, Toast.LENGTH_SHORT).show();
                             dismiss();
                         } else {
-                            Toast.makeText(getContext(), "Erreur lors de la complétion de la tâche : " + response.message(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_completion_de_la_tache), response.message()), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -158,7 +159,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         APIController.getUserByRoles(roles, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des utilisateurs : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_recuperation_des_utilisateurs), e.getMessage()), Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -180,7 +181,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                             Log.e("WasteDialogFragment", "Error while parsing users : " + e.getMessage());
                         }
                     } else {
-                        Toast.makeText(getContext(), "Erreur lors de la récupération des utilisateurs : " + response.message(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_recuperation_des_utilisateurs), response.message()), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -200,7 +201,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 APIController.assignTask(waste.getId(), assigneeId, new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error while assigning task : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_l_assignation_de_la_tache), e.getMessage()), Toast.LENGTH_SHORT).show());
                     }
 
                     @Override
@@ -208,9 +209,9 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                         requireActivity().runOnUiThread(() -> {
                             if (response.isSuccessful()) {
                                 waste.setAssignee(optionalUser.orElse(null));
-                                Toast.makeText(getContext(), "La tâche a été assignée avec succès", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), R.string.la_tache_a_ete_assignee_avec_succes, Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(getContext(), "Erreur lors de l'assignation de la tâche : " + response.message(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_l_assignation_de_la_tache), response.message()), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -238,17 +239,17 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         String message = e.getMessage();
                         Log.e("APIController", "Error while removing waste : " + message);
-                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la suppression du déchet:" + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_suppression_du_dechet), e.getMessage()), Toast.LENGTH_SHORT).show());
                     }
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) {
                         requireActivity().runOnUiThread(() -> {
                             if (response.isSuccessful()) {
-                                Toast.makeText(getContext(), "Déchet supprimé avec succès.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.dechet_supprime_avec_succes, Toast.LENGTH_SHORT).show();
                                 dismiss();
                             } else {
-                                Toast.makeText(getContext(), "Erreur lors de la suppression du déchet :" + response.message(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(),  MessageFormat.format(getString(R.string.erreur_lors_de_la_suppression_du_dechet), response.message()), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.model.observable.Observable;
 import okhttp3.Call;
@@ -29,6 +30,7 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     public WasteList(Activity activity) {
         this.activity = activity;
     }
+
     public void init() {
         APIController.getWasteList(new Callback() {
             @Override
@@ -40,7 +42,7 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     Log.d(TAG + "TasksListFragment", "onResponse: " + response.body().string());
-                    activity.runOnUiThread(() -> Toast.makeText(activity, "Imposible de récupérer la liste des déchets", Toast.LENGTH_SHORT).show());
+                    activity.runOnUiThread(() -> Toast.makeText(activity, R.string.imposible_de_recuperer_la_liste_des_dechets, Toast.LENGTH_SHORT).show());
                     return;
                 }
                 String json = response.body().string();

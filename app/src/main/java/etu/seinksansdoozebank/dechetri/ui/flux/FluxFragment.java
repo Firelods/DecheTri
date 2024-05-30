@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -106,7 +107,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             String message = e.getMessage();
                             Log.e(TAG, "Error while removing announcement : " + message);
-                            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce : " + message, Toast.LENGTH_SHORT).show());
+                            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_suppression_de_l_annonce), message), Toast.LENGTH_SHORT).show());
                         }
 
                         @Override
@@ -188,7 +189,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                 ContentResolver cr = requireContext().getContentResolver();
                 addEventToCalendar(cr, item);
             } else {
-                Toast toast = Toast.makeText(getContext(), "Permission refusée", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getContext(), R.string.permission_du_calendrier_refusee, Toast.LENGTH_LONG);
                 toast.show();
             }
         }
