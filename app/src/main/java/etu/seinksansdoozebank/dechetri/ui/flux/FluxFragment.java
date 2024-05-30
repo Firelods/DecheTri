@@ -28,7 +28,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -40,7 +39,6 @@ import etu.seinksansdoozebank.dechetri.databinding.FragmentFluxBinding;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementList;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementListObserver;
-import etu.seinksansdoozebank.dechetri.ui.notifications.INotification;
 import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationFactory;
 import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationHelper;
 import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationType;
@@ -81,7 +79,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
 
         Button btnAddAnnouncement = root.findViewById(R.id.btn_add_announcement);
         if (role.equals(requireContext().getString(R.string.role_admin_title))) {
-            swipeRefreshLayout.setPadding(0,0,0,160);
+            // swipeRefreshLayout.setPadding(0,0,0,160);
             btnAddAnnouncement.setVisibility(View.VISIBLE);
             btnAddAnnouncement.setOnClickListener(v -> showNewAnnouncementDialog());
         } else {
@@ -194,7 +192,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                 ContentResolver cr = requireContext().getContentResolver();
                 addEventToCalendar(cr, item);
             } else {
-                Toast toast = Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getContext(), R.string.permission_du_calendrier_refusee, Toast.LENGTH_LONG);
                 toast.show();
             }
         }

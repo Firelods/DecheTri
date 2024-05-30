@@ -135,7 +135,8 @@
                     android:src="@drawable/outline_cancel_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iv_date_picker"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/clear_date" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -151,6 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_announcement_cancel"
+            android:backgroundTint="@color/orange_700"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

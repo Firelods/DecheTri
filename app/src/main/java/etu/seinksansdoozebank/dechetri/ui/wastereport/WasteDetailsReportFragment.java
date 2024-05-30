@@ -32,7 +32,6 @@ import com.faltenreich.skeletonlayout.Skeleton;
 import org.osmdroid.bonuspack.location.GeocoderNominatim;
 
 import java.io.IOException;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
@@ -40,7 +39,7 @@ import java.util.concurrent.Executors;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
-import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.model.waste.WasteDTO;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteType;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -101,7 +100,7 @@ public class WasteDetailsReportFragment extends Fragment {
             @Override
             public void onError(Exception e) {
                 requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(requireContext(), "Impossible de récupérer l'adresse", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.impossible_de_recuperer_l_adresse, Toast.LENGTH_SHORT).show();
                     skeleton.showOriginal();
                 });
             }
@@ -181,7 +180,7 @@ public class WasteDetailsReportFragment extends Fragment {
     }
 
     private void reportWaste(String name, WasteType wasteType, String description, String userReporterID, String address, double latitude, double longitude, byte[] image) {
-        Waste newWaste = new Waste(name, description, wasteType, description, image, new GregorianCalendar().getTime(), address, latitude, longitude, userReporterID);
+        WasteDTO newWaste = new WasteDTO(name, wasteType, description, image, address, latitude, longitude, userReporterID);
         APIController.reportWaste(newWaste, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -196,7 +195,7 @@ public class WasteDetailsReportFragment extends Fragment {
                         //TODO : navigate to the map
                         Navigation.findNavController(requireView()).navigate(R.id.navigation_map);
 
-                        Toast.makeText(requireContext(), "Waste reported", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.dechet_signale, Toast.LENGTH_SHORT).show();
                     });
                 } else {
                     Log.e("WasteDetailsReportFragment", "Erreur lors du signalement du déchet: " + response.body().string());

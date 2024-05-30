@@ -26,32 +26,6 @@ public class Waste implements Parcelable {
     private String userReporterId;
     private User assignee;
 
-    public Waste(String id, String name, WasteType type, String description, String imageData, Date reportDate, String address, double latitude, double longitude, String userReporterId) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.description = description;
-        this.imageData = imageData;
-        this.reportDate = reportDate;
-        this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.userReporterId = userReporterId;
-    }
-
-    public Waste(String id, String name, WasteType type, String description, byte[] imageData, Date reportDate, String address, double latitude, double longitude, String userReporterId) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.description = description;
-        this.imageData = Base64.encodeToString(imageData, Base64.DEFAULT);
-        this.reportDate = reportDate;
-        this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.userReporterId = userReporterId;
-    }
-
     protected Waste(Parcel in) {
         id = in.readString();
         name = in.readString();
