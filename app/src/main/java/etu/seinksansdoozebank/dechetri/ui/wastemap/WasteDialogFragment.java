@@ -124,7 +124,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             buttonConfirm.setOnClickListener(v -> APIController.completeTask(waste.getId(), new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Failure completing task : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la complétion de la tâche : " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 }
 
                 @Override
