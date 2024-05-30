@@ -174,7 +174,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
                 String message = e.getMessage();
                 activity.runOnUiThread(() -> {
                     Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce : " + message, Toast.LENGTH_SHORT).show();
-                    NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
+                    NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Erreur lors de la création de l'annonce", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                     onComplete.run();
                 });
             }
@@ -184,7 +184,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
                 if (response.isSuccessful()) {
                     activity.runOnUiThread(() -> {
                         Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
-                        NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Announcement created successfully", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
+                        NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Annonce créée avec succès", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
                         fluxUpdateable.updateFlux();
                         onComplete.run();
                     });
@@ -194,7 +194,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
                             assert response.body() != null;
                             String body = response.body().string();
                             Toast.makeText(getContext(), R.string.add_announcement_result_error + " : " + body, Toast.LENGTH_SHORT).show();
-                            NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Failed to create announcement", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
+                            NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Erreur lors de la création de l'annonce", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

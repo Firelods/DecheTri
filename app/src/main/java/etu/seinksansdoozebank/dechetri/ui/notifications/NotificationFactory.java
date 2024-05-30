@@ -39,6 +39,6 @@ public abstract class NotificationFactory {
 
     public static void removeNotification(Context context, int notificationId) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.cancel(notificationId);
+        notificationManager.cancelAll();
     }
 }

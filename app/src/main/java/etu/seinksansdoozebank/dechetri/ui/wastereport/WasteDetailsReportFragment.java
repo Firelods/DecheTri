@@ -185,7 +185,7 @@ public class WasteDetailsReportFragment extends Fragment {
         APIController.reportWaste(newWaste, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("WasteDetailsReportFragment", "Failed to report waste", e);
+                Log.e("WasteDetailsReportFragment", "Erreur lors du signalement du déchet", e);
             }
 
             @Override
@@ -199,7 +199,7 @@ public class WasteDetailsReportFragment extends Fragment {
                         Toast.makeText(requireContext(), "Waste reported", Toast.LENGTH_SHORT).show();
                     });
                 } else {
-                    Log.e("WasteDetailsReportFragment", "Failed to report waste: " + response.body().string());
+                    Log.e("WasteDetailsReportFragment", "Erreur lors du signalement du déchet: " + response.body().string());
                 }
             }
         });

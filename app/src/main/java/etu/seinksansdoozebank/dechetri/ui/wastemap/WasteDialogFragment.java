@@ -132,21 +132,21 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     Log.d("WasteDialogFragment", "Error completing task for waste at " + waste.getName() + " : " + e.getMessage());
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error completing task for waste at " + waste.getName(), Toast.LENGTH_SHORT).show());
-                    NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), String.valueOf(R.string.error_completing_task), "Error completing task for waste at " + waste.getName(), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur dans l'accomplissement de la tâche pour les déchêts " + waste.getName(), Toast.LENGTH_SHORT).show());
+                    NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), String.valueOf(R.string.error_completing_task), "Erreur dans l'accomplissement de la tâche pour les déchêts " + waste.getName(), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
                 }
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) {
                     requireActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Task completed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Tâche complétée", Toast.LENGTH_SHORT).show();
                             NotificationFactory.removeNotification(getContext(), notificationId[0]);
                             dismiss();
                         } else {
                             Log.d("WasteDialogFragment", "Else Error completing task for waste at " + waste.getName() + " : " + response.message());
-                            Toast.makeText(getContext(), "Error completing task : " + response.message(), Toast.LENGTH_SHORT).show();
-                            NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), String.valueOf(R.string.error_completing_task), "Error completing task for waste at " + waste.getName(), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
+                            Toast.makeText(getContext(), "Erreur lors de la complétion de la tâche : " + response.message(), Toast.LENGTH_SHORT).show();
+                            NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), String.valueOf(R.string.error_completing_task), "Erreur dans l'accomplissement de la tâche pour les déchêts " + waste.getName(), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
                         }
                     });
                 }
@@ -170,7 +170,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         APIController.getUserByRoles(roles, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error while getting users : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de la récupération des utilisateurs : " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -251,8 +251,8 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                         String message = e.getMessage();
                         requireActivity().runOnUiThread(() -> {
                             Log.d("APIController", "Error while removing waste : " + message);
-                            Toast.makeText(getContext(), "Error deleting waste : " + waste.getName(), Toast.LENGTH_SHORT).show();
-                            NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), String.valueOf(R.string.error_deleting_task), "Error deleting waste : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
+                            Toast.makeText(getContext(), "Erreur lors de la suppression du déchet: " + waste.getName(), Toast.LENGTH_SHORT).show();
+                            NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), String.valueOf(R.string.error_deleting_task), "Error lors de la suppression du déchet : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
                         });
                     }
 
@@ -260,12 +260,12 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                     public void onResponse(@NonNull Call call, @NonNull Response response) {
                         requireActivity().runOnUiThread(() -> {
                             if (response.isSuccessful()) {
-                                Toast.makeText(getContext(), "Waste successfully deleted", Toast.LENGTH_SHORT).show();
-                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), String.valueOf(R.string.waste_successfully_deleted), "Waste successfully deleted : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_DEFAULT);
+                                Toast.makeText(getContext(), "Déchet supprimé avec succès :", Toast.LENGTH_SHORT).show();
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), String.valueOf(R.string.waste_successfully_deleted), "Déchet supprimé avec succès : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_DEFAULT);
                                 dismiss();
                             } else {
-                                Toast.makeText(getContext(), "Error deleting waste : " + response.message(), Toast.LENGTH_SHORT).show();
-                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), String.valueOf(R.string.error_deleting_task), "Error deleting waste : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
+                                Toast.makeText(getContext(), "Erreur lors de la suppression du déchet : " + response.message(), Toast.LENGTH_SHORT).show();
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), String.valueOf(R.string.error_deleting_task), "Erreur lors de la suppression du déchet : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
                             }
                         });
                     }
