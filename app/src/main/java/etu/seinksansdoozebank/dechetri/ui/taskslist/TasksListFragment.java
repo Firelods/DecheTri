@@ -1,10 +1,6 @@
 package etu.seinksansdoozebank.dechetri.ui.taskslist;
 
-import static android.content.Context.MODE_PRIVATE;
-
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,33 +12,53 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentTasksListBinding;
-import etu.seinksansdoozebank.dechetri.model.task.Task;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 public class TasksListFragment extends Fragment implements TasksListAdapterListener {
-    private static final String TAG = "512Bank" + TasksListFragment.class.getSimpleName();
+    private static final String URL_KEY = "query_url";
+    private static final String ID_KEY = "id";
+
     private FragmentTasksListBinding binding;
-    private TasksListAdapter taskListAdapter;
-    private final List<Task> taskList = new ArrayList<>();
+    private TasksFromWasteListAdapter taskListAdapter;
     private final List<Waste> wasteList = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView noTasksAssignedTextView;
     private View root;
 
+    private String requestURL;
+    private String connectedID;
+
+    public static TasksListFragment newInstance(String url, String id) {
+        TasksListFragment fragment = new TasksListFragment();
+        Bundle args = new Bundle();
+        args.putString(URL_KEY, url);
+        args.putString(ID_KEY, id);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public TasksListFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            requestURL = getArguments().getString(URL_KEY);
+            connectedID = getArguments().getString(ID_KEY);
+        }
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -54,104 +70,18 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
 
         swipeRefreshLayout.setOnRefreshListener(this::getEmployeAssignee);
 
-//        getEmployeAssignee();
         noTasksAssignedTextView=root.findViewById(R.id.noTaskAssigned);
-        noTasksAssignedTextView.setVisibility(root.GONE);
-        // Create an adapter
-        taskListAdapter = new TasksListAdapter(requireActivity(), wasteList);
+        noTasksAssignedTextView.setVisibility(View.GONE);
+        taskListAdapter = new TasksFromWasteListAdapter(requireActivity(), wasteList);
         listViewTasks.setAdapter(taskListAdapter);
-
-
         return root;
     }
 
-    private void getEmployeAssignee() {
+    @Override
+    public void onResume() {
+        super.onResume();
         swipeRefreshLayout.setRefreshing(true);
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(requireContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
-        String id = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_user_id), requireContext().getResources().getString(R.string.role_user_id));
-        APIController.getEmployeAssignee(id, new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show());
-                swipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show());
-                    return;
-                }
-                String json = response.body().string();
-                Gson gson = new Gson();
-                Type taskListType = new TypeToken<List<Task>>() {
-                }.getType();
-                List<Task> tasks = gson.fromJson(json, taskListType);
-                if (tasks != null) {
-                    taskList.clear();
-                    wasteList.clear();
-                    taskList.addAll(tasks);
-                    if (taskList.isEmpty()) {
-
-                        requireActivity().runOnUiThread(() -> {
-                            noTasksAssignedTextView.setVisibility(root.VISIBLE);
-                            taskListAdapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
-                        });
-                        return;
-                    }
-                    getWasteList();
-                } else {
-
-                    // The employee has no tasks
-                    requireActivity().runOnUiThread(() -> {
-                        taskList.clear();
-                        taskListAdapter.notifyDataSetChanged();
-                        swipeRefreshLayout.setRefreshing(false);
-                    });
-                }
-            }
-        });
-    }
-
-    private void getWasteList() {
-        List<Task> tempTaskList = new ArrayList<>(taskList);
-        for (Task task : tempTaskList) {
-            APIController.getWaste(task.getIdWasteToCollect(), new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    String message = e.getMessage();
-                    Log.e("APIController", "Error while getting waste : " + message);
-                    requireActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_dechets, Toast.LENGTH_SHORT).show();
-                        swipeRefreshLayout.setRefreshing(false);
-                    });
-                }
-
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        requireActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_dechets, Toast.LENGTH_SHORT).show();
-                            swipeRefreshLayout.setRefreshing(false);
-                        });
-                        return;
-                    }
-                    String json = response.body().string();
-                    Gson gson = new Gson();
-                    Waste waste = gson.fromJson(json, Waste.class);
-                    if (waste == null) {
-                        return;
-                    }
-                    wasteList.add(waste);
-                    // notify the listview that the data has changed
-                    requireActivity().runOnUiThread(() -> {
-                        taskListAdapter.notifyDataSetChanged();
-                        swipeRefreshLayout.setRefreshing(false);
-                    });
-                }
-            });
-        }
+        getEmployeAssignee();
     }
 
     @Override
@@ -160,11 +90,30 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
         binding = null;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void getEmployeAssignee() {
         swipeRefreshLayout.setRefreshing(true);
-        getEmployeAssignee();
+        APIController.getEmployeeTasks(requestURL, connectedID, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show());
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful() || response.body() == null) {
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show());
+                    return;
+                }
+                wasteList.clear();
+                wasteList.addAll(APIController.parseWastes(response.body().string()));
+                requireActivity().runOnUiThread(() -> {
+                    noTasksAssignedTextView.setVisibility(wasteList.isEmpty() ? View.VISIBLE : View.GONE);
+                    taskListAdapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+                });
+            }
+        });
     }
 }
 

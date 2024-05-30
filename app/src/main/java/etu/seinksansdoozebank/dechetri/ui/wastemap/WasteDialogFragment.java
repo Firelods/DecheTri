@@ -52,7 +52,7 @@ import okhttp3.Response;
 public class WasteDialogFragment extends BottomSheetDialogFragment {
 
     private FragmentWasteDialogBinding binding;
-
+    String id;
     private Waste waste;
 
     @Nullable
@@ -106,21 +106,23 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         } else {
             wasteAssignLayout.setVisibility(View.GONE);
         }
+        id = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_user_id), requireContext().getResources().getString(R.string.role_user_id));
+        User userAssigned=waste.getAssignee();
+        if (userAssigned!=null && role.assignable() && userAssigned.getId().equals(id) ){
 
-        if (role.assignable()) {
-            buttonItinary.setVisibility(View.VISIBLE);
-            buttonConfirm.setVisibility(View.VISIBLE);
-            buttonItinary.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("QueryPermissionsNeeded")
-                @Override
-                public void onClick(View v) {
-                    String address = waste.getAddress();
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Uri.encode(address));
+                buttonItinary.setVisibility(View.VISIBLE);
+                buttonConfirm.setVisibility(View.VISIBLE);
+                buttonItinary.setOnClickListener(new View.OnClickListener() {
+                    @SuppressLint("QueryPermissionsNeeded")
+                    @Override
+                    public void onClick(View v) {
+                        String address = waste.getAddress();
+                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Uri.encode(address));
 
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    startActivity(mapIntent);
-                }
-            });
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        startActivity(mapIntent);
+                    }
+                });
 
             buttonConfirm.setOnClickListener(v -> APIController.completeTask(waste.getId(), new Callback() {
                 @Override
@@ -178,7 +180,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                             spinnerAssign.setVisibility(View.VISIBLE);
                             spinnerAssign.setOnItemSelectedListener(getSpinnerAssignListener(waste, users, spinnerAssign.getSelectedItemId()));
                         } catch (IOException e) {
-                            Log.e("WasteDialogFragment", "Error while parsing users : " + e.getMessage());
+                            Log.e("WasteDialogFragment", "Erreur lors du parse des utilisateurs : " + e.getMessage());
                         }
                     } else {
                         Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_recuperation_des_utilisateurs), response.message()), Toast.LENGTH_SHORT).show();
@@ -238,7 +240,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         String message = e.getMessage();
-                        Log.e("APIController", "Error while removing waste : " + message);
+                        Log.e("APIController", "Une erreur est survenue lors d'une suppression de déchet : " + message);
                         requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_suppression_du_dechet), e.getMessage()), Toast.LENGTH_SHORT).show());
                     }
 

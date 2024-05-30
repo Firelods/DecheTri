@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_taskList">
+    app:startDestination="@+id/navigation_personnalTaskList">
 
     <fragment
         android:id="@+id/navigation_flux"
@@ -18,10 +18,11 @@
         tools:layout="@layout/fragment_statistics" />
 
     <fragment
-        android:id="@+id/navigation_taskList"
-        android:name="etu.seinksansdoozebank.dechetri.ui.taskslist.TasksListFragment"
+        android:id="@+id/navigation_personnalTaskList"
+        android:name="etu.seinksansdoozebank.dechetri.ui.taskslist.PersonnalTaskList"
         android:label="@string/title_tasklist"
-        tools:layout="@layout/fragment_tasks_list" />
+        tools:layout="@layout/fragment_personnal_task_list">
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_map"
@@ -30,5 +31,10 @@
         tools:layout="@layout/fragment_waste_map" />
 
     <include app:graph="@navigation/nav_report" />
+    <fragment
+        android:id="@+id/navigation_unassignedTaskList"
+        android:name="etu.seinksansdoozebank.dechetri.ui.taskslist.UnassignedTaskList"
+        android:label="@string/title_unassignedtasklist"
+        tools:layout="@layout/fragment_unassigned_task_list" />
 
 </navigation>

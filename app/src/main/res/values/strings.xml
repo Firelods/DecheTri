@@ -5,7 +5,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="title_flux">Activités</string>
+    <string name="title_flux">Annonces</string>
     <string name="title_map">Carte</string>
     <string name="title_report">Signalement</string>
     <string name="title_photo">Signalement - Photo</string>
@@ -13,6 +13,7 @@
     <string name="title_details">Signalement - Détails</string>
     <string name="title_stat">Statistiques</string>
     <string name="title_tasklist">Liste de tâches</string>
+    <string name="title_unassignedtasklist">Tâche libres</string>
     <string name="title_disconnect">Se déconnecter</string>
 
     <!--    WasteDialog Fragment-->
@@ -101,6 +102,8 @@
     <string name="statisticsPieChart">Proportion d\'annonces en fonction de leur type.</string>
     <string name="statisticsBarChart">Nombre de déchets signalés au cours du temps.</string>
     <string name="logo_signalement">logo signalement</string>
+    <string name="add_announcement_button">Publier une annonce</string>
+    <string name="clear_date">The button to clear the date input</string>
 <!--    Toast resources -->
     <string name="erreur_lors_de_la_recuperation_des_annonces">Erreur lors de la récupération des annonces : {0}</string>
     <string name="erreur_lors_de_la_recuperation_des_taches">Erreur lors de la récupération des tâches</string>
@@ -125,4 +128,5 @@
     <string name="l_application_de_galerie_n_est_pas_disponible">L\'application de galerie n\'est pas disponible, Veuillez réessayer</string>
     <string name="erreur_lors_de_la_recuperation_des_dechets">Erreur lors de la récupération des déchets</string>
     <string name="dechet_signale">Déchet signalé</string>
+    <string name="aucune_tache_assignee">Aucune tâche assignée.</string>
 </resources>

@@ -69,16 +69,15 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
 
         if (role.equals(Role.ADMIN)) {
-//            bottomNavView.inflateMenu(R.menu.menu_item_statistics);
             navController.setGraph(R.navigation.nav_admin);
         } else if (role.equals(Role.USER)) {
             navController.setGraph(R.navigation.nav_user);
         } else if (role.equals(Role.MANAGER)) {
-            bottomNavView.inflateMenu(R.menu.menu_item_task_list);
-//            bottomNavView.inflateMenu(R.menu.menu_item_statistics);
+            bottomNavView.inflateMenu(R.menu.menu_item_personnal_task_list);
+            bottomNavView.inflateMenu(R.menu.menu_item_unassigned_task_list);
             navController.setGraph(R.navigation.nav_manager);
         } else if (role.equals(Role.EMPLOYEE)) {
-            bottomNavView.inflateMenu(R.menu.menu_item_task_list);
+            bottomNavView.inflateMenu(R.menu.menu_item_personnal_task_list);
             navController.setGraph(R.navigation.nav_employee);
         }
 

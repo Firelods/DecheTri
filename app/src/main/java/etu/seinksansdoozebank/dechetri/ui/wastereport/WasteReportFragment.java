@@ -1,6 +1,7 @@
 package etu.seinksansdoozebank.dechetri.ui.wastereport;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -31,8 +32,6 @@ import etu.seinksansdoozebank.dechetri.R;
 
 
 public class WasteReportFragment extends Fragment {
-
-    private static final String TAG = "emma";
     private static final int CAMERA_PERMISSION_CODE = 100 ;
     private static final int LIBRARY_PERMISSION_CODE =200 ;
     private ActivityResultLauncher<Intent> pickImageLauncher;
@@ -50,14 +49,13 @@ public class WasteReportFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_waste_report, container, false);
 
         //Si on appuie sur le bouton annuler alors on revient en arrière.
-        view.findViewById(R.id.cancelButton).setOnClickListener(view1 -> requireActivity().onBackPressed());
         imageView = view.findViewById(R.id.imageView);
         imageView.setImageResource(0);
 
 
          pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == getActivity().RESULT_OK) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
                         // Le code ici sera exécuté lorsque l'utilisateur aura sélectionné une image
                         Intent data = result.getData();
 
@@ -78,7 +76,7 @@ public class WasteReportFragment extends Fragment {
 
         takePictureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == getActivity().RESULT_OK) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
                         validateButton.setEnabled(true);
                         Intent data = result.getData();
                         Bitmap photoBitmap = (Bitmap) data.getExtras().get("data");
@@ -103,22 +101,19 @@ public class WasteReportFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         validateButton = view.findViewById(R.id.confirmButton);
         validateButton.setEnabled(false);
 
 
         //Si on clique sur le bouton de la pellicule alors on ouvre le service du téléphone.
-        view.findViewById(R.id.LibraryPhoto).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    selectPictureFromGallery();
-                } else {
-                    // Si la permission n'est pas accordée, demandez la permission
-                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, LIBRARY_PERMISSION_CODE);
-                }
+        view.findViewById(R.id.LibraryPhoto).setOnClickListener(view1 -> {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                selectPictureFromGallery();
+            } else {
+                // Si la permission n'est pas accordée, demandez la permission
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, LIBRARY_PERMISSION_CODE);
             }
         });
 
