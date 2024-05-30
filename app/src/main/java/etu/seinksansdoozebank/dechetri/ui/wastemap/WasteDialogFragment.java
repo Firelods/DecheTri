@@ -127,7 +127,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             buttonConfirm.setOnClickListener(v -> APIController.completeTask(waste.getId(), new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_completion_de_la_tache), e.getMessage()), Toast.LENGTH_SHORT).show());
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_completion_de_la_tache, Toast.LENGTH_SHORT).show());
                 }
 
                 @Override
@@ -137,7 +137,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                             Toast.makeText(getContext(), R.string.tache_terminee, Toast.LENGTH_SHORT).show();
                             dismiss();
                         } else {
-                            Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_completion_de_la_tache), response.message()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.erreur_lors_de_la_completion_de_la_tache, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -161,7 +161,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         APIController.getUserByRoles(roles, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_recuperation_des_utilisateurs), e.getMessage()), Toast.LENGTH_SHORT).show());
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_utilisateurs, Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -183,7 +183,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                             Log.e("WasteDialogFragment", "Erreur lors du parse des utilisateurs : " + e.getMessage());
                         }
                     } else {
-                        Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_recuperation_des_utilisateurs), response.message()), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_utilisateurs, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -203,7 +203,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 APIController.assignTask(waste.getId(), assigneeId, new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_l_assignation_de_la_tache), e.getMessage()), Toast.LENGTH_SHORT).show());
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_l_assignation_de_la_tache, Toast.LENGTH_SHORT).show());
                     }
 
                     @Override
@@ -213,7 +213,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                                 waste.setAssignee(optionalUser.orElse(null));
                                 Toast.makeText(getContext(), R.string.la_tache_a_ete_assignee_avec_succes, Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_l_assignation_de_la_tache), response.message()), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.erreur_lors_de_l_assignation_de_la_tache, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -241,7 +241,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         String message = e.getMessage();
                         Log.e("APIController", "Une erreur est survenue lors d'une suppression de déchet : " + message);
-                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_suppression_du_dechet), e.getMessage()), Toast.LENGTH_SHORT).show());
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_suppression_du_dechet, Toast.LENGTH_SHORT).show());
                     }
 
                     @Override

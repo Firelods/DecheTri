@@ -41,7 +41,7 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
                 Log.e("APIController", "Error while getting announcement : " + message);
-                activity.runOnUiThread(() -> Toast.makeText(context, MessageFormat.format(activity.getString(R.string.erreur_lors_de_la_recuperation_des_annonces), message), Toast.LENGTH_SHORT).show());
+                activity.runOnUiThread(() -> Toast.makeText(context, R.string.erreur_lors_de_la_recuperation_des_annonces, Toast.LENGTH_SHORT).show());
             }
 
             @Override

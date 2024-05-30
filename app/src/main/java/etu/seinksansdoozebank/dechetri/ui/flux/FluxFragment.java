@@ -107,7 +107,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             String message = e.getMessage();
                             Log.e(TAG, "Error while removing announcement : " + message);
-                            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), MessageFormat.format(getString(R.string.erreur_lors_de_la_suppression_de_l_annonce), message), Toast.LENGTH_SHORT).show());
+                            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_suppression_de_l_annonce, Toast.LENGTH_SHORT).show());
                         }
 
                         @Override
