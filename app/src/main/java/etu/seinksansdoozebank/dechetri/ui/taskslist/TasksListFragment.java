@@ -112,11 +112,13 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                 }
                 wasteList.clear();
                 wasteList.addAll(APIController.parseWastes(response.body().string()));
-                requireActivity().runOnUiThread(() -> {
-                    noTasksAssignedTextView.setVisibility(wasteList.isEmpty() ? View.VISIBLE : View.GONE);
-                    taskListAdapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
-                });
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        noTasksAssignedTextView.setVisibility(wasteList.isEmpty() ? View.VISIBLE : View.GONE);
+                        taskListAdapter.notifyDataSetChanged();
+                        swipeRefreshLayout.setRefreshing(false);
+                    });
+                }
             }
         });
     }
