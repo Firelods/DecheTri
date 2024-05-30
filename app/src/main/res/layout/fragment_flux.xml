@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.flux.FluxFragment"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:paddingHorizontal="20dp">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -19,7 +20,6 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="20dp"
             android:paddingTop="10dp"
-            android:paddingHorizontal="20dp"
             android:paddingBottom="6dp"
             />
 
