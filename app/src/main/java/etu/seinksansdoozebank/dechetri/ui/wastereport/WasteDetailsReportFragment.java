@@ -100,7 +100,7 @@ public class WasteDetailsReportFragment extends Fragment {
             @Override
             public void onError(Exception e) {
                 requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(requireContext(), "Impossible de récupérer l'adresse", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.impossible_de_recuperer_l_adresse, Toast.LENGTH_SHORT).show();
                     skeleton.showOriginal();
                 });
             }
@@ -195,7 +195,7 @@ public class WasteDetailsReportFragment extends Fragment {
                         //TODO : navigate to the map
                         Navigation.findNavController(requireView()).navigate(R.id.navigation_map);
 
-                        Toast.makeText(requireContext(), "Waste reported", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.dechet_signale, Toast.LENGTH_SHORT).show();
                     });
                 } else {
                     Log.e("WasteDetailsReportFragment", "Failed to report waste: " + response.body().string());

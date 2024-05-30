@@ -96,7 +96,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(getContext(), "Erreur lors de la récupération des tâches", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show();
                     swipeRefreshLayout.setRefreshing(false);
                 });
             }
@@ -105,7 +105,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful() || response.body() == null) {
                     requireActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), "Erreur lors de la récupération des tâches", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.erreur_lors_de_la_recuperation_des_taches, Toast.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                     });
                     return;

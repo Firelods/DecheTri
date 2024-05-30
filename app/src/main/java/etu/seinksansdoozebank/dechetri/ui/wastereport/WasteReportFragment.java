@@ -70,7 +70,7 @@ public class WasteReportFragment extends Fragment {
                             }
                         }
                     } else {
-                        Toast.makeText(requireContext(), "Aucune image sélectionnée", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.aucune_image_selectionnee, Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -89,7 +89,7 @@ public class WasteReportFragment extends Fragment {
                             }
                         }
                     } else {
-                        Toast.makeText(requireContext(), "Aucune photo capturée", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.aucune_photo_capturee, Toast.LENGTH_SHORT).show();
                     }
                 });
         return view;
@@ -165,17 +165,17 @@ public class WasteReportFragment extends Fragment {
                     takePictureWithCamera();
                 } else {
                     // Permission is denied, show a message or handle accordingly
-                    Toast.makeText(requireContext(), "Permission de la caméra refusée", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.permission_de_la_camera_refusee, Toast.LENGTH_SHORT).show();
                 }
             case LIBRARY_PERMISSION_CODE : // Si on a la permission de la pellicule
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     selectPictureFromGallery();
                 } else {
                     // Permission is denied, show a message or handle accordingly
-                    Toast.makeText(requireContext(), "Permission de la pellicule refusée", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.permission_de_la_pellicule_refusee, Toast.LENGTH_SHORT).show();
                 }
             default :
-                Toast.makeText(requireContext(), "Permission refusée", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.permission_refusee, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -187,7 +187,7 @@ public class WasteReportFragment extends Fragment {
             takePictureLauncher.launch(takePictureIntent);
         } else {
             // si erreur alors afficher un message d'information
-            Toast.makeText(requireContext(), "L'application de l'appareil photo n'est pas disponible", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.l_application_de_l_appareil_photo_n_est_pas_disponible, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -200,7 +200,7 @@ public class WasteReportFragment extends Fragment {
             pickImageLauncher.launch(pickPhotoIntent);
         } else {
             // si erreur alors afficher un message d'information
-            Toast.makeText(requireContext(), "L'application de galerie n'est pas disponible", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.l_application_de_galerie_n_est_pas_disponible, Toast.LENGTH_SHORT).show();
         }
     }
 
