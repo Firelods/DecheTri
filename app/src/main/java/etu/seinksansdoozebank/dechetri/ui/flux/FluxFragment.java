@@ -30,6 +30,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -105,9 +106,9 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             String message = e.getMessage();
-                            Log.e(TAG, "Error while removing announcement: " + message);
+                            Log.e(TAG, "Error while removing announcement : " + message);
                             requireActivity().runOnUiThread(() -> {
-                                Toast.makeText(getContext(), "Erreur lors de la suppression de l'annonce: " + message, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.erreur_lors_de_la_suppression_de_l_annonce, Toast.LENGTH_SHORT).show();
                                 NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.delete_announcement), "Erreur lors de la suppression de l'annonce", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
                             });
                         }

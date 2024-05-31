@@ -173,8 +173,9 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
+                Log.e("APIController", "Error while creating announcement : " + message);
                 activity.runOnUiThread(() -> {
-                    Toast.makeText(getContext(), "Erreur lors de la publication de l'annonce : " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity.getApplicationContext(), R.string.erreur_lors_de_la_publication_de_l_annonce, Toast.LENGTH_SHORT).show();
                     NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Erreur lors de la création de l'annonce", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                     onComplete.run();
                 });
@@ -194,7 +195,8 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
                         try {
                             assert response.body() != null;
                             String body = response.body().string();
-                            Toast.makeText(getContext(), R.string.add_announcement_result_error + " : " + body, Toast.LENGTH_SHORT).show();
+                            Log.e("APIController", "Error while creating announcement : " + body);
+                            Toast.makeText(activity.getApplicationContext(), R.string.erreur_lors_de_la_publication_de_l_annonce, Toast.LENGTH_SHORT).show();
                             NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Erreur lors de la création de l'annonce", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                         } catch (IOException e) {
                             throw new RuntimeException(e);

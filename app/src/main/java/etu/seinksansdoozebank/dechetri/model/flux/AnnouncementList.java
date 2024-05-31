@@ -10,11 +10,13 @@ import androidx.fragment.app.FragmentActivity;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.model.observable.Observable;
 import okhttp3.Call;
@@ -40,7 +42,7 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
                 String message = e.getMessage();
                 Log.e("APIController", "Error while getting announcement : " + message);
                 activity.runOnUiThread(() -> {
-                    Toast.makeText(context, "Erreur lors de la récupération des annonces : " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.erreur_lors_de_la_recuperation_des_annonces, Toast.LENGTH_SHORT).show();
                     notifyObservers();
                 });
             }
@@ -48,9 +50,8 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    Log.e(TAG + "AnnouncementList", "onResponse: " + response.body().string());
                     activity.runOnUiThread(() -> {
-                        Toast.makeText(context, "Erreur lors de la récupération des annonces", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.erreur_lors_de_la_recuperation_des_annonces, Toast.LENGTH_SHORT).show();
                         notifyObservers();
                     });
                     return;

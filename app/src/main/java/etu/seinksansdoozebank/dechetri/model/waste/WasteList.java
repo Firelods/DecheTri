@@ -49,8 +49,9 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
+                    Log.d(TAG + "TasksListFragment", "onResponse: " + response.body().string());
                     activity.runOnUiThread(() -> {
-                        Toast.makeText(context, "Erreur lors de la récupération des déchêts", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.imposible_de_recuperer_la_liste_des_dechets, Toast.LENGTH_SHORT).show();
                         notifyObservers();
                     });
                     return;
