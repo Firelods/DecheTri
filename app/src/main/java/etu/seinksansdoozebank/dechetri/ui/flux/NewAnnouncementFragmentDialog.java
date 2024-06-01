@@ -176,7 +176,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
                 Log.e("APIController", "Error while creating announcement : " + message);
                 activity.runOnUiThread(() -> {
                     Toast.makeText(activity.getApplicationContext(), R.string.erreur_lors_de_la_publication_de_l_annonce, Toast.LENGTH_SHORT).show();
-                    NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Erreur lors de la création de l'annonce", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
+                    NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), getString(R.string.erreur_lors_de_la_publication_de_l_annonce), NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                     onComplete.run();
                 });
             }
@@ -197,7 +197,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
                             String body = response.body().string();
                             Log.e("APIController", "Error while creating announcement : " + body);
                             Toast.makeText(activity.getApplicationContext(), R.string.erreur_lors_de_la_publication_de_l_annonce, Toast.LENGTH_SHORT).show();
-                            NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Erreur lors de la création de l'annonce", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
+                            NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), getString(R.string.erreur_lors_de_la_publication_de_l_annonce), NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

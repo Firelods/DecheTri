@@ -109,7 +109,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                             Log.e(TAG, "Error while removing announcement : " + message);
                             requireActivity().runOnUiThread(() -> {
                                 Toast.makeText(getContext(), R.string.erreur_lors_de_la_suppression_de_l_annonce, Toast.LENGTH_SHORT).show();
-                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.delete_announcement), "Erreur lors de la suppression de l'annonce", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.delete_announcement), getString(R.string.erreur_lors_de_la_suppression_de_l_annonce), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
                             });
                         }
 
@@ -119,7 +119,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                                 swipeRefreshLayout.setRefreshing(true);
                                 announcementList.updateList();
                                 Toast.makeText(getContext(), R.string.remove_announcement_result_success, Toast.LENGTH_SHORT).show();
-                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.delete_announcement), "Annonce supprimée avec succès", NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.delete_announcement), getString(R.string.remove_announcement_result_success), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
                             });
                         }
                     });

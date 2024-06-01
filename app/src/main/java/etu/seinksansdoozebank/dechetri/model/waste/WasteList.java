@@ -41,7 +41,7 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
                 String message = e.getMessage();
                 Log.e(TAG + "APIController", "Error while getting waste : " + message);
                 activity.runOnUiThread(() -> {
-                    Toast.makeText(context, "Erreur lors de la récupération des déchêts : " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.erreur_lors_de_la_recuperation_des_dechets + message, Toast.LENGTH_SHORT).show();
                     notifyObservers();
                 });
             }
