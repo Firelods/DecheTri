@@ -211,7 +211,6 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
             if (items.stream().noneMatch(overlayItem -> overlayItem.getPoint().equals(point))) {
                 OverlayItem overlayItem = new OverlayItem(location.getAddress(), getString(R.string.dechet_ici), point);
                 if(userAssigned!=null && userAssigned.getId().equals(id)){
-                    Log.d(TAG, "addWastePointsOnMap: emma");
                     overlayItem.setMarker(ContextCompat.getDrawable(requireContext(),R.drawable.waste_to_pick));
                 }else{
                     overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), location.getType().getIcon()));
