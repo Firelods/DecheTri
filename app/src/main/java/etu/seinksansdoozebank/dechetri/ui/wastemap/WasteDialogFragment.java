@@ -134,7 +134,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_completion_de_la_tache, Toast.LENGTH_SHORT).show());
-                    NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), getString(R.string.error_completing_task), "Erreur dans l'accomplissement de la tâche pour les déchêts " + waste.getName(), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
+                    NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), getString(R.string.error_completing_task), getString(R.string.erreur_lors_de_la_completion_de_la_tache), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
                 }
 
                 @Override
@@ -145,7 +145,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                             NotificationFactory.removeNotification(getContext(), notificationId[0]);dismiss();
                         } else {
                             Toast.makeText(getContext(), R.string.erreur_lors_de_la_completion_de_la_tache, Toast.LENGTH_SHORT).show();
-                            NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), getString(R.string.error_completing_task), "Erreur dans l'accomplissement de la tâche pour les déchêts " + waste.getName(), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
+                            NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), getString(R.string.error_completing_task), getString(R.string.erreur_lors_de_la_completion_de_la_tache), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
                         }
                     });
                 }

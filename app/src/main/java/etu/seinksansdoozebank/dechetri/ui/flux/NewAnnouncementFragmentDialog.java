@@ -186,7 +186,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
                 if (response.isSuccessful()) {
                     activity.runOnUiThread(() -> {
                         Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
-                        NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), "Annonce créée avec succès", NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
+                        NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), getString(R.string.add_announcement_result_success), NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
                         fluxUpdateable.updateFlux();
                         onComplete.run();
                     });
