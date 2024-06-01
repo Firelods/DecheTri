@@ -1,9 +1,14 @@
 package etu.seinksansdoozebank.dechetri.ui.notifications;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.service.notification.StatusBarNotification;
+import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
+
+import java.util.Arrays;
 
 public abstract class NotificationFactory {
     private static int notificationIdCounter = 0;
@@ -34,11 +39,11 @@ public abstract class NotificationFactory {
         NotificationFactory factory = getFactory(type);
         INotification notification = factory.createNotification(activity, context, title, message, channelId, priority);
         notification.sendNotification();
-        return notificationIdCounter;
+        return notificationIdCounter - 1;
     }
 
     public static void removeNotification(Context context, int notificationId) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.cancelAll();
+        notificationManager.cancel(notificationId);
     }
 }
