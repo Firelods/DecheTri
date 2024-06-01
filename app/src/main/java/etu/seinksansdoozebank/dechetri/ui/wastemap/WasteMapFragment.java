@@ -1,9 +1,13 @@
 package etu.seinksansdoozebank.dechetri.ui.wastemap;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -40,6 +44,8 @@ import java.util.stream.Collectors;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
+import etu.seinksansdoozebank.dechetri.model.user.Role;
+import etu.seinksansdoozebank.dechetri.model.user.User;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteListObserver;
@@ -56,6 +62,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     private final List<OverlayItem> items = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
     private Activity activity;
+    private String id;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -195,12 +202,19 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
         // Remove items that no longer exist in the updated list
         items.removeIf(item -> !newWastePoints.contains(item.getPoint()));
 
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
+        id = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_user_id), requireContext().getResources().getString(R.string.role_user_id));
         // Add new items
         for (Waste location : wastes) {
+            User userAssigned=location.getAssignee();
             GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
             if (items.stream().noneMatch(overlayItem -> overlayItem.getPoint().equals(point))) {
                 OverlayItem overlayItem = new OverlayItem(location.getAddress(), getString(R.string.dechet_ici), point);
-                overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), location.getType().getIcon()));
+                if(userAssigned!=null && userAssigned.getId().equals(id)){
+                    overlayItem.setMarker(ContextCompat.getDrawable(requireContext(),R.drawable.waste_to_pick));
+                }else{
+                    overlayItem.setMarker(ContextCompat.getDrawable(requireContext(), location.getType().getIcon()));
+                }
                 items.add(overlayItem);
             }
         }
