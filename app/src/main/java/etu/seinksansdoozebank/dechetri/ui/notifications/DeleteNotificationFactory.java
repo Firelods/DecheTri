@@ -34,7 +34,7 @@ public class DeleteNotificationFactory extends NotificationFactory {
 
                     // Build the notification
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
-                            .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                            .setSmallIcon(R.drawable.dechettri_icon)
                             .setContentTitle(title)
                             .setContentText(message)
                             .setPriority(priority)
