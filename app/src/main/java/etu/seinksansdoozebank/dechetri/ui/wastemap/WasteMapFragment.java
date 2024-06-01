@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -44,13 +43,12 @@ import java.util.stream.Collectors;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteMapBinding;
-import etu.seinksansdoozebank.dechetri.model.user.Role;
 import etu.seinksansdoozebank.dechetri.model.user.User;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteList;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteListObserver;
 
-public class WasteMapFragment extends Fragment implements LocationListener, WasteListObserver {
+public class WasteMapFragment extends Fragment implements LocationListener, WasteListObserver, WasteDialogListener {
     private FragmentWasteMapBinding binding;
     private WasteList wasteList;
     private MapView map;
@@ -252,6 +250,8 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
 
         wasteDialogFragment.setArguments(args);
 
+        wasteDialogFragment.setWasteDialogListener(this);
+
         wasteDialogFragment.show(getParentFragmentManager(), "wasteDetails");
     }
 
@@ -321,6 +321,13 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
             swipeRefreshLayout.setRefreshing(false);
             addWastePointsOnMap(wasteList);
         });
+    }
+
+    @Override
+    public void onWasteDialogChange() {
+        if (wasteList != null) {
+            wasteList.updateList();
+        }
     }
 
     @Override

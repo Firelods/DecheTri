@@ -54,6 +54,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
     private FragmentWasteDialogBinding binding;
     String id;
     private Waste waste;
+    private WasteDialogListener wasteDialogListener;
 
     @Nullable
     @Override
@@ -135,6 +136,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                     requireActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
                             Toast.makeText(getContext(), R.string.tache_terminee, Toast.LENGTH_SHORT).show();
+                            wasteDialogListener.onWasteDialogChange();
                             dismiss();
                         } else {
                             Toast.makeText(getContext(), R.string.erreur_lors_de_la_completion_de_la_tache, Toast.LENGTH_SHORT).show();
@@ -212,6 +214,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                             if (response.isSuccessful()) {
                                 waste.setAssignee(optionalUser.orElse(null));
                                 Toast.makeText(getContext(), R.string.la_tache_a_ete_assignee_avec_succes, Toast.LENGTH_LONG).show();
+                                wasteDialogListener.onWasteDialogChange();
                             } else {
                                 Toast.makeText(getContext(), R.string.erreur_lors_de_l_assignation_de_la_tache, Toast.LENGTH_SHORT).show();
                             }
@@ -249,6 +252,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                         requireActivity().runOnUiThread(() -> {
                             if (response.isSuccessful()) {
                                 Toast.makeText(getContext(), R.string.dechet_supprime_avec_succes, Toast.LENGTH_SHORT).show();
+                                wasteDialogListener.onWasteDialogChange();
                                 dismiss();
                             } else {
                                 Toast.makeText(getContext(),  MessageFormat.format(getString(R.string.erreur_lors_de_la_suppression_du_dechet), response.message()), Toast.LENGTH_SHORT).show();
@@ -279,4 +283,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
         binding = null;
     }
 
+    public void setWasteDialogListener(WasteDialogListener wasteMapFragment) {
+        this.wasteDialogListener = wasteMapFragment;
+    }
 }
