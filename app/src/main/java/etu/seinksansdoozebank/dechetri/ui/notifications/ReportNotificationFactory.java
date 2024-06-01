@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -16,17 +15,17 @@ import androidx.core.app.NotificationManagerCompat;
 import etu.seinksansdoozebank.dechetri.MainActivity;
 import etu.seinksansdoozebank.dechetri.R;
 
-public class CreateNotificationFactory extends NotificationFactory {
+public class ReportNotificationFactory extends NotificationFactory {
     private static final long NOTIFICATION_DURATION = 5000;
 
     @Override
     protected INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
-        return new CreateNotification(this.createCallback(context, title, message, channelId, priority, null), activity, context);
+        return new ReportNotification(this.createCallback(context, title, message, channelId, priority, null), activity, context);
     }
 
     @Override
     protected INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority, byte[] image) {
-        return new CreateNotification(this.createCallback(context, title, message, channelId, priority, image), activity, context);
+        return new ReportNotification(this.createCallback(context, title, message, channelId, priority, image), activity, context);
     }
 
     private NotificationPermissionCallback createCallback(Context context, String title, String message, String channelId, int priority, byte[] image) {
@@ -64,7 +63,6 @@ public class CreateNotificationFactory extends NotificationFactory {
                                 .setContentIntent(pendingIntent)
                                 .setAutoCancel(true);
                     }
-
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                     notificationManager.notify(currentNotificationId, builder.build());
 
@@ -80,7 +78,6 @@ public class CreateNotificationFactory extends NotificationFactory {
             @Override
             public void onPermissionDenied() {
                 // Do nothing
-                Log.d("CreateNotificationFactory", "onPermissionDenied: " + title + " " + message);
             }
         };
     }

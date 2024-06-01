@@ -138,4 +138,5 @@
     <string name="error_completing_task">Erreur lors de la complétion de la tâche</string>
     <string name="error_deleting_task">Erreur lors de la suppression de la tâche</string>
     <string name="waste_successfully_deleted">Déchet supprimé avec succès</string>
+    <string name="waste_report_with_success">Déchet signalé avec succès</string>
 </resources>

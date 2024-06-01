@@ -126,7 +126,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
                         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                         startActivity(mapIntent);
-                        notificationId[0] = NotificationFactory.sendNotification(NotificationType.ITINERARY, getActivity(), getContext(), getString(R.string.itinerary_confirmation), "Itinerary for waste: " + waste.getName() + " at address " + waste.getAddress(), NotificationHelper.CHANNEL_ID_ITINERARY, Notification.PRIORITY_DEFAULT);
+                        notificationId[0] = NotificationFactory.sendNotification(NotificationType.ITINERARY, getActivity(), getContext(), getString(R.string.itinerary_confirmation), waste.getName() + " at address " + waste.getAddress(), waste.getImageData(), NotificationHelper.CHANNEL_ID_ITINERARY, Notification.PRIORITY_DEFAULT);
                     }
                 });
 
@@ -251,7 +251,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                         Log.e("APIController", "Une erreur est survenue lors d'une suppression de déchet : " + message);
                         requireActivity().runOnUiThread(() -> {
                             Toast.makeText(getContext(), R.string.erreur_lors_de_la_suppression_du_dechet, Toast.LENGTH_SHORT).show();
-                            NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.error_deleting_task), "Error lors de la suppression du déchet : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
+                            NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.error_deleting_task), waste.getName() + " a l'adresse " + waste.getAddress(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
                         });
                     }
 
@@ -260,11 +260,11 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                         requireActivity().runOnUiThread(() -> {
                             if (response.isSuccessful()) {
                                 Toast.makeText(getContext(), R.string.dechet_supprime_avec_succes, Toast.LENGTH_SHORT).show();
-                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.waste_successfully_deleted), "Déchet supprimé avec succès : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_DEFAULT);
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.waste_successfully_deleted), "", waste.getImageData(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_DEFAULT);
                                 dismiss();
                             } else {
                                 Toast.makeText(getContext(),  MessageFormat.format(getString(R.string.erreur_lors_de_la_suppression_du_dechet), response.message()), Toast.LENGTH_SHORT).show();
-                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.error_deleting_task), "Erreur lors de la suppression du déchet : " + waste.getName(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.error_deleting_task), waste.getName() + " à l'adresse " + waste.getAddress(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
                             }
                         });
                     }

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -18,10 +20,15 @@ public class DeleteNotificationFactory extends NotificationFactory {
 
     @Override
     protected INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority) {
-        return new DeleteNotification(this.createCallback(context, title, message, channelId, priority), activity, context);
+        return new DeleteNotification(this.createCallback(context, title, message, channelId, priority, null), activity, context);
     }
 
-    private NotificationPermissionCallback createCallback(Context context, String title, String message, String channelId, int priority) {
+    @Override
+    protected INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority, byte[] image) {
+        return new DeleteNotification(this.createCallback(context, title, message, channelId, priority, image), activity, context);
+    }
+
+    private NotificationPermissionCallback createCallback(Context context, String title, String message, String channelId, int priority, byte[] image) {
         int currentNotificationId = getNextNotificationId();
         return new NotificationPermissionCallback() {
             @Override
@@ -33,13 +40,29 @@ public class DeleteNotificationFactory extends NotificationFactory {
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
                     // Build the notification
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
-                            .setSmallIcon(R.drawable.dechettri_icon)
-                            .setContentTitle(title)
-                            .setContentText(message)
-                            .setPriority(priority)
-                            .setContentIntent(pendingIntent)
-                            .setAutoCancel(true);
+                    NotificationCompat.Builder builder;
+                    if (image != null) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                        builder = new NotificationCompat.Builder(context, channelId)
+                                .setSmallIcon(R.drawable.dechettri_icon)
+                                .setContentTitle(title)
+                                .setContentText(message)
+                                .setPriority(priority)
+                                .setLargeIcon(bitmap)
+                                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap)
+                                        .bigPicture(bitmap)
+                                        .bigLargeIcon(null))
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true);
+                    } else {
+                        builder = new NotificationCompat.Builder(context, channelId)
+                                .setSmallIcon(R.drawable.dechettri_icon)
+                                .setContentTitle(title)
+                                .setContentText(message)
+                                .setPriority(priority)
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true);
+                    }
 
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                     notificationManager.notify(currentNotificationId, builder.build());

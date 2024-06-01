@@ -1,14 +1,9 @@
 package etu.seinksansdoozebank.dechetri.ui.notifications;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.service.notification.StatusBarNotification;
-import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
-
-import java.util.Arrays;
 
 public abstract class NotificationFactory {
     private static int notificationIdCounter = 0;
@@ -20,6 +15,8 @@ public abstract class NotificationFactory {
 
     protected abstract INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority);
 
+    protected abstract INotification createNotification(Activity activity, Context context, String title, String message, String channelId, int priority, byte[] image);
+
     public static NotificationFactory getFactory(NotificationType type) {
         switch (type) {
             case DELETE:
@@ -30,6 +27,8 @@ public abstract class NotificationFactory {
                 return new TaskCompletedNotificationFactory();
             case ITINERARY:
                 return new ItineraryNotificationFactory();
+            case REPORT:
+                return new ReportNotificationFactory();
             default:
                 throw new IllegalArgumentException("Unknown Notification Type");
         }
@@ -38,6 +37,13 @@ public abstract class NotificationFactory {
     public static int sendNotification(NotificationType type, Activity activity, Context context, String title, String message, String channelId, int priority) {
         NotificationFactory factory = getFactory(type);
         INotification notification = factory.createNotification(activity, context, title, message, channelId, priority);
+        notification.sendNotification();
+        return notificationIdCounter - 1;
+    }
+
+    public static int sendNotification(NotificationType type, Activity activity, Context context, String title, String message, byte[] image, String channelId, int priority) {
+        NotificationFactory factory = getFactory(type);
+        INotification notification = factory.createNotification(activity, context, title, message, channelId, priority, image);
         notification.sendNotification();
         return notificationIdCounter - 1;
     }
