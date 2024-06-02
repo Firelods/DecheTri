@@ -17,7 +17,7 @@
     <string name="title_disconnect">Se déconnecter</string>
 
     <!--    WasteDialog Fragment-->
-    <string name="intinerary">Itinéraire</string>
+    <string name="itinerary">Itinéraire</string>
     <string name="confirm_ramassage">Confirmer le ramassage</string>
     <string name="delete_waste">Supprimer ce signalement</string>
     <string name="placeholder">placeholder</string>
@@ -129,4 +129,14 @@
     <string name="erreur_lors_de_la_recuperation_des_dechets">Erreur lors de la récupération des déchets</string>
     <string name="dechet_signale">Déchet signalé</string>
     <string name="aucune_tache_assignee">Aucune tâche assignée.</string>
+
+    <!--    Notifications    -->
+    <string name="send_notification_error">L\'envoie de la notification a rencontré une erreur</string>
+    <string name="create_announcement">Création d\'une annonce</string>
+    <string name="delete_announcement">Suppression d\'une announcement</string>
+    <string name="itinerary_confirmation">Confirmation de l\'itinéraire</string>
+    <string name="error_completing_task">Erreur lors de la complétion de la tâche</string>
+    <string name="error_deleting_task">Erreur lors de la suppression de la tâche</string>
+    <string name="waste_successfully_deleted">Déchet supprimé avec succès</string>
+    <string name="waste_report_with_success">Déchet signalé avec succès</string>
 </resources>

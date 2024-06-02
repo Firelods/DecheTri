@@ -3,6 +3,7 @@ package etu.seinksansdoozebank.dechetri.ui.wastereport;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.Notification;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,6 +42,9 @@ import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteDTO;
 import etu.seinksansdoozebank.dechetri.model.waste.WasteType;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationFactory;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationHelper;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationType;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -184,7 +188,7 @@ public class WasteDetailsReportFragment extends Fragment {
         APIController.reportWaste(newWaste, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("WasteDetailsReportFragment", "Failed to report waste", e);
+                Log.e("WasteDetailsReportFragment", "Erreur lors du signalement du déchet", e);
             }
 
             @Override
@@ -194,11 +198,20 @@ public class WasteDetailsReportFragment extends Fragment {
 //                        requireActivity().getSupportFragmentManager().popBackStack();
                         //TODO : navigate to the map
                         Navigation.findNavController(requireView()).navigate(R.id.navigation_map);
-
                         Toast.makeText(requireContext(), R.string.dechet_signale, Toast.LENGTH_SHORT).show();
+                        NotificationFactory.sendNotification(
+                                NotificationType.REPORT,
+                                requireActivity(),
+                                requireContext(),
+                                getString(R.string.dechet_signale),
+                                getString(R.string.waste_report_with_success),
+                                newWaste.getImageData(),
+                                NotificationHelper.CHANNEL_ID_REPORT_WASTE,
+                                Notification.PRIORITY_DEFAULT
+                        );
                     });
                 } else {
-                    Log.e("WasteDetailsReportFragment", "Failed to report waste: " + response.body().string());
+                    Log.e("WasteDetailsReportFragment", "Erreur lors du signalement du déchet: " + response.body().string());
                 }
             }
         });

@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,11 +40,14 @@ import etu.seinksansdoozebank.dechetri.databinding.FragmentFluxBinding;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementList;
 import etu.seinksansdoozebank.dechetri.model.flux.AnnouncementListObserver;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationFactory;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationHelper;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationType;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class FluxFragment extends Fragment implements FluxAdapterListener, AnnouncementListObserver {
+public class FluxFragment extends Fragment implements FluxAdapterListener, AnnouncementListObserver, IFluxUpdateable {
     private final String TAG = "512Bank " + getClass().getSimpleName();
     private FragmentFluxBinding binding;
     private FluxAdapter fluxAdapter;
@@ -74,16 +78,13 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences(requireContext().getString(R.string.shared_preferences_file_key), MODE_PRIVATE);
         String role = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_role), requireContext().getResources().getString(R.string.role_user_title));
 
-
-        Button btn_add_announcement = root.findViewById(R.id.btn_add_announcement);
+        Button btnAddAnnouncement = root.findViewById(R.id.btn_add_announcement);
         if (role.equals(requireContext().getString(R.string.role_admin_title))) {
-            btn_add_announcement.setVisibility(View.VISIBLE);
-            btn_add_announcement.setOnClickListener(v -> showNewAnnouncementDialog());
+            btnAddAnnouncement.setVisibility(View.VISIBLE);
+            btnAddAnnouncement.setOnClickListener(v -> showNewAnnouncementDialog());
         } else {
-            btn_add_announcement.setVisibility(View.GONE);
+            btnAddAnnouncement.setVisibility(View.GONE);
         }
-
-
         return root;
     }
 
@@ -96,18 +97,19 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
 
     @Override
     public void onClickBin(ImageButton bin, Announcement item) {
-        // (1) : Create a dialog
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.alert_delete_title)
                 .setMessage(R.string.alert_delete_message)
                 .setPositiveButton(R.string.alert_delete_yes, (dialog, which) -> {
-                    // (2) : Remove item from list
                     APIController.deleteAnnouncement(item.getId(), new Callback() {
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             String message = e.getMessage();
                             Log.e(TAG, "Error while removing announcement : " + message);
-                            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_suppression_de_l_annonce, Toast.LENGTH_SHORT).show());
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.erreur_lors_de_la_suppression_de_l_annonce, Toast.LENGTH_SHORT).show();
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.delete_announcement), getString(R.string.erreur_lors_de_la_suppression_de_l_annonce), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
+                            });
                         }
 
                         @Override
@@ -116,12 +118,13 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
                                 swipeRefreshLayout.setRefreshing(true);
                                 announcementList.updateList();
                                 Toast.makeText(getContext(), R.string.remove_announcement_result_success, Toast.LENGTH_SHORT).show();
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.delete_announcement), getString(R.string.remove_announcement_result_success), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_MAX);
                             });
                         }
                     });
                 })
                 .setNegativeButton(R.string.alert_delete_no, (dialog, which) -> {
-                    // (3) : Do nothing
+                    // Do nothing
                 })
                 .show();
 
@@ -198,7 +201,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
 
     @SuppressLint("ClickableViewAccessibility")
     private void showNewAnnouncementDialog() {
-        NewAnnouncementFragmentDialog.newInstance().show(requireActivity().getSupportFragmentManager(), "NewAnnouncementFragmentDialog");
+        NewAnnouncementFragmentDialog.newInstance(this).show(requireActivity().getSupportFragmentManager(), "NewAnnouncementFragmentDialog");
     }
 
     @Override
@@ -211,8 +214,7 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Context context = requireContext();
-        announcementList = new AnnouncementList(requireActivity(), context);
+        announcementList = new AnnouncementList(requireActivity());
         announcementList.addObserver(this);
     }
 
@@ -228,5 +230,11 @@ public class FluxFragment extends Fragment implements FluxAdapterListener, Annou
             fluxAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         });
+    }
+
+    @Override
+    public void updateFlux() {
+        swipeRefreshLayout.setRefreshing(true);
+        announcementList.updateList();
     }
 }

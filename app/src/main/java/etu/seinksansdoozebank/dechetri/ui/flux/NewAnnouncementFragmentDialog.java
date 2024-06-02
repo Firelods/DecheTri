@@ -3,13 +3,10 @@ package etu.seinksansdoozebank.dechetri.ui.flux;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Notification;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,6 +18,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -30,6 +30,10 @@ import java.util.Locale;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
+import etu.seinksansdoozebank.dechetri.ui.notifications.INotification;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationFactory;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationHelper;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationType;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -41,19 +45,17 @@ import okhttp3.Response;
  */
 public class NewAnnouncementFragmentDialog extends DialogFragment {
     private final String TAG = "512Bank " + getClass().getSimpleName();
-
     private Context context;
     private Activity activity;
-
     private EditText editTextTitle;
     private EditText editTextDescription;
     private EditText editTextDate;
     private Button publishButton;
-
     private Calendar pickedDate;
+    private IFluxUpdateable fluxUpdateable;
 
-    public NewAnnouncementFragmentDialog() {
-        // Required empty public constructor
+    public NewAnnouncementFragmentDialog(IFluxUpdateable fluxUpdateable) {
+        this.fluxUpdateable = fluxUpdateable;
     }
 
     /**
@@ -62,9 +64,8 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
      *
      * @return A new instance of fragment NewAnnouncementFragmentDialog.
      */
-    public static NewAnnouncementFragmentDialog newInstance() {
-        NewAnnouncementFragmentDialog fragment = new NewAnnouncementFragmentDialog();
-        return fragment;
+    public static NewAnnouncementFragmentDialog newInstance(IFluxUpdateable fluxUpdateable) {
+        return new NewAnnouncementFragmentDialog(fluxUpdateable);
     }
 
     @Override
@@ -119,8 +120,7 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
             if (editTextTitle != null && editTextDescription != null && editTextDate != null) {
                 title = editTextTitle.getText().toString();
                 description = editTextDescription.getText().toString();
-                publishAnnouncement(title, description, pickedDate);
-                this.dismiss();
+                publishAnnouncement(title, description, pickedDate, this::dismiss);
             }
         });
         cancel.setOnClickListener(v -> this.dismiss());
@@ -168,19 +168,28 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
         editTextDescription.addTextChangedListener(textWatcher);
     }
 
-    private void publishAnnouncement(String title, String description, Calendar eventDate) {
+    private void publishAnnouncement(String title, String description, Calendar eventDate, Runnable onComplete) {
         Callback onResponse = new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
                 Log.e("APIController", "Error while creating announcement : " + message);
-                activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(), R.string.erreur_lors_de_la_publication_de_l_annonce, Toast.LENGTH_SHORT).show());
+                activity.runOnUiThread(() -> {
+                    Toast.makeText(activity.getApplicationContext(), R.string.erreur_lors_de_la_publication_de_l_annonce, Toast.LENGTH_SHORT).show();
+                    NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), getString(R.string.erreur_lors_de_la_publication_de_l_annonce), NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
+                    onComplete.run();
+                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 if (response.isSuccessful()) {
-                    activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show());
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(getContext(), R.string.add_announcement_result_success, Toast.LENGTH_SHORT).show();
+                        NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), getString(R.string.add_announcement_result_success), NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_DEFAULT);
+                        fluxUpdateable.updateFlux();
+                        onComplete.run();
+                    });
                 } else {
                     activity.runOnUiThread(() -> {
                         try {
@@ -188,11 +197,13 @@ public class NewAnnouncementFragmentDialog extends DialogFragment {
                             String body = response.body().string();
                             Log.e("APIController", "Error while creating announcement : " + body);
                             Toast.makeText(activity.getApplicationContext(), R.string.erreur_lors_de_la_publication_de_l_annonce, Toast.LENGTH_SHORT).show();
+                            NotificationFactory.sendNotification(NotificationType.CREATE, getActivity(), getContext(), getString(R.string.create_announcement), getString(R.string.erreur_lors_de_la_publication_de_l_annonce), NotificationHelper.CHANNEL_ID_CREATES, Notification.PRIORITY_MAX);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     });
                 }
+                onComplete.run();
             }
         };
         if (eventDate == null) {

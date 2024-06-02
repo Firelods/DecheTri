@@ -29,10 +29,10 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
     private final FragmentActivity activity;
     private final Context context;
 
-    public AnnouncementList(FragmentActivity activity, Context context) {
+    public AnnouncementList(FragmentActivity activity) {
         super();
-        this.context = context;
         this.activity = activity;
+        this.context = activity.getApplicationContext();
     }
 
     private void init() {
@@ -41,14 +41,19 @@ public class AnnouncementList extends ArrayList<Announcement> implements Observa
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 String message = e.getMessage();
                 Log.e("APIController", "Error while getting announcement : " + message);
-                activity.runOnUiThread(() -> Toast.makeText(context, R.string.erreur_lors_de_la_recuperation_des_annonces, Toast.LENGTH_SHORT).show());
+                activity.runOnUiThread(() -> {
+                    Toast.makeText(context, R.string.erreur_lors_de_la_recuperation_des_annonces, Toast.LENGTH_SHORT).show();
+                    notifyObservers();
+                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    //TODO : handle error correctly
-                    activity.runOnUiThread(() -> Toast.makeText(context, R.string.erreur_lors_de_la_recuperation_des_annonces, Toast.LENGTH_SHORT).show());
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(context, R.string.erreur_lors_de_la_recuperation_des_annonces, Toast.LENGTH_SHORT).show();
+                        notifyObservers();
+                    });
                     return;
                 }
                 String json = response.body().string();

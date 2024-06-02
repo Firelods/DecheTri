@@ -317,7 +317,7 @@ public class WasteMapFragment extends Fragment implements LocationListener, Wast
     @Override
     public void onWasteListChanged() {
         requireActivity().runOnUiThread(() -> {
-            Log.d(TAG, "onWasteListChanged: ");
+            Log.d(TAG, "onWasteListChanged: " + wasteList);
             swipeRefreshLayout.setRefreshing(false);
             addWastePointsOnMap(wasteList);
         });

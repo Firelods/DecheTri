@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +43,9 @@ import etu.seinksansdoozebank.dechetri.databinding.FragmentWasteDialogBinding;
 import etu.seinksansdoozebank.dechetri.model.user.Role;
 import etu.seinksansdoozebank.dechetri.model.user.User;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationFactory;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationHelper;
+import etu.seinksansdoozebank.dechetri.ui.notifications.NotificationType;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -63,6 +67,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
         binding = FragmentWasteDialogBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        final int[] notificationId = new int[1];
         Button buttonItinary = view.findViewById(R.id.buttonItinerary);
         TextView wasteAddress = view.findViewById(R.id.wasteAddress);
         TextView wasteName = view.findViewById(R.id.wasteName);
@@ -108,8 +113,8 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
             wasteAssignLayout.setVisibility(View.GONE);
         }
         id = sharedPreferences.getString(requireContext().getString(R.string.shared_preferences_key_user_id), requireContext().getResources().getString(R.string.role_user_id));
-        User userAssigned=waste.getAssignee();
-        if (userAssigned!=null && role.assignable() && userAssigned.getId().equals(id) ){
+        User userAssigned = waste.getAssignee();
+        if (userAssigned != null && role.assignable() && userAssigned.getId().equals(id)) {
 
                 buttonItinary.setVisibility(View.VISIBLE);
                 buttonConfirm.setVisibility(View.VISIBLE);
@@ -122,6 +127,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
                         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                         startActivity(mapIntent);
+                        notificationId[0] = NotificationFactory.sendNotification(NotificationType.ITINERARY, getActivity(), getContext(), getString(R.string.itinerary_confirmation), waste.getName() + " at address " + waste.getAddress(), waste.getImageData(), NotificationHelper.CHANNEL_ID_ITINERARY, Notification.PRIORITY_DEFAULT);
                     }
                 });
 
@@ -129,6 +135,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_completion_de_la_tache, Toast.LENGTH_SHORT).show());
+                    NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), getString(R.string.error_completing_task), getString(R.string.erreur_lors_de_la_completion_de_la_tache), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
                 }
 
                 @Override
@@ -136,10 +143,12 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                     requireActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
                             Toast.makeText(getContext(), R.string.tache_terminee, Toast.LENGTH_SHORT).show();
+                            NotificationFactory.removeNotification(getContext(), notificationId[0]);
                             wasteDialogListener.onWasteDialogChange();
                             dismiss();
                         } else {
                             Toast.makeText(getContext(), R.string.erreur_lors_de_la_completion_de_la_tache, Toast.LENGTH_SHORT).show();
+                            NotificationFactory.sendNotification(NotificationType.TASK_COMPLETED, getActivity(), getContext(), getString(R.string.error_completing_task), getString(R.string.erreur_lors_de_la_completion_de_la_tache), NotificationHelper.CHANNEL_ID_COMPLETE_TASK, Notification.PRIORITY_HIGH);
                         }
                     });
                 }
@@ -244,7 +253,10 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         String message = e.getMessage();
                         Log.e("APIController", "Une erreur est survenue lors d'une suppression de déchet : " + message);
-                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.erreur_lors_de_la_suppression_du_dechet, Toast.LENGTH_SHORT).show());
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), R.string.erreur_lors_de_la_suppression_du_dechet, Toast.LENGTH_SHORT).show();
+                            NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.error_deleting_task), waste.getName() + " a l'adresse " + waste.getAddress(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
+                        });
                     }
 
                     @Override
@@ -252,10 +264,12 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
                         requireActivity().runOnUiThread(() -> {
                             if (response.isSuccessful()) {
                                 Toast.makeText(getContext(), R.string.dechet_supprime_avec_succes, Toast.LENGTH_SHORT).show();
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.waste_successfully_deleted), "", waste.getImageData(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_DEFAULT);
                                 wasteDialogListener.onWasteDialogChange();
                                 dismiss();
                             } else {
                                 Toast.makeText(getContext(),  MessageFormat.format(getString(R.string.erreur_lors_de_la_suppression_du_dechet), response.message()), Toast.LENGTH_SHORT).show();
+                                NotificationFactory.sendNotification(NotificationType.DELETE, getActivity(), getContext(), getString(R.string.error_deleting_task), waste.getName() + " à l'adresse " + waste.getAddress(), NotificationHelper.CHANNEL_ID_DELETES, Notification.PRIORITY_HIGH);
                             }
                         });
                     }

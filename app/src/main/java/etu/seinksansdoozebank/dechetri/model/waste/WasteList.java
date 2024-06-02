@@ -1,6 +1,7 @@
 package etu.seinksansdoozebank.dechetri.model.waste;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,23 +27,33 @@ public class WasteList extends ArrayList<Waste> implements Observable<WasteListO
     private final ArrayList<WasteListObserver> observers = new ArrayList<>();
 
     private Activity activity;
+    private Context context;
 
     public WasteList(Activity activity) {
         this.activity = activity;
+        this.context = activity.getApplicationContext();
     }
 
     public void init() {
         APIController.getWasteList(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(TAG + "TasksListFragment", "onFailure: " + e.getMessage());
+                String message = e.getMessage();
+                Log.e(TAG + "APIController", "Error while getting waste : " + message);
+                activity.runOnUiThread(() -> {
+                    Toast.makeText(context, R.string.erreur_lors_de_la_recuperation_des_dechets + message, Toast.LENGTH_SHORT).show();
+                    notifyObservers();
+                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     Log.d(TAG + "TasksListFragment", "onResponse: " + response.body().string());
-                    activity.runOnUiThread(() -> Toast.makeText(activity, R.string.imposible_de_recuperer_la_liste_des_dechets, Toast.LENGTH_SHORT).show());
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(activity, R.string.imposible_de_recuperer_la_liste_des_dechets, Toast.LENGTH_SHORT).show();
+                        notifyObservers();
+                    });
                     return;
                 }
                 String json = response.body().string();

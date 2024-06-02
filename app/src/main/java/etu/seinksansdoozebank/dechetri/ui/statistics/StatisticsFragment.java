@@ -162,7 +162,7 @@ public class StatisticsFragment extends Fragment implements AnnouncementListObse
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        announcementList = new AnnouncementList(getActivity(), getContext());
+        announcementList = new AnnouncementList(getActivity());
         announcementList.addObserver(this);
         wasteList = new WasteList(getActivity());
         wasteList.addObserver(this);
