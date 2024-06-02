@@ -20,11 +20,12 @@ import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.controller.api.APIController;
 import etu.seinksansdoozebank.dechetri.databinding.FragmentTasksListBinding;
 import etu.seinksansdoozebank.dechetri.model.waste.Waste;
+import etu.seinksansdoozebank.dechetri.ui.wastemap.WasteDialogListener;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class TasksListFragment extends Fragment implements TasksListAdapterListener {
+public class TasksListFragment extends Fragment implements TasksListAdapterListener, WasteDialogListener {
     private static final String URL_KEY = "query_url";
     private static final String ID_KEY = "id";
 
@@ -72,7 +73,7 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
 
         noTasksAssignedTextView=root.findViewById(R.id.noTaskAssigned);
         noTasksAssignedTextView.setVisibility(View.GONE);
-        taskListAdapter = new TasksFromWasteListAdapter(requireActivity(), wasteList);
+        taskListAdapter = new TasksFromWasteListAdapter(this, requireActivity(), wasteList);
         listViewTasks.setAdapter(taskListAdapter);
         return root;
     }
@@ -121,6 +122,11 @@ public class TasksListFragment extends Fragment implements TasksListAdapterListe
                 }
             }
         });
+    }
+
+    @Override
+    public void onWasteDialogChange() {
+        getEmployeAssignee();
     }
 }
 
