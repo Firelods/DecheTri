@@ -133,7 +133,7 @@
     <!--    Notifications    -->
     <string name="send_notification_error">L\'envoie de la notification a rencontré une erreur</string>
     <string name="create_announcement">Création d\'une annonce</string>
-    <string name="delete_announcement">Suppression d\'une announcement</string>
+    <string name="delete_announcement">Suppression d\'une annonce</string>
     <string name="itinerary_confirmation">Confirmation de l\'itinéraire</string>
     <string name="error_completing_task">Erreur lors de la complétion de la tâche</string>
     <string name="error_deleting_task">Erreur lors de la suppression de la tâche</string>
