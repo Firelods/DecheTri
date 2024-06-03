@@ -129,7 +129,7 @@ public class WasteDialogFragment extends BottomSheetDialogFragment {
 
                         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                         startActivity(mapIntent);
-                        notificationId[0] = NotificationFactory.sendNotification(NotificationType.ITINERARY, getActivity(), getContext(), getString(R.string.itinerary_confirmation), waste.getName() + " at address " + waste.getAddress(), waste.getImageData(), NotificationHelper.CHANNEL_ID_ITINERARY, Notification.PRIORITY_DEFAULT);
+                        notificationId[0] = NotificationFactory.sendNotification(NotificationType.ITINERARY, getActivity(), getContext(), getString(R.string.itinerary_confirmation), waste.getName() + " à l'adresse " + waste.getAddress(), waste.getImageData(), NotificationHelper.CHANNEL_ID_ITINERARY, Notification.PRIORITY_DEFAULT);
                     }
                 });
 
