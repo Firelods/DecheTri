@@ -3,7 +3,6 @@ package etu.seinksansdoozebank.dechetri.ui.flux;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import etu.seinksansdoozebank.dechetri.R;
 import etu.seinksansdoozebank.dechetri.model.flux.Announcement;
@@ -112,44 +113,33 @@ public class FluxAdapter extends BaseAdapter {
      * If the date is yesterday, return "Hier"
      * If the date is in the last 7 days, return "Il y a x jours"
      * else return "Le dd/MM/yyyy"
-     * @param date the date to format
+     *
+     * @param givenDate the date to format
      * @return the formatted date
      */
-    private String getFormattedDate(Date date) {
-        Calendar now = Calendar.getInstance();
-        Calendar inputDate = Calendar.getInstance();
-        inputDate.setTime(date);
+    private String getFormattedDate(Date givenDate) {
+        Date currentDate = new Date();
+        long diffInMillis = currentDate.getTime() - givenDate.getTime();
 
-        // if the date is today
-        if (inputDate.get(Calendar.YEAR) == now.get(Calendar.YEAR) && inputDate.get(Calendar.MONTH) == now.get(Calendar.MONTH) && inputDate.get(Calendar.DATE) == now.get(Calendar.DATE)) {
-            long diff = now.getTimeInMillis() - inputDate.getTimeInMillis();
-            long minutes = diff / 60000;
-            // if under 1 minute
-            if (minutes < 1) {
-                return "Il y a quelques secondes";
-            }
-            // if under 1 hour
-            if (minutes < 60) {
-                return "Il y a " + minutes + " minute" + (minutes > 1 ? "s" : "");
-            }
-            // if under 1 day
-            long hours = minutes / 60;
-            if (hours < 24) {
-                return "Il y a " + hours + " heure" + (hours > 1 ? "s" : "");
-            }
-        }
-        // if the date is yesterday
-        now.add(Calendar.DATE, -1);
-        if (inputDate.get(Calendar.YEAR) == now.get(Calendar.YEAR) && inputDate.get(Calendar.MONTH) == now.get(Calendar.MONTH) && inputDate.get(Calendar.DATE) == now.get(Calendar.DATE)) {
+        long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(diffInMillis);
+        long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+        long diffInHours = TimeUnit.MILLISECONDS.toHours(diffInMillis);
+        long diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis);
+
+        if (diffInSeconds < 60) {
+            return "Il y a quelques secondes";
+        } else if (diffInMinutes < 60) {
+            return "Il y a " + diffInMinutes + " minute" + (diffInMinutes > 1 ? "s" : "");
+        } else if (diffInHours < 24) {
+            return "Il y a " + diffInHours + " heure" + (diffInHours > 1 ? "s" : "");
+        } else if (diffInDays == 1) {
             return "Hier";
+        } else if (diffInDays < 7) {
+            return "Il y a " + diffInDays + " jour" + (diffInDays > 1 ? "s" : "");
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            return "Publié le " + sdf.format(givenDate);
         }
-        // if the date is in the last 7 days
-        now.add(Calendar.DATE, -6);
-        if (inputDate.after(now)) {
-            return "Il y a " + (inputDate.get(Calendar.DATE) - now.get(Calendar.DATE)) + " jour" + ((now.get(Calendar.DATE) - inputDate.get(Calendar.DATE)) > 1 ? "s" : "");
-        }
-        // else
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
-        return "Publié le " + outputFormat.format(date);
     }
+
 }
