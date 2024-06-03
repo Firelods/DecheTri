@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.flux.FluxFragment"
+    android:layout_gravity="center"
+    android:paddingHorizontal="20dp">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9">
+        <ListView
+            android:id="@+id/listView_flux"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="6dp"
+            />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <Button
+        android:id="@+id/btn_add_announcement"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="@string/add_announcement_button"
+        android:textAlignment="center"
+        android:textColor="@color/white_500"
+        android:textSize="18sp"
+        android:layout_weight="1"
+        />
+
+
+</LinearLayout>
